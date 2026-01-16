@@ -1,11 +1,12 @@
 #프로젝트 이름
+donotlate
 
 #프로젝트 소개
-
+실시간 교통 상황을 분석하여 최적의 출발 시간을 알려드립니다
 #팀원 <br>
-유건우 
-이승준
-양충모
+유건우 <br>
+이승준 <br>
+양충모 <br>
 
 #Skills  <br>
 ![js](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=JavaScript&logoColor=white) 
