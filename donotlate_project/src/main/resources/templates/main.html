@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome (CSS only) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Plotly (차트 사용 시) -->
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/common.js"></script>
+</head>
+<body class="page-background">
+
+<header id="header" class="app-header">
+    <div class="flex-center">
+        <button id="sidebarToggle" class="icon-button">
+            <i class="fa-solid fa-bars icon-gray icon-size-xl"></i>
+        </button>
+            <div class="header-title-wrapper">
+            <div class="icon-wrapper">
+                <i class="fa-solid fa-clock icon-white icon-size-lg"></i>
+            </div>
+            <h1 class="header-title">늦지마 / 메인 페이지</h1>
+        </div>
+    </div>
+    <div class="flex-center-gap-4">
+        <button class="icon-button">
+            <i class="fa-solid fa-cog text-gray-600 text-lg"></i>
+        </button>
+		<button>
+        <div class="profile-avatar">유</div>
+		</button>
+    </div>
+</header>
+
+<div class="layout-container">
+    <aside id="sidebar" class="app-sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-menu-list">
+                <a href="#" class="sidebar-link active">
+                    <i class="fa-solid fa-house sidebar-icon"></i>
+                    <span class="sidebar-text">메인 페이지</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-clock sidebar-icon"></i>
+                    <span class="font-medium">시간 계산 & Push 등록</span>
+                </a>
+				<a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-chart-line sidebar-icon"></i>
+                    <span class="sidebar-text">통계 대시보드</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-cloud-sun sidebar-icon"></i>
+                    <span class="sidebar-text">현재 날씨</span>
+                </a>
+                <a href="#" class="sidebar-link">
+					<i class="fa-solid fa-bullhorn sidebar-icon"></i>
+                    <span class="sidebar-text">공지 사항</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-content-wrapper content-max-width-xl">
+            <div class="main-grid-layout">
+                
+                <section id="saved-alarms-section" class="section-card row-span-2 h-[520px] flex flex-col">
+                        <div class="flex-between mb-4">
+                            <h2 class="heading-3 flex-center">
+                                <i class="fa-solid fa-list text-blue-600 mr-2"></i>
+                                저장된 Push
+                            </h2>
+                        </div>
+                        <div class="space-y-3 overflow-y-auto pr-2 flex-1">
+                            <div class="flex-between p-4 bg-gray-50 rounded-xl border border-gray-200">
+                                <div class="flex-1">
+                                    <div class="font-semibold text-gray-900">회사 출근</div>
+                                    <div class="text-secondary mt-1">월~금 | Push 알람 시간 : 07:48 AM</div>
+                                    <div class="flex-center-gap-2 mt-2">
+                                        <span class="badge badge-primary text-xs">지하철</span>
+                                        <span class="text-xs text-muted">역삼역 → 광화문역</span>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer ml-4">
+                                    <input type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                            <div class="flex-between p-4 bg-gray-50 rounded-xl border border-gray-200 opacity-60">
+                                <div class="flex-1">
+                                    <div class="font-semibold text-gray-900">주말 약속</div>
+                                    <div class="text-secondary mt-1">토~일 | Push 알람 시간 : 10:30 AM</div>
+                                    <div class="flex-center-gap-2 mt-2">
+                                        <span class="badge badge-success text-xs">버스</span>
+                                        <span class="text-xs text-muted">강남역 → 홍대입구</span>
+                                    </div>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer ml-4">
+                                    <input type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                </label>
+                            </div>
+                        </div>
+                </section> 
+                <section id="alarm-result-section" class="gradient-primary rounded-2xl shadow-lg p-6 text-white">
+                        <div class="flex-between mb-4">
+                            <h2 class="text-lg font-semibold flex items-center">
+                                <i class="fa-solid fa-bell mr-2"></i>
+                                등록된 Push의 평균 시간
+                            </h2>
+                        </div>
+                        
+                        <div class="text-center py-6">
+                            <div class="text-6xl font-bold mb-2">08:55</div>
+                            <div class="text-blue-200 text-sm">오전</div>
+                        </div>
+                        
+                        <div class="mt-6 p-4 bg-white/10 rounded-xl backdrop-blur">
+                            <div class="flex-center text-sm">
+                                <i class="fa-solid fa-lightbulb text-yellow-300 mr-2"></i>
+                                <span>당신은 상위 95.2%의 일찍 일어나는 사람입니다.</span>
+                            </div>
+                        </div>
+                </section>
+                <section id="commute-recommendation" class="mb-8">
+                    <div class="gradient-success rounded-2xl p-8 text-white">
+                        <div class="flex-between">
+                            <div>
+                                <div class="flex-center-gap-3 mb-4">
+                                    <i class="fa-solid fa-circle-check text-3xl"></i>
+                                    <span class="text-2xl font-bold">출근하기 좋은 날씨입니다.</span>
+                                </div>
+                                <p class="text-green-100 text-lg mb-6">맑은 날씨가 예상됩니다.<br/>평소보다 5분 일찍 출발하시면 여유롭게 출근할 수 있습니다.</p>
+                            </div>
+                            <i class="fa-solid fa-thumbs-up text-7xl opacity-20"></i>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+</div>
+</body>
+</html>

@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome (CSS only) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/common.js"></script>
+</head>
+<body class="page-background">
+
+<header id="header" class="bg-white border-b border-gray-200 sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex-between">
+        <div class="flex-center-gap-2">
+            <div class="icon-wrapper-small">
+                <i class="fa-solid fa-clock text-white text-lg"></i>
+            </div>
+            <span class="text-2xl font-bold text-gray-900">늦지마</span>
+        </div>
+        <div class="flex-center-gap-3">
+            <button id="loginBtn" class="px-5 py-2 text-gray-700 font-medium hover:text-primary transition">로그인</button>
+            <button id="signupBtn" class="btn-primary px-5 py-2 rounded-lg font-medium hover:bg-indigo-700 transition shadow-md">회원가입</button>
+        </div>
+    </div>
+</header>
+
+<section id="hero-section" class="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-blue-500 h-[640px] flex items-center justify-center overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+        <div class="absolute top-20 left-20 w-72 h-72 bg-white rounded-full blur-3xl"></div>
+        <div class="absolute bottom-20 right-20 w-96 h-96 bg-white rounded-full blur-3xl"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-6 relative z-10">
+        <div class="grid grid-cols-2 gap-12 items-center">
+            <div class="text-white">
+                <h1 class="text-6xl font-black mb-6 leading-tight">교통정보 기반<br/>스마트 출근 알람</h1>
+                <p class="text-xl mb-8 text-indigo-100 leading-relaxed">실시간 교통 상황을 분석하여<br/>최적의 출발 시간을 알려드립니다</p>
+                <div class="flex-center-gap-4">
+                    <button class="px-8 py-4 bg-white text-primary rounded-xl font-bold text-lg hover:bg-gray-100 transition shadow-2xl">무료로 시작하기</button>
+                    <button class="px-8 py-4 bg-transparent border-2 border-white text-white rounded-xl font-bold text-lg hover:bg-white hover:text-primary transition">더 알아보기</button>
+                </div>
+                <div class="flex-center-gap-8 mt-12">
+                    <div>
+                        <div class="text-4xl font-black">50K+</div>
+                        <div class="text-indigo-200">활성 사용자</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-black">98%</div>
+                        <div class="text-indigo-200">만족도</div>
+                    </div>
+                    <div>
+                        <div class="text-4xl font-black">4.9</div>
+                        <div class="text-indigo-200">평점</div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative h-[480px]">
+                <div class="absolute inset-0 bg-white rounded-3xl shadow-2xl p-8 transform rotate-3 opacity-90"></div>
+                <div class="absolute inset-0 bg-white rounded-3xl shadow-2xl p-8">
+                    <div class="flex items-center justify-center mb-6">
+                        <div class="w-20 h-20 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center">
+                            <i class="fa-solid fa-mobile-screen-button text-white text-4xl"></i>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4">
+                            <div class="flex-between mb-2">
+                                <span class="text-gray-600 font-medium">출발 시간</span>
+                                <span class="text-2xl font-bold text-primary">08:15</span>
+                            </div>
+                            <div class="flex-center-gap-2 text-muted">
+                                <i class="fa-solid fa-car"></i>
+                                <span>예상 소요시간: 35분</span>
+                            </div>
+                        </div>
+                        <div class="bg-green-50 rounded-xl p-4 border-2 border-green-200">
+                            <div class="flex-center-gap-2 mb-2">
+                                <i class="fa-solid fa-check-circle text-green-500 text-xl"></i>
+                                <span class="font-bold text-gray-800">원활한 교통 상황</span>
+                            </div>
+                            <p class="text-secondary">평소보다 5분 일찍 출발하세요</p>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <div class="flex-between mb-3">
+                                <span class="text-gray-700 font-medium">주요 경로</span>
+                                <i class="fa-solid fa-route text-indigo-500"></i>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex-center text-sm">
+                                    <div class="w-2 h-2 bg-indigo-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-600">강남대로 → 올림픽대로</span>
+                                </div>
+                                <div class="flex-center text-sm">
+                                    <div class="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                                    <span class="text-gray-600">한강대교 → 여의도</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="features-section" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-black text-gray-900 mb-4">주요 기능</h2>
+            <p class="text-xl text-gray-600">스마트한 출근을 위한 필수 기능들</p>
+        </div>
+        <div class="grid grid-cols-3 gap-8">
+            <div id="feature-card-3" class="bg-gradient-to-br from-green-50 to-teal-50 rounded-2xl p-8 hover-lift">
+                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex-center justify-center mb-6">
+                    <i class="fa-solid fa-route text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">경로 추천</h3>
+                <p class="text-secondary leading-relaxed">실시간으로 가장 빠른 경로를 추천해드립니다</p>
+            </div>
+            <div id="feature-card-4" class="bg-gradient-to-br from-orange-50 to-red-50 rounded-2xl p-8 hover-lift">
+                <div class="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-600 rounded-xl flex-center justify-center mb-6">
+                    <i class="fa-solid fa-cloud-sun text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">날씨 정보</h3>
+                <p class="text-secondary leading-relaxed">날씨에 따른 교통 상황 변화를 미리 알려드립니다</p>
+            </div>
+            <div id="feature-card-5" class="bg-gradient-to-br from-cyan-50 to-blue-50 rounded-2xl p-8 hover-lift">
+                <div class="w-16 h-16 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-xl flex-center justify-center mb-6">
+                    <i class="fa-solid fa-chart-line text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">통계 분석</h3>
+                <p class="text-secondary leading-relaxed">출근 패턴을 분석하여 인사이트를 제공합니다</p>
+            </div>
+            <div id="feature-card-6" class="bg-gradient-to-br from-violet-50 to-purple-50 rounded-2xl p-8 hover-lift">
+                <div class="w-16 h-16 bg-gradient-to-br from-violet-500 to-purple-600 rounded-xl flex-center justify-center mb-6">
+                    <i class="fa-solid fa-calendar-days text-white text-3xl"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">일정 연동</h3>
+                <p class="text-secondary leading-relaxed">캘린더와 연동하여 자동으로 일정을 설정합니다</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="how-it-works-section" class="py-24 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-black text-gray-900 mb-4">이용 방법</h2>
+            <p class="text-xl text-gray-600">3단계로 시작하는 스마트한 출근</p>
+        </div>
+        <div class="grid grid-cols-3 gap-8">
+            <div id="step-1" class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex-center justify-center mx-auto mb-6 shadow-lg">
+                    <span class="text-white text-4xl font-black">1</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">회원가입</h3>
+                <p class="text-secondary leading-relaxed">간편하게 소셜 로그인으로<br/>시작하세요</p>
+            </div>
+            <div id="step-2" class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-purple-500 to-pink-600 rounded-full flex-center justify-center mx-auto mb-6 shadow-lg">
+                    <span class="text-white text-4xl font-black">2</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">경로 설정</h3>
+                <p class="text-secondary leading-relaxed">출발지와 목적지를<br/>등록하세요</p>
+            </div>
+            <div id="step-3" class="text-center">
+                <div class="w-24 h-24 bg-gradient-to-br from-pink-500 to-red-600 rounded-full flex-center justify-center mx-auto mb-6 shadow-lg">
+                    <span class="text-white text-4xl font-black">3</span>
+                </div>
+                <h3 class="text-2xl font-bold text-gray-900 mb-3">알람 수신</h3>
+                <p class="text-secondary leading-relaxed">실시간 교통정보 기반<br/>알람을 받으세요</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer id="footer" class="bg-gray-900 text-gray-300 py-12">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-4 gap-8 mb-8">
+            <div>
+                <div class="flex-center-gap-2 mb-4">
+                    <i class="fa-solid fa-clock text-primary text-2xl"></i>
+                    <span class="text-xl font-bold text-white">늦지마</span>
+                </div>
+                <p class="text-sm text-gray-400">교통정보 기반 스마트 출근 알람 서비스</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">서비스</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">서비스 소개</a></li>
+                    <li><a href="#" class="hover:text-white transition">기능</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">지원</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">고객지원</a></li>
+                    <li><a href="#" class="hover:text-white transition">이용약관</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">문의</h4>
+                <ul class="space-y-2 text-sm">
+                    <li>이메일: support@smartalarm.com</li>
+                    <li>전화: 1588-0000</li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-gray-800 pt-8 text-center text-sm text-gray-500">
+            <p>&copy; 2026 늦지마. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+<div id="authModal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-[100] flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl max-w-md w-full relative max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        
+        <button id="closeModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 z-50">
+            <i class="fa-solid fa-xmark text-2xl"></i>
+        </button>
+
+        <div class="overflow-y-auto p-8 modal-scroll-area">
+            
+            <div id="loginForm">
+                <div class="text-center mb-8">
+                    <div class="flex-center justify-center flex-center-gap-2 mb-4">
+                        <i class="fa-solid fa-clock text-primary text-3xl"></i>
+                        <span class="text-2xl font-bold text-gray-900">늦지마</span>
+                    </div>
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2">로그인</h2>
+                    <p class="text-secondary">스마트한 출근을 시작하세요</p>
+                </div>
+                
+                <form class="space-y-4 mb-6">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">이메일</label>
+                        <input type="email" class="input-field" placeholder="example@email.com">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">비밀번호</label>
+                        <input type="password" class="input-field" placeholder="••••••••">
+                    </div>
+                    <div class="flex-between text-sm">
+                        <label class="flex-center">
+                            <input type="checkbox" class="mr-2 rounded">
+                            <span class="text-secondary">아이디 저장</span>
+                        </label>
+                        <a href="#" class="text-primary hover:underline">비밀번호 초기화</a>
+                    </div>
+                    <button type="submit" class="btn-primary w-full py-3 rounded-lg font-bold hover:bg-indigo-700 transition">로그인</button>
+                </form>
+                
+                <div class="relative mb-6">
+                    <div class="absolute inset-0 flex-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-4 bg-white text-muted">또는 소셜 로그인</span>
+                    </div>
+                </div>
+                
+                <div class="space-y-3 mb-6">
+                    <button class="flex-center justify-center w-full py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition duration-200 group">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="h-5 w-5 mr-3">
+                    <span class="text-gray-700 font-medium">Google로 계속하기</span>
+                </button>
+                    <button class="flex-center justify-center w-full py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition duration-200 group">
+                    <div class="w-5 h-5 mr-3 bg-green-500 rounded flex-center justify-center">
+                        <span class="text-white text-xs font-bold">N</span>
+                    </div>
+                    <span class="text-gray-700 font-medium">네이버로 계속하기</span>
+                </button>
+                    <button class="w-full py-3 bg-[#FEE500] text-gray-900 rounded-lg font-medium hover:bg-[#fdd800] transition flex-center justify-center flex-center-gap-2">
+                        <i class="fa-solid fa-comment text-xl"></i>
+                        <span>카카오로 계속하기</span>
+                    </button>
+                </div>
+                
+                <div class="text-center text-sm">
+                    <span class="text-secondary">계정이 없으신가요?</span>
+                    <button id="showSignup" class="text-primary font-bold hover:underline ml-1">회원가입</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('load', function() {
+        const authModal = document.getElementById('authModal');
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const closeModal = document.getElementById('closeModal');
+
+        if (loginBtn && authModal && loginForm) {
+            loginBtn.addEventListener('click', () => {
+                authModal.classList.remove('hidden');
+                loginForm.classList.remove('hidden');
+            });
+        }
+
+        if (closeModal && authModal) {
+            closeModal.addEventListener('click', () => {
+                authModal.classList.add('hidden');
+            });
+        }
+    });
+</script>
+</body>
+</html>
