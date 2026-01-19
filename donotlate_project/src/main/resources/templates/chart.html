@@ -1,129 +1,63 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>늦지마</title>
-    
-        <!-- Tailwind -->
-        <script src="https://cdn.tailwindcss.com"></script>
-    
-        <!-- Font Awesome (CSS only) -->
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-        <!-- Plotly (차트 사용 시) -->
-        <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
-    
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
-        <!-- Custom -->
-        <link rel="stylesheet" href="css/common.css">
-        <script src="js/common.js"></script>
-        <script src="js/chart.js"></script>
-    </head>    
+<th:block th:replace="~{head :: headFragment}"></th:block>
 <body class="bg-gray-50">
 
-<header id="header" class="app-header">
-    <div class="flex-center">
-        <button id="sidebarToggle" class="icon-button">
-            <i class="fa-solid fa-bars text-gray-700 text-xl"></i>
-        </button>
-        <div class="ml-6 flex-center">
-            <div class="icon-wrapper">
-                <i class="fa-solid fa-chart-line text-white text-lg"></i>
-            </div>
-            <h1 class="text-xl font-bold text-gray-800">늦지마 / 통계 대시보드</h1>
-        </div>
-    </div>
-    <div class="flex-center-gap-4">
-        <button class="icon-button">
-            <i class="fa-solid fa-cog text-gray-600 text-lg"></i>
-        </button>
-		<button>
-        <div class="profile-avatar">유</div>
-		</button>
-    </div>
-</header>
+<th:block th:replace="~{header :: headerFragment}"></th:block>
+
+<!-- 사이드바 오버레이 (모바일) -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
 
 <div class="layout-container">
-    <aside id="sidebar" class="app-sidebar">
-        <div class="p-6">
-            <div class="space-y-2">
-                <a href="#" class="sidebar-link">
-                    <i class="fa-solid fa-house mr-3 w-5"></i>
-                    <span class="font-medium">메인 페이지</span>
-                </a>
-                <a href="#" class="sidebar-link">
-                    <i class="fa-solid fa-clock mr-3 w-5"></i>
-                    <span class="font-medium">시간 계산 & Push 등록</span>
-                </a>
-				<a href="#" class="sidebar-link active">
-                    <i class="fa-solid fa-chart-line mr-3 w-5"></i>
-                    <span class="font-medium">통계 대시보드</span>
-                </a>
-                <a href="#" class="sidebar-link">
-                    <i class="fa-solid fa-cloud-sun mr-3 w-5" ></i>
-                    <span class="font-medium">현재 날씨</span>
-                </a>
-                <a href="#" class="sidebar-link">
-                    <i class="fa-solid fa-bullhorn mr-3 w-5"></i>
-                    <span class="font-medium">공지 사항</span>
-                </a>
-            </div>
-        </div>
-    </aside>
-
+    <th:block th:replace="~{aside :: asideFragment}"></th:block>
     <main class="main-content">
-        <div class="w-full max-w-6xl px-8 py-8 transition-all duration-300 ease-in-out">
+        <div class="w-full max-w-6xl px-4 sm:px-6 lg:px-8 py-6 sm:py-8 transition-all duration-300 ease-in-out">
             <div id="stats-overview" class="mb-6">
-                <div class="grid grid-cols-4 gap-4">
-                    <div class="card p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between">
                             <div>
                                 <p class="text-muted font-medium">총 사용자</p>
-                                <h3 class="text-3xl font-bold text-gray-800 mt-2">9999명</h3>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-2">9999명</h3>
                             </div>
-                            <div class="w-14 h-14 bg-blue-100 rounded-full flex-center justify-center">
-                                <i class="fa-solid fa-users text-blue-600 text-2xl"></i>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-blue-100 rounded-full flex-center justify-center">
+                                <i class="fa-solid fa-users text-blue-600 text-xl sm:text-2xl"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card p-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between">
                             <div>
                                 <p class="text-muted font-medium">평균 Push 시간</p>
-                                <h3 class="text-3xl font-bold text-gray-800 mt-2">7시 42분</h3>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-2">7시 42분</h3>
                             </div>
-                            <div class="w-14 h-14 bg-purple-100 rounded-full flex-center justify-center">
-                                <i class="fa-solid fa-clock text-purple-600 text-2xl"></i>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-purple-100 rounded-full flex-center justify-center">
+                                <i class="fa-solid fa-clock text-purple-600 text-xl sm:text-2xl"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card p-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between">
                             <div>
                                 <p class="text-muted font-medium">평균 준비 시간</p>
-                                <h3 class="text-3xl font-bold text-gray-800 mt-2">23분</h3>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-2">23분</h3>
                             </div>
-                            <div class="w-14 h-14 bg-red-100 rounded-full flex-center justify-center">
-                                <i class="fa-solid fa-clock-rotate-left text-red-600 text-2xl"></i>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-red-100 rounded-full flex-center justify-center">
+                                <i class="fa-solid fa-clock-rotate-left text-red-600 text-xl sm:text-2xl"></i>
                             </div>
                         </div>
                     </div>
 
-                    <div class="card p-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between">
                             <div>
                                 <p class="text-muted font-medium">활성 정류장</p>
-                                <h3 class="text-3xl font-bold text-gray-800 mt-2">1,284개</h3>
+                                <h3 class="text-2xl sm:text-3xl font-bold text-gray-800 mt-2">1,284개</h3>
                             </div>
-                            <div class="w-14 h-14 bg-green-100 rounded-full flex-center justify-center">
-                                <i class="fa-solid fa-route text-green-600 text-2xl"></i>
+                            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-green-100 rounded-full flex-center justify-center">
+                                <i class="fa-solid fa-route text-green-600 text-xl sm:text-2xl"></i>
                             </div>
                         </div>
                     </div>
@@ -132,15 +66,15 @@
 
             <div id="traffic-section" class="mb-6">
                 <h2 class="heading-2">대중교통 이용 추이</h2>
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="card p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between mb-4">
                             <h3 class="heading-3">요일별 지하철 이용자 수</h3>
                         </div>
                         <div id="metro-chart" style="height: 300px"></div>
                     </div>
 
-                    <div class="card p-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between mb-4">
                             <h3 class="heading-3">요일별 버스 이용자 수</h3>
                         </div>
@@ -151,15 +85,15 @@
 
             <div id="route-section" class="mb-6">
                 <h2 class="heading-2">노선 및 환승 분석</h2>
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="card p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between mb-4">
                             <h3 class="heading-3">환승 많은 노선 Top 10</h3>
                         </div>
                         <div id="transfer-routes-chart" style="height: 350px"></div>
                     </div>
 
-                    <div class="card p-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between mb-4">
                             <h3 class="heading-3">정류장 간 거리 긴 구간</h3>
                         </div>
@@ -170,15 +104,15 @@
 
             <div id="station-section" class="mb-6">
                 <h2 class="heading-2">출퇴근 이용자 통계</h2>
-                <div class="grid grid-cols-2 gap-6">
-                    <div class="card p-6">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between mb-4">
                             <h3 class="heading-3">출근 이용자 많은 역</h3>
                         </div>
                         <div id="attendance-chart" style="height: 320px"></div>
                     </div>
 
-                    <div class="card p-6">
+                    <div class="card p-4 sm:p-6">
                         <div class="flex-between mb-4">
                             <h3 class="heading-3">퇴근 이용자 많은 역</h3>
                         </div>
@@ -189,21 +123,22 @@
 
             <div id="detailed-stats" class="mb-6">
                 <h2 class="heading-2">상세 통계</h2>
-                <div class="card p-6">
-                    <div class="flex-between mb-6">
+                <div class="card p-4 sm:p-6">
+                    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                         <h3 class="heading-3">시간대별 출근 패턴</h3>
-                        <div class="flex-center-gap-2">
-                            <button class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg">주간</button>
-                            <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">월간</button>
-                            <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">연간</button>
+                        <div class="flex-center-gap-2 flex-wrap">
+                            <button class="px-3 sm:px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg">주간</button>
+                            <button class="px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">월간</button>
+                            <button class="px-3 sm:px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">연간</button>
                         </div>
                     </div>
-                    <div id="hourly-pattern-chart" style="height: 400px"></div>
+                    <div id="hourly-pattern-chart" style="height: 320px; max-height: 400px"></div>
                 </div>
             </div>
 
         </div>
     </main>
 </div>
+<script src="js/chart.js"></script>
 </body>
 </html>
