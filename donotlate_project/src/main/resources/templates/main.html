@@ -2,29 +2,7 @@
 <html lang="ko">
 <th:block th:replace="~{head :: headFragment}"></th:block>
 <body class="page-background">
-
-<header id="header" class="app-header">
-    <div class="flex-center">
-        <button id="sidebarToggle" class="icon-button">
-            <i class="fa-solid fa-bars icon-gray icon-size-xl"></i>
-        </button>
-            <div class="header-title-wrapper">
-            <div class="icon-wrapper">
-                <i class="fa-solid fa-clock icon-white icon-size-lg"></i>
-            </div>
-            <h1 class="header-title">늦지마 / 메인 페이지</h1>
-        </div>
-    </div>
-    <div class="flex-center-gap-4">
-        <button class="icon-button">
-            <i class="fa-solid fa-cog text-gray-600 text-lg"></i>
-        </button>
-		<button>
-        <div class="profile-avatar">유</div>
-		</button>
-    </div>
-</header>
-
+<th:block th:replace="~{header :: headerFragment}"></th:block>  
 <div class="layout-container">
     <th:block th:replace="~{aside :: asideFragment}"></th:block>
     <main class="main-content">
