@@ -1,0 +1,47 @@
+<th:block th:fragment="headerFragment">
+    <header id="header" class="app-header">
+        <div class="flex-center">
+            <button id="sidebarToggle" class="icon-button">
+                <i class="fa-solid fa-bars icon-gray icon-size-xl"></i>
+            </button>
+
+            <div class="header-title-wrapper">
+                <div class="icon-wrapper">
+                    <i 
+                        th:if="${activeMenu} == 'main'" 
+                        class="fa-solid fa-clock icon-white icon-size-lg"></i>
+                    <i 
+                        th:if="${activeMenu} == 'calculator'" 
+                        class="fa-solid fa-calculator icon-white icon-size-lg"></i>
+                    <i 
+                        th:if="${activeMenu} == 'chart'" 
+                        class="fa-solid fa-chart-line icon-white icon-size-lg"></i>
+                    <i 
+                        th:if="${activeMenu} == 'weather'" 
+                        class="fa-solid fa-cloud-sun icon-white icon-size-lg"></i>
+                    <i 
+                        th:if="${activeMenu} == 'notice'" 
+                        class="fa-solid fa-bullhorn icon-white icon-size-lg"></i>
+                    <i 
+                        th:if="${activeMenu} == 'mypage'" 
+                        class="fa-solid fa-user icon-white icon-size-lg"></i>
+                </div>
+                <h1 class="header-title">
+                    <span class="header-title-full"
+                        th:text="${headerTitle}">기본 타이틀</span>
+                    <span class="header-title-mobile"
+                        th:text="${headerMobileTitle}">모바일 기본 타이틀</span>
+                </h1>
+            </div>
+        </div>
+
+        <div class="flex-center-gap-4">
+            <button class="icon-button" onclick="location.href='/mypage'">
+                <i class="fa-solid fa-cog icon-gray-medium icon-size-lg"></i>
+            </button>
+            <button onclick="location.href='/mypage'">
+                <div class="profile-avatar">유</div>
+            </button>
+        </div>
+    </header>
+</th:block>

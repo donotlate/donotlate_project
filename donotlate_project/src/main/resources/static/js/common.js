@@ -1,4 +1,6 @@
-// Tailwind Config 설정
+/* =========================
+    Tailwind Config
+========================= */
 if (typeof tailwind !== 'undefined') {
     tailwind.config = {
         theme: {
@@ -10,7 +12,9 @@ if (typeof tailwind !== 'undefined') {
     };
 }
 
-// 사이드바 토글 기능 (이벤트 위임 사용)
+/* =========================
+    사이드바 처리
+========================= */
 function initSidebarToggle() {
     function isMobile() {
         return window.innerWidth <= 768;
@@ -19,23 +23,14 @@ function initSidebarToggle() {
     function toggleSidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
-        
         if (!sidebar) return;
 
         if (isMobile()) {
-            // 모바일: 오버레이와 함께 토글
             sidebar.classList.toggle('sidebar-open');
-            if (overlay) {
-                overlay.classList.toggle('active');
-            }
-            // 사이드바가 열릴 때 body 스크롤 방지
-            if (sidebar.classList.contains('sidebar-open')) {
-                document.body.style.overflow = 'hidden';
-            } else {
-                document.body.style.overflow = '';
-            }
+            overlay?.classList.toggle('active');
+            document.body.style.overflow =
+                sidebar.classList.contains('sidebar-open') ? 'hidden' : '';
         } else {
-            // 데스크톱: 기존 방식 유지
             sidebar.classList.toggle('sidebar-closed');
         }
     }
@@ -43,76 +38,123 @@ function initSidebarToggle() {
     function closeSidebar() {
         const sidebar = document.getElementById('sidebar');
         const overlay = document.getElementById('sidebarOverlay');
-        
         if (!sidebar) return;
 
-        if (isMobile()) {
-            sidebar.classList.remove('sidebar-open');
-            if (overlay) {
-                overlay.classList.remove('active');
-            }
-            document.body.style.overflow = '';
-        }
+        sidebar.classList.remove('sidebar-open');
+        overlay?.classList.remove('active');
+        document.body.style.overflow = '';
     }
 
-    // 토글 버튼 클릭 이벤트
-    document.addEventListener('click', function(e) {
-        const toggleBtn = e.target.closest('#sidebarToggle');
-        if (toggleBtn) {
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('#sidebarToggle')) {
             e.preventDefault();
             toggleSidebar();
         }
-    });
-
-    // 오버레이 클릭 시 사이드바 닫기
-    document.addEventListener('click', function(e) {
-        const overlay = document.getElementById('sidebarOverlay');
-        if (overlay && e.target === overlay) {
+        if (e.target.id === 'sidebarOverlay') {
             closeSidebar();
         }
-    });
-
-    // 사이드바 링크 클릭 시 모바일에서 닫기
-    document.addEventListener('click', function(e) {
-        const sidebarLink = e.target.closest('.sidebar-link');
-        if (sidebarLink && isMobile()) {
-            setTimeout(closeSidebar, 100); // 약간의 지연으로 부드러운 전환
+        if (e.target.closest('.sidebar-link') && isMobile()) {
+            setTimeout(closeSidebar, 100);
         }
     });
-
-    // 창 크기 변경 시 사이드바 상태 초기화
-    let resizeTimer;
-    window.addEventListener('resize', function() {
-        clearTimeout(resizeTimer);
-        resizeTimer = setTimeout(function() {
-            const sidebar = document.getElementById('sidebar');
-            const overlay = document.getElementById('sidebarOverlay');
-            
-            if (isMobile()) {
-                // 모바일로 변경 시 데스크톱 상태 초기화
-                if (sidebar) {
-                    sidebar.classList.remove('sidebar-closed');
-                    sidebar.classList.remove('sidebar-open');
-                    // 모바일에서는 기본적으로 닫힌 상태
-                }
-                if (overlay) {
-                    overlay.classList.remove('active');
-                }
-                document.body.style.overflow = '';
-            } else {
-                // 데스크톱으로 변경 시 모바일 상태 초기화
-                if (sidebar) {
-                    sidebar.classList.remove('sidebar-open');
-                    sidebar.style.transform = '';
-                }
-                if (overlay) {
-                    overlay.classList.remove('active');
-                }
-                document.body.style.overflow = '';
-            }
-        }, 250);
-    });
 }
+
+/* =========================
+    모달처리
+========================= */
+function initModal() {
+    function openModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        modal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+        const modal = document.getElementById(modalId);
+        if (!modal) return;
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+    }
+
+    // 전역 노출 (HTML onclick용)
+    window.openModal = openModal;
+    window.closeModal = closeModal;
+
+    // ESC 닫기
+    document.addEventListener('keydown', (e) => {
+        if (e.key !== 'Escape') return;
+        document.querySelectorAll('[id^="modal-"]:not(.hidden)')
+            .forEach(modal => closeModal(modal.id));
+    });
+
+    // 로그인 모달 버튼 바인딩
+    const authModal = document.getElementById('authModal');
+    const loginForm = document.getElementById('loginForm');
+    const loginBtns = ['loginBtn', 'loginBtn2']
+        .map(id => document.getElementById(id))
+        .filter(Boolean);
+
+    loginBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            authModal?.classList.remove('hidden');
+            loginForm?.classList.remove('hidden');
+        });
+    });
+
+    // 로그인 모달 닫기 버튼
+    const closeBtn = document.getElementById('closeModal');
+    closeBtn?.addEventListener('click', () => {
+        authModal?.classList.add('hidden');
+        document.body.style.overflow = '';
+    });
+
+    // footer 약관
+    document.getElementById('btn-terms')
+        ?.addEventListener('click', e => {
+            e.preventDefault();
+            openModal('modal-terms');
+        });
+
+    document.getElementById('btn-privacy')
+        ?.addEventListener('click', e => {
+            e.preventDefault();
+            openModal('modal-privacy');
+        });
+}
+
+/* =========================
+    회원가입 -> 로그인
+========================= */
+function initAuthRedirect() {
+    const showSignup = document.getElementById('showSignup');
+    const signupBtn = document.getElementById('signupBtn');
+
+    showSignup?.addEventListener('click', () => {
+        location.href = '/signUp';
+    });
+
+    signupBtn?.addEventListener('click', () => {
+        location.href = '/signUp';
+    });
+
+    // ?login=true 처리
+    const params = new URLSearchParams(location.search);
+    if (params.get('login') === 'true') {
+        document.getElementById('authModal')?.classList.remove('hidden');
+        document.getElementById('loginForm')?.classList.remove('hidden');
+    }
+}
+
+/* =========================
+    파라미터로 넘겨졌을 경우, 초기화
+========================= */
+document.addEventListener('DOMContentLoaded', () => {
+    initSidebarToggle();
+    initModal();
+    initAuthRedirect();
+});
+
 
 // 마이페이지 스크롤 활성 메뉴 기능
 function initMyPageScrollMenu() {
@@ -193,44 +235,3 @@ function initMyPageScrollMenu() {
         setTimeout(init, 0);
     }
 }
-
-// 모달 열기/닫기 기능
-function initModal() {
-    function openModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
-        }
-    }
-
-    function closeModal(modalId) {
-        const modal = document.getElementById(modalId);
-        if (modal) {
-            modal.classList.add('hidden');
-            document.body.style.overflow = '';
-        }
-    }
-
-    // 전역 함수로 등록
-    window.openModal = openModal;
-    window.closeModal = closeModal;
-
-    // ESC 키로 모달 닫기
-    document.addEventListener('keydown', function (event) {
-        if (event.key === "Escape") {
-            const modals = document.querySelectorAll('[id^="modal-"]');
-            modals.forEach(modal => {
-                if (!modal.classList.contains('hidden')) {
-                    closeModal(modal.id);
-                }
-            });
-        }
-    });
-}
-
-// 초기화 함수들 실행
-initSidebarToggle();
-initModal();
-
-// 마이페이지는 별도로 호출 필요 (initMyPageScrollMenu)

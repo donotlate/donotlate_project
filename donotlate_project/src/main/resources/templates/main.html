@@ -1,24 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
-<head>
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome (CSS only) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Plotly (차트 사용 시) -->
-    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Custom -->
-    <link rel="stylesheet" href="css/common.css">
-    <script src="js/common.js"></script>
-</head>
+<th:block th:replace="~{head :: headFragment}"></th:block>
 <body class="page-background">
 
 <header id="header" class="app-header">
@@ -44,33 +26,7 @@
 </header>
 
 <div class="layout-container">
-    <aside id="sidebar" class="app-sidebar">
-        <div class="sidebar-content">
-            <div class="sidebar-menu-list">
-                <a href="#" class="sidebar-link active">
-                    <i class="fa-solid fa-house sidebar-icon"></i>
-                    <span class="sidebar-text">메인 페이지</span>
-                </a>
-                <a href="#" class="sidebar-link">
-                    <i class="fa-solid fa-clock sidebar-icon"></i>
-                    <span class="font-medium">시간 계산 & Push 등록</span>
-                </a>
-				<a href="#" class="sidebar-link">
-                    <i class="fa-solid fa-chart-line sidebar-icon"></i>
-                    <span class="sidebar-text">통계 대시보드</span>
-                </a>
-                <a href="#" class="sidebar-link">
-                    <i class="fa-solid fa-cloud-sun sidebar-icon"></i>
-                    <span class="sidebar-text">현재 날씨</span>
-                </a>
-                <a href="#" class="sidebar-link">
-					<i class="fa-solid fa-bullhorn sidebar-icon"></i>
-                    <span class="sidebar-text">공지 사항</span>
-                </a>
-            </div>
-        </div>
-    </aside>
-
+    <th:block th:replace="~{aside :: asideFragment}"></th:block>
     <main class="main-content">
         <div class="main-content-wrapper content-max-width-xl">
             <div class="main-grid-layout">

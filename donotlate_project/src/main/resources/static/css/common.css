@@ -596,15 +596,17 @@ body {
 }
 
 .search-input {
-    padding-left: 2.5rem;
+    padding-left: 2.5rem !important; /* 2.5rem에서 3rem으로 늘리고 !important 추가 */
     padding-right: 1rem;
     padding-top: 0.5rem;
     padding-bottom: 0.5rem;
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     outline: none;
-    width: 20rem;
+    /* width: 20rem; 은 모바일을 위해 가급적 삭제하거나 max-width로 변경을 추천합니다 */
+    max-width: 100%; 
     transition: all 0.2s;
+    box-sizing: border-box; /* 패딩이 너비를 계산할 때 밖으로 삐져나가지 않게 함 */
 }
 
 .search-input:focus {
