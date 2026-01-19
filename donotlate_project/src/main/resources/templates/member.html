@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome (CSS only) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Plotly (차트 사용 시) -->
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/common.js"></script>
+
+    <script>
+        // 회원가입 페이지는 Inter 폰트 사용
+        if (typeof tailwind !== 'undefined') {
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        fontFamily: {
+                            sans: ['Inter', 'sans-serif']
+                        }
+                    }
+                }
+            };
+        }
+    </script>
+</head>
+<body class="signup-page-background">
+    <div id="signup-container" class="flex flex-col flex-center justify-center min-h-screen py-10 px-4">
+        <div id="signup-card" class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+            <div id="logo-section" class="flex justify-center mb-6">
+                <div class="flex-center-gap-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex-center justify-center">
+                        <i class="fa-solid fa-clock text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-800">늦지마</span>
+                </div>
+            </div>
+
+            <div id="header-section" class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">회원가입</h1>
+                <p class="text-secondary">
+                    이미 계정이 있으신가요?
+                    <a href="#" class="text-blue-600 hover:text-blue-700 font-medium">로그인</a>
+                </p>
+            </div>
+
+            <div id="social-login-section" class="space-y-3 mb-6">
+                <button class="flex-center justify-center w-full py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition duration-200 group">
+                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="h-5 w-5 mr-3">
+                    <span class="text-gray-700 font-medium">Google로 계속하기</span>
+                </button>
+
+                <button class="flex-center justify-center w-full py-3 px-4 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 transition duration-200 group">
+                    <div class="w-5 h-5 mr-3 bg-green-500 rounded flex-center justify-center">
+                        <span class="text-white text-xs font-bold">N</span>
+                    </div>
+                    <span class="text-gray-700 font-medium">네이버로 계속하기</span>
+                </button>
+
+                <button class="w-full py-3 bg-[#FEE500] text-gray-900 rounded-lg font-medium hover:bg-[#fdd800] transition flex-center justify-center flex-center-gap-2">
+                        <i class="fa-solid fa-comment text-xl"></i>
+                        <span>카카오로 계속하기</span>
+                    </button>
+            </div>
+
+            <div id="divider-section" class="flex-center justify-center mb-6">
+                <div class="flex-grow border-t border-gray-300"></div>
+                <span class="mx-4 text-muted text-sm font-medium">또는</span>
+                <div class="flex-grow border-t border-gray-300"></div>
+            </div>
+
+            <form id="signup-form" class="space-y-4">
+                <div id="name-field">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="name">이름</label>
+                    <input class="input-field" id="name" type="text" placeholder="홍길동"/>
+                </div>
+
+                <div id="email-field">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="email">이메일</label>
+                    <input class="input-field" id="email" type="email" placeholder="example@email.com"/>
+                </div>
+
+                <div id="password-field">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="password">비밀번호</label>
+                    <input class="input-field" id="password" type="password" placeholder="8자 이상 입력해주세요"/>
+                </div>
+
+                <div id="password-confirm-field">
+                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="password-confirm">비밀번호 확인</label>
+                    <input class="input-field" id="password-confirm" type="password" placeholder="비밀번호를 다시 입력해주세요"/>
+                </div>
+
+                <div id="terms-section" class="space-y-3 pt-2">
+                    <label class="flex-center">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"/>
+                        <span class="ml-2 text-sm text-gray-700">
+                            <a href="#" id="btn-terms" class="text-blue-600 hover:text-blue-700 font-medium">서비스 이용약관</a>에 동의합니다
+                        </span>
+                    </label>
+                    <label class="flex-center">
+                        <input type="checkbox" class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"/>
+                        <span class="ml-2 text-sm text-gray-700">
+                            <a href="#" id="btn-privacy" class="text-blue-600 hover:text-blue-700 font-medium">개인정보 처리방침</a>에 동의합니다
+                        </span>
+                    </label>
+                </div>
+
+                <button id="signup-button" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 shadow-md mt-6" type="submit">
+                    회원가입
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <div id="modal-terms" class="fixed inset-0 z-50 flex items-center justify-center hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-gray-900 bg-opacity-50 transition-opacity backdrop-blur-sm" onclick="closeModal('modal-terms')"></div>
+        
+        <div class="bg-white rounded-lg shadow-xl w-11/12 max-w-lg z-10 transform transition-all p-6 relative flex flex-col max-h-[80vh]">
+            <div class="flex-between mb-4 border-b pb-2">
+                <h3 class="text-lg font-bold text-gray-900" id="modal-title">서비스 이용약관</h3>
+                <button onclick="closeModal('modal-terms')" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="overflow-y-auto modal-scroll text-secondary space-y-4 pr-2 mb-4">
+                <p><strong>제 1 조 (목적)</strong><br>
+                본 약관은 '늦지마' 서비스(이하 "서비스")를 이용함에 있어 회사와 회원 간의 권리, 의무 및 책임사항을 규정함을 목적으로 합니다.</p>
+                
+                <p><strong>제 2 조 (용어의 정의)</strong><br>
+                1. "서비스"라 함은 구현되는 단말기와 상관없이 회원이 이용할 수 있는 '늦지마' 관련 제반 서비스를 의미합니다.<br>
+                2. "회원"이라 함은 회사의 서비스에 접속하여 본 약관에 따라 회사와 이용계약을 체결하고 회사가 제공하는 서비스를 이용하는 고객을 말합니다.</p>
+                
+                <p><strong>제 3 조 (약관의 게시와 개정)</strong><br>
+                회사는 본 약관의 내용을 회원이 쉽게 알 수 있도록 서비스 초기 화면에 게시합니다. 회사는 법률을 위배하지 않는 범위에서 본 약관을 개정할 수 있습니다.</p>
+                
+                <p><strong>제 4 조 (서비스의 제공)</strong><br>
+                회사는 다음과 같은 업무를 수행합니다.<br>
+                1. 지각 방지 Push 및 경로 추천 서비스<br>
+                2. 교통 상황 실시간 정보 제공<br>
+                3. 기타 회사가 정하는 업무</p>
+            </div>
+
+            <div class="pt-2 border-t flex justify-end">
+                <button onclick="closeModal('modal-terms')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal-privacy" class="fixed inset-0 z-50 flex items-center justify-center hidden" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="absolute inset-0 bg-gray-900 bg-opacity-50 transition-opacity backdrop-blur-sm" onclick="closeModal('modal-privacy')"></div>
+        
+        <div class="bg-white rounded-lg shadow-xl w-11/12 max-w-lg z-10 transform transition-all p-6 relative flex flex-col max-h-[80vh]">
+            <div class="flex-between mb-4 border-b pb-2">
+                <h3 class="text-lg font-bold text-gray-900">개인정보 처리방침</h3>
+                <button onclick="closeModal('modal-privacy')" class="text-gray-400 hover:text-gray-600 focus:outline-none">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="overflow-y-auto modal-scroll text-secondary space-y-4 pr-2 mb-4">
+                <p><strong>1. 개인정보의 수집 및 이용 목적</strong><br>
+                '늦지마'는 다음의 목적을 위해 개인정보를 수집 및 이용합니다.<br>
+                - 회원 가입 및 관리<br>
+                - 서비스 제공 (Push, 경로 안내)<br>
+                - 고충 처리 및 공지사항 전달</p>
+                
+                <p><strong>2. 수집하는 개인정보의 항목</strong><br>
+                - 필수항목: 이름, 이메일 주소, 비밀번호<br>
+                - 선택항목: 출발지/도착지 즐겨찾기 정보</p>
+                
+                <p><strong>3. 개인정보의 보유 및 이용 기간</strong><br>
+                회사는 원칙적으로 개인정보 수집 및 이용목적이 달성된 후에는 해당 정보를 지체 없이 파기합니다. 단, 관계법령의 규정에 의하여 보존할 필요가 있는 경우 일정 기간 동안 보관합니다.</p>
+                
+                <p><strong>4. 개인정보의 파기절차 및 방법</strong><br>
+                회사는 파기 사유가 발생한 개인정보를 선정하고, 개인정보 보호책임자의 승인을 받아 개인정보를 파기합니다.</p>
+            </div>
+
+            <div class="pt-2 border-t flex justify-end">
+                <button onclick="closeModal('modal-privacy')" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 모달 이벤트 리스너 등록
+        window.addEventListener('load', function() {
+            const btnTerms = document.getElementById('btn-terms');
+            const btnPrivacy = document.getElementById('btn-privacy');
+
+            if (btnTerms) {
+                btnTerms.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openModal('modal-terms');
+                });
+            }
+
+            if (btnPrivacy) {
+                btnPrivacy.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    openModal('modal-privacy');
+                });
+            }
+        });
+    </script>
+</body>
+</html>

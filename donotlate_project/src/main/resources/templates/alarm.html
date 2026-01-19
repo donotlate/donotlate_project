@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Font Awesome (CSS only) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Plotly (차트 사용 시) -->
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom -->
+    <link rel="stylesheet" href="css/common.css">
+    <script src="js/common.js"></script>
+    
+    <!-- 모바일 뷰포트 설정 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body class="page-background">
+
+<header id="header" class="app-header">
+    <div class="flex-center">
+        <button id="sidebarToggle" class="icon-button">
+            <i class="fa-solid fa-bars icon-gray icon-size-xl"></i>
+        </button>
+            <div class="header-title-wrapper">
+            <div class="icon-wrapper">
+                <i class="fa-solid fa-clock icon-white icon-size-lg"></i>
+            </div>
+            <h1 class="header-title">
+                <span class="header-title-full">늦지마 / 시간 계산 & Push 등록</span>
+                <span class="header-title-mobile">시간 계산</span>
+            </h1>
+        </div>
+    </div>
+    <div class="flex-center-gap-4">
+        <button class="icon-button">
+            <i class="fa-solid fa-cog icon-gray-medium icon-size-lg"></i>
+        </button>
+		<button>
+        <div class="profile-avatar">유</div>
+		</button>
+    </div>
+</header>
+
+<!-- 사이드바 오버레이 (모바일용) -->
+<div id="sidebarOverlay" class="sidebar-overlay"></div>
+
+<div class="layout-container">
+    <aside id="sidebar" class="app-sidebar">
+        <div class="sidebar-content">
+            <div class="sidebar-menu-list">
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-house sidebar-icon"></i>
+                    <span class="sidebar-text">메인 페이지</span>
+                </a>
+                <a href="#" class="sidebar-link active">
+                    <i class="fa-solid fa-clock sidebar-icon"></i>
+                    <span class="font-medium">시간 계산 & Push 등록</span>
+                </a>
+				<a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-chart-line sidebar-icon"></i>
+                    <span class="sidebar-text">통계 대시보드</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-cloud-sun sidebar-icon"></i>
+                    <span class="sidebar-text">현재 날씨</span>
+                </a>
+                <a href="#" class="sidebar-link">
+                    <i class="fa-solid fa-bullhorn sidebar-icon"></i>
+                    <span class="sidebar-text">공지 사항</span>
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="main-content-wrapper content-max-width-xl">
+            <div class="alarm-grid-layout grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <!-- 1번째 줄 -->
+                <section id="location-input-section" class="section-card">
+                    <h2 class="heading-3 flex-center">
+                        <i class="fa-solid fa-location-dot text-blue-600 mr-2"></i>
+                        출발지 및 도착지<span class="text-red-500 ml-0.5">*</span>
+                    </h2>
+                    
+                    <div class="space-y-3">
+                        <div class="relative">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-blue-500"></div>
+                            </div>
+                            <input type="text" id="departure-input" placeholder="출발지를 입력해주세요." value="서울시 동일로 230나길 37"
+                                class="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium">
+                            <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" onclick="sample4_execDaumPostcode()">
+                                <i class="fa-solid fa-location-crosshairs"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="flex justify-center -my-2 z-10 relative">
+                            <button onclick="swapLocations()" class="w-8 h-8 flex items-center justify-center bg-white border border-gray-200 rounded-full hover:bg-gray-50 transition shadow-sm">
+                                <i class="fa-solid fa-up-down text-gray-600 text-sm"></i>
+                            </button>
+                        </div>
+                        
+                        <div class="relative">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            </div>
+                            <input type="text" id="arrival-input" placeholder="도착지를 입력해주세요." value="서울 종로구 우정국로2길 21"
+                                class="w-full pl-12 pr-12 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium">
+                            <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400" onclick="sample5_execDaumPostcode()">
+                                <i class="fa-solid fa-location-crosshairs"></i>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="time-settings-section" class="section-card">
+                    <h2 class="heading-3 flex-center">
+                        <i class="fa-solid fa-clock text-blue-600 mr-2"></i>
+                        일정 상세 설정<span class="text-red-500 ml-0.5">*</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-sm font-medium text-gray-700 block">출발 희망 일시</label>
+                            <div class="flex items-center space-x-2">
+                                <div class="relative flex-1">
+                                    <i class="fa-solid fa-calendar-days absolute left-3 top-1/2 -translate-y-1/2 text-blue-500 text-sm"></i>
+                                    <input type="date" value="2026-01-16" 
+                                        class="w-full pl-9 pr-2 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-semibold text-sm">
+                                </div>
+                                <div class="relative">
+                                    <input type="time" value="08:00" 
+                                        class="w-32 px-2 py-2 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-semibold text-sm text-center">
+                                </div>
+                            </div>
+                        </div>
+                
+                        <hr class="border-gray-100">
+                
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm font-medium text-gray-700">개인 준비 시간</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" value="10" min="0" max="60" 
+                                    oninput="this.value = Number(this.value); if(this.value > 60) this.value = 60;"
+                                    class="w-16 px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-center font-semibold text-sm">
+                                <span class="text-xs text-gray-500">분</span>
+                            </div>
+                        </div>
+                
+                        <div class="flex items-center justify-between">
+                            <label class="text-sm font-medium text-gray-700">교통 여유 시간</label>
+                            <div class="flex items-center space-x-2">
+                                <input type="number" value="10" min="0" max="60" 
+                                    oninput="this.value = Number(this.value); if(this.value > 60) this.value = 60;"
+                                    class="w-16 px-2 py-1.5 bg-white border border-gray-200 rounded-lg text-center font-semibold text-sm">
+                                <span class="text-xs text-gray-500">분</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 2번째 줄 -->
+                <section id="transport-selection-section" class="section-card lg:col-span-2">
+                    <h2 class="heading-3 flex-center">
+                        <i class="fa-solid fa-train-subway text-blue-600 mr-2"></i>
+                        교통수단 선택
+                    </h2>
+                    
+                    <div class="grid grid-cols-3 gap-3">
+                        <button class="flex flex-col items-center justify-center p-4 bg-blue-50 border-2 border-blue-500 rounded-xl hover:bg-blue-100 transition">
+                            <i class="fa-solid fa-train-subway text-blue-600 text-2xl mb-2"></i>
+                            <span class="text-sm font-semibold text-blue-600">지하철</span>
+                        </button>
+                        
+                        <button class="flex flex-col items-center justify-center p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:bg-gray-100 transition">
+                            <i class="fa-solid fa-bus text-gray-600 text-2xl mb-2"></i>
+                            <span class="text-sm font-semibold text-gray-600">버스</span>
+                        </button>
+                        
+                        <button class="flex flex-col items-center justify-center p-4 bg-gray-50 border-2 border-gray-200 rounded-xl hover:bg-gray-100 transition">
+                            <i class="fa-solid fa-shuffle text-gray-600 text-2xl mb-2"></i>
+                            <span class="text-sm font-semibold text-gray-600">혼합</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 3번째 줄 -->
+                <section id="route-info-section-1" class="section-card">
+                    <h2 class="heading-3 flex-center">
+                        <i class="fa-solid fa-route text-blue-600 mr-2"></i>
+                        1번 경로 / 경유 노선 및 환승 정보
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex-start flex-center-gap-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">2</div>
+                                <div class="w-0.5 h-16 bg-blue-300 my-1"></div>
+                            </div>
+                            <div class="flex-1 pt-2">
+                                <div class="font-semibold text-gray-900">역삼역 승차</div>
+                                <div class="text-secondary mt-1">2호선 (외선순환)</div>
+                                <div class="text-xs text-muted mt-1">
+                                    <i class="fa-solid fa-clock mr-1"></i>5개 역 이동 (약 8분)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">3</div>
+                                <div class="w-0.5 h-16 bg-orange-300 my-1"></div>
+                            </div>
+                            <div class="flex-1 pt-2">
+                                <div class="font-semibold text-gray-900">을지로3가역 환승</div>
+                                <div class="text-secondary mt-1">3호선 (대화방면)</div>
+                                <div class="text-xs text-muted mt-1">
+                                    <i class="fa-solid fa-clock mr-1"></i>3개 역 이동 (약 5분)
+                                </div>
+                                <div class="mt-2 inline-flex items-center px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-full">
+                                    <i class="fa-solid fa-exchange-alt mr-1"></i>환승시간 약 3분
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                                    <i class="fa-solid fa-flag-checkered text-white"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1 pt-2">
+                                <div class="font-semibold text-gray-900">광화문역 하차</div>
+                                <div class="text-secondary mt-1">도착 후 도보 5분</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-xl">
+                        <div class="flex-between">
+                            <div>
+                                <div class="text-secondary">총 소요시간</div>
+                                <div class="text-2xl font-bold text-blue-600">32분</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-secondary">환승 횟수</div>
+                                <div class="text-2xl font-bold text-gray-900">1회</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="route-info-section-2" class="section-card">
+                    <h2 class="heading-3 flex-center">
+                        <i class="fa-solid fa-route text-blue-600 mr-2"></i>
+                        2번 경로 / 경유 노선 및 환승 정보
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div class="flex-start flex-center-gap-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">2</div>
+                                <div class="w-0.5 h-16 bg-blue-300 my-1"></div>
+                            </div>
+                            <div class="flex-1 pt-2">
+                                <div class="font-semibold text-gray-900">강남역 승차</div>
+                                <div class="text-secondary mt-1">2호선 (외선순환)</div>
+                                <div class="text-xs text-muted mt-1">
+                                    <i class="fa-solid fa-clock mr-1"></i>6개 역 이동 (약 10분)
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center text-white font-bold">3</div>
+                                <div class="w-0.5 h-16 bg-orange-300 my-1"></div>
+                            </div>
+                            <div class="flex-1 pt-2">
+                                <div class="font-semibold text-gray-900">을지로5가역 환승</div>
+                                <div class="text-secondary mt-1">3호선 (대화방면)</div>
+                                <div class="text-xs text-muted mt-1">
+                                    <i class="fa-solid fa-clock mr-1"></i>2개 역 이동 (약 3분)
+                                </div>
+                                <div class="mt-2 inline-flex items-center px-2 py-1 bg-orange-50 text-orange-700 text-xs rounded-full">
+                                    <i class="fa-solid fa-exchange-alt mr-1"></i>환승시간 약 3분
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start space-x-4">
+                            <div class="flex flex-col items-center">
+                                <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
+                                    <i class="fa-solid fa-flag-checkered text-white"></i>
+                                </div>
+                            </div>
+                            <div class="flex-1 pt-2">
+                                <div class="font-semibold text-gray-900">광화문역 하차</div>
+                                <div class="text-secondary mt-1">도착 후 도보 5분</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-blue-50 rounded-xl">
+                        <div class="flex-between">
+                            <div>
+                                <div class="text-secondary">총 소요시간</div>
+                                <div class="text-2xl font-bold text-blue-600">35분</div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-secondary">환승 횟수</div>
+                                <div class="text-2xl font-bold text-gray-900">1회</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 4번째 줄 -->
+                <section id="recommended-push-time-section" class="bg-gradient-to-br from-indigo-600 to-green-700 rounded-2xl shadow-lg p-6 text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold flex items-center">
+                            <i class="fa-solid fa-bell mr-2"></i>
+                            권장 Push 시간
+                        </h2>
+                        <div class="flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-medium">1번 경로 사용 시</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center py-6">
+                        <div class="text-6xl font-bold mb-2">07:48</div>
+                        <div class="text-blue-200 text-sm">오전</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3 mt-6">
+                        <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
+                            <div class="text-2xl font-bold">30분</div>
+                            <div class="text-xs text-blue-200 mt-1">준비시간</div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
+                            <div class="text-2xl font-bold">32분</div>
+                            <div class="text-xs text-blue-200 mt-1">이동시간</div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
+                            <div class="text-2xl font-bold">10분</div>
+                            <div class="text-xs text-blue-200 mt-1">여유시간</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-white/10 rounded-xl backdrop-blur">
+                        <div class="flex items-center text-sm">
+                            <i class="fa-solid fa-lightbulb text-yellow-300 mr-2"></i>
+                            <span>여유 시간이 5분 남았을 경우, Push 알림으로 알려드립니다!</span>
+                        </div>
+                    </div>
+                </section>
+                <section id="ai-recommended-push-time-section" class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl shadow-lg p-6 text-white">
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-semibold flex items-center">
+                            <i class="fa-solid fa-bell mr-2"></i>
+                            AI 추천 Push 시간
+                        </h2>
+                        <div class="flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-xs font-medium">1번 경로 사용 시</span>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center py-6">
+                        <div class="text-6xl font-bold mb-2">07:52</div>
+                        <div class="text-blue-200 text-sm">오전</div>
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-3 mt-6">
+                        <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
+                            <div class="text-2xl font-bold">30분</div>
+                            <div class="text-xs text-blue-200 mt-1">준비시간</div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
+                            <div class="text-2xl font-bold">32분</div>
+                            <div class="text-xs text-blue-200 mt-1">이동시간</div>
+                        </div>
+                        <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
+                            <div class="text-2xl font-bold">10분</div>
+                            <div class="text-xs text-blue-200 mt-1">여유시간</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 p-4 bg-white/10 rounded-xl backdrop-blur">
+                        <div class="flex items-center text-sm">
+                            <i class="fa-solid fa-lightbulb text-yellow-300 mr-2"></i>
+                            <span>여유 시간이 5분 남았을 경우, Push 알림으로 알려드립니다!</span>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 5번째 줄 -->
+                <section id="alarm-save-section" class="section-card lg:col-span-2">
+                    <h2 class="heading-3 flex-center">
+                        <i class="fa-solid fa-floppy-disk text-blue-600 mr-2"></i>
+                        Push 저장<span class="text-red-500 ml-0.5">*</span>
+                    </h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="text-sm font-medium text-gray-700 mb-2 block">Push 이름</label>
+                            <input type="text" placeholder="예: 출근하러 갑니다." maxlength="20" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium">
+                        </div>
+                        
+                        <div>
+                            <label class="text-sm font-medium text-gray-700 mb-2 block">반복 요일</label>
+                            <div class="grid grid-cols-7 gap-1.5">
+                                <button class="h-10 flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-200 transition">일</button>
+                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">월</button>
+                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">화</button>
+                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">수</button>
+                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">목</button>
+                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">금</button>
+                                <button class="h-10 flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-200 transition">토</button>
+                            </div>
+                            
+                            <div class="grid grid-cols-2 gap-3 mt-4">
+                                <button class="flex items-center justify-center py-3 px-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 transition">
+                                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="h-5 w-5 mr-3">
+                                    <span>Google 연동</span>
+                                </button>
+                                <button class="flex items-center justify-center py-3 px-2 bg-[#FEE500] text-[#191919] rounded-lg text-sm font-semibold hover:bg-[#FADA0A] transition">
+                                    <i class="fa-solid fa-comment mr-2"></i>
+                                    <span>카카오 연동</span>
+                                </button>
+                            </div>
+                        </div>
+
+
+                        
+                        <button class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-blue-500/30">
+                            <i class="fa-solid fa-check mr-2"></i>
+                            Push 저장하기
+                        </button>
+                    </div>
+                </section>
+        </div>
+    </main>
+</div>
+<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+<script>
+    function swapLocations() {
+        const startInput = document.getElementById('departure-input');
+        const endInput = document.getElementById('arrival-input');
+        
+        // 두 값을 임시 변수를 활용해 교체
+        const tempValue = startInput.value;
+        startInput.value = endInput.value;
+        endInput.value = tempValue;
+    }
+
+    // 카카오 주소 찾기
+    function sample4_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var roadAddr = data.roadAddress;
+                document.getElementById("departure-input").value = roadAddr;
+            }
+        }).open();
+    }
+
+    // 카카오 주소 찾기
+    function sample5_execDaumPostcode() {
+        new daum.Postcode({
+            oncomplete: function(data) {
+                var roadAddr = data.roadAddress;
+                document.getElementById("arrival-input").value = roadAddr;
+            }
+        }).open();
+    }
+</script>
+</body>
+</html>
