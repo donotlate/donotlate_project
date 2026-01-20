@@ -1,39 +1,6 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <!-- Tailwind -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Font Awesome (CSS only) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Plotly (차트 사용 시) -->
-    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
-
-    <!-- Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Custom -->
-    <link rel="stylesheet" href="css/common.css">
-    <script src="js/common.js"></script>
-
-    <script>
-        // 회원가입 페이지는 Inter 폰트 사용
-        if (typeof tailwind !== 'undefined') {
-            tailwind.config = {
-                theme: {
-                    extend: {
-                        fontFamily: {
-                            sans: ['Inter', 'sans-serif']
-                        }
-                    }
-                }
-            };
-        }
-    </script>
-</head>
+<th:block th:include="head :: headFragment"></th:block>
 <body class="signup-page-background">
     <div id="signup-container" class="flex flex-col flex-center justify-center min-h-screen py-10 px-4">
         <div id="signup-card" class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
@@ -191,7 +158,6 @@
             </div>
         </div>
     </div>
-
     <script>
         // 모달 이벤트 리스너 등록
         window.addEventListener('load', function() {
