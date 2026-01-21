@@ -272,14 +272,14 @@
                     <p class="text-secondary text-sm sm:text-base">스마트한 출근을 시작하세요</p>
                 </div>
                 
-                <form class="space-y-3 sm:space-y-4 mb-4 sm:mb-6">
+                <form class="space-y-3 sm:space-y-4 mb-4 sm:mb-6" action="/member/login" method="post">
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">이메일</label>
-                        <input type="email" class="input-field text-sm sm:text-base" placeholder="example@email.com">
+                        <input type="email" name="memberEmail" class="input-field text-sm sm:text-base" placeholder="example@gmail.com">
                     </div>
                     <div>
                         <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">비밀번호</label>
-                        <input type="password" class="input-field text-sm sm:text-base" placeholder="••••••••">
+                        <input type="password" name="memberPw" class="input-field text-sm sm:text-base" placeholder="••••••••">
                     </div>
                     <div class="flex-between text-xs sm:text-sm">
                         <label class="flex-center">
@@ -466,6 +466,9 @@
             loginForm.classList.remove('hidden');
         }
     });
+</script>
+<script th:if="${message}" th:inline="javascript">
+    alert(/*[[${message}]]*/"");
 </script>
 </body>
 </html>
