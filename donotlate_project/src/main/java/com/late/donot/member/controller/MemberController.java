@@ -1,10 +1,14 @@
 package com.late.donot.member.controller;
 
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.late.donot.member.model.dto.Member;
@@ -51,4 +55,47 @@ public class MemberController {
         req.getSession().invalidate();
         return "redirect:/";
     }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 아이디 중복 체크
+     */
+    @PostMapping("checkId")
+    @ResponseBody
+    public int checkId(@RequestBody String memberEmail) {
+        String cleanEmail = memberEmail.replaceAll("\"", "");
+        System.out.println("입력받은 이메일: " + cleanEmail);
+        return service.checkId(cleanEmail);
+    }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 회원가입 메일 발송
+     */
+    @PostMapping("sendAuthKey")
+    @ResponseBody
+    public int sendAuthKey(@RequestBody Map<String, String> map) {
+        String email = map.get("email");
+		String authKey = service.sendEmail("signUp", email);
+
+        if(authKey != null) {
+		    return 1;
+		}
+
+		return 0;
+    }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 인증번호 확인
+     */
+    @PostMapping("checkAuthKey")
+    @ResponseBody
+    public int checkAuthKey(@RequestBody Map<String, String> map) {
+        return service.checkAuthKey(map);
+    }
+
 }

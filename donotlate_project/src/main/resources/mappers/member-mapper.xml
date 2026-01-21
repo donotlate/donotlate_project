@@ -9,5 +9,41 @@
 		WHERE MEMBER_EMAIL = #{memberId}
 		AND MEMBER_DEL_FL = 'N'
 	</select>
+
+    <select id="checkId">
+        SELECT COUNT(*) FROM "MEMBER"
+        WHERE MEMBER_EMAIL = #{memberEmail}
+        AND MEMBER_DEL_FL = 'N'
+    </select>
+
+    <select id="selectAuthKey">
+        SELECT COUNT(*) FROM "TB_AUTH_KEY"
+        WHERE AUTH_KEY = #{authKey}
+        AND EMAIL = #{email}
+    </select>
+
+    <update id="updateAuthKey">
+        UPDATE "TB_AUTH_KEY"
+        SET AUTH_KEY = #{authKey},
+        CREATE_TIME = SYSTIMESTAMP
+        WHERE EMAIL = #{email}
+    </update>
+
+    <insert id="insertAuthKey">
+        INSERT INTO "TB_AUTH_KEY"
+        VALUES (SEQ_KEY.NEXTVAL, #{email}, #{authKey}, DEFAULT)
+    </insert>
+
+    <select id="checkAuthKey" resultType="_int">
+        SELECT COUNT(*)
+        FROM "TB_AUTH_KEY"
+        WHERE EMAIL = #{email}
+        AND AUTH_KEY = #{authKey}
+        AND CREATE_TIME >= SYSTIMESTAMP - INTERVAL '5' MINUTE
+    </select>
     
+    <delete id="deleteAuthKey">
+        DELETE FROM "TB_AUTH_KEY"
+        WHERE EMAIL = #{email}
+    </delete>
 </mapper>
