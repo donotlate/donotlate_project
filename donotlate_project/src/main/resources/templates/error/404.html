@@ -1,0 +1,29 @@
+<html>
+  <th:block th:replace="~{head :: headFragment}"></th:block>
+  <body class="bg-gradient-to-br from-blue-50 to-indigo-50">
+    <main id="error-section" class="flex items-center justify-center px-6">
+      <div class="max-w-2xl w-full text-center">
+        <div class="mb-8 mt-16 relative inline-block">
+          <div
+            class="absolute inset-0 bg-indigo-200 rounded-full blur-3xl opacity-30 animate-pulse">
+          </div>
+          <div
+            class="relative bg-white rounded-full p-12 shadow-xl inline-block">
+            <i class="fa-solid fa-route text-indigo-600 text-8xl"></i></div>
+        </div>
+        <h1 class="text-9xl font-black text-indigo-600 mb-4">404</h1><br/>
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">길을 잃으셨나요?</h2>
+        <p class="text-xl text-gray-600 mb-8 leading-relaxed">
+          요청하신 페이지를 찾을 수 없습니다.<br>
+        </p>
+        <div class="flex items-center justify-center gap-4 mb-12"></div>
+        <div
+          class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+          <a href="/"
+            class="w-full sm:w-auto px-8 py-4 bg-indigo-600 text-white font-bold text-lg rounded-xl hover:bg-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center justify-center gap-2"><i
+              class="fa-solid fa-house"></i><span>홈으로 돌아가기</span></a></div>
+        <div class="grid grid-cols-3 gap-4 max-w-lg mx-auto"></div>
+      </div>
+    </main>
+	</body>
+</html>
