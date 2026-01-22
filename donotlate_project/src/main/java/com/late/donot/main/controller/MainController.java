@@ -17,7 +17,7 @@ public class MainController {
      * 작성일 : 2026-01-19
      * 회원가입 페이지 이동
      */
-    @GetMapping("/signUp")
+    @GetMapping("signUp")
     public String signUp() {
         return "signUp";
     }
@@ -27,7 +27,7 @@ public class MainController {
      * 작성일 : 2026-01-19
      * 메인페이지 이동
      */
-    @GetMapping("/main")
+    @GetMapping("main")
     public String main(Model model) {
         setMenu(model, MenuType.MAIN);
         return "main";
@@ -38,7 +38,7 @@ public class MainController {
      * 작성일 : 2026-01-19
      * 계산 페이지 이동
      */
-    @GetMapping("/calculator")
+    @GetMapping("calculator")
     public String calculator(Model model) {
         setMenu(model, MenuType.CALCULATOR);
         return "calculator";
@@ -49,25 +49,25 @@ public class MainController {
      * 작성일 : 2026-01-19
      * 통계 페이지 이동
      */
-    @GetMapping("/chart")
+    @GetMapping("chart")
     public String chart(Model model) {
         setMenu(model, MenuType.CHART);
         return "chart";
     }
 
-    @GetMapping("/weather")
+    @GetMapping("weather")
     public String weather(Model model) {
         setMenu(model, MenuType.WEATHER);
         return "weather";
     }
 
-    @GetMapping("/notice")
+    @GetMapping("notice")
     public String notice(Model model) {
         setMenu(model, MenuType.NOTICE);
         return "notice";
     }
 
-    @GetMapping({"/mypage", "/mypage/**"})
+    @GetMapping("mypage")
     public String mypage(Model model) {
         setMenu(model, MenuType.MYPAGE);
         return "mypage";

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<th:block th:replace="~{head :: headFragment}"></th:block>
+<body class="signup-page-background">
+    <div id="signup-container" class="flex flex-col flex-center justify-center min-h-screen py-10 px-4">
+        <div id="signup-card" class="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
+            <div id="logo-section" class="flex justify-center mb-6">
+                <div class="flex-center-gap-2">
+                    <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex-center justify-center">
+                        <i class="fa-solid fa-clock text-white text-xl"></i>
+                    </div>
+                    <span class="text-2xl font-bold text-gray-800">늦지마</span>
+                </div>
+            </div>
+
+            <div id="header-section" class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">비밀번호 초기화</h1>
+                <p class="text-secondary">
+                    임시 비밀번호를 발급받으셨나요?
+                    <a href="/?login=true" class="text-blue-600 hover:text-blue-700 font-medium">로그인</a>
+                </p>
+            </div>
+
+            <div id="divider-section" class="flex-center justify-center mb-6">
+                <div class="flex-grow border-t border-gray-300"></div>
+                <span class="mx-4 text-muted text-sm font-medium">또는</span>
+                <div class="flex-grow border-t border-gray-300"></div>
+            </div>
+
+            <form id="resetPw-form" class="space-y-4" action="/member/resetPw" method="post">
+                <div id="email-section" class="space-y-4">
+                    <div id="email-field">
+                        <label class="block text-sm font-semibold text-gray-700 mb-2" for="email">비밀번호를 초기화할 이메일</label>
+                        <div class="flex gap-2">
+                            <input class="input-field flex-grow" id="email" name="memberEmail" type="email" maxlength="50" placeholder="example@email.com"/>
+                        </div>
+                        <label id="email-check" class="text-xs mt-1 block min-h-[1.25rem]"></label>
+                    </div>
+                </div>
+                <button id="resetPw-button" class="w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-200 shadow-md mt-6" type="submit">
+                    비밀번호 초기화
+                </button>
+            </form>
+        </div>
+    </div>
+    <script src="/js/resetPw.js"></script>
+</body>
+</html>
