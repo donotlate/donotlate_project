@@ -18,5 +18,5 @@ public class Weather {
 	
 	private String date;
 	private String time;
-	private String locataion;
+	private String location;
 }
