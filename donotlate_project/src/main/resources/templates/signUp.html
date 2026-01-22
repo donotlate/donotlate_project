@@ -51,13 +51,6 @@
                     <label class="block text-sm font-semibold text-gray-700 mb-2" for="name">이름</label>
                     <input class="input-field" id="name" name="memberName" type="text" maxlength="15" placeholder="홍길동"/>
                 </div>
-
-                <!-- <div id="email-field">
-                    <label class="block text-sm font-semibold text-gray-700 mb-2" for="email">이메일</label>
-                    <input class="input-field" id="email" type="email" maxlength="50" placeholder="example@email.com"/>
-                    <label id="email-check" class="member-auth-label"></label>
-                </div> -->
-
                 <div id="email-section" class="space-y-4">
                     <div id="email-field">
                         <label class="block text-sm font-semibold text-gray-700 mb-2" for="email">이메일</label>
@@ -206,7 +199,7 @@
             }
         });
     </script>
-    <script src="js/signUp.js"></script>
+    <script src="/js/signUp.js"></script>
     <script th:if="${message}" th:inline="javascript">
         alert(/*[[${message}]]*/"");
     </script>

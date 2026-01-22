@@ -172,4 +172,47 @@ public class MemberServiceImpl implements MemberService {
 		return mapper.signup(inputMember);
     }
     
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-22
+     * 비밀번호 초기화 및 메일 발송
+     */
+    @Override
+    public int resetPw(String memberEmail) {
+        String tempPw = UUID.randomUUID().toString().substring(0, 6);
+        String encPw = encoder.encode(tempPw);
+
+        Member resetPwMember = new Member();
+        resetPwMember.setMemberEmail(memberEmail);
+        resetPwMember.setMemberPw(encPw);
+            
+        int result = mapper.resetPassword(resetPwMember);
+        
+        if(result == 0) return 0;
+            
+        sendResetPwEmail(memberEmail, tempPw);            
+        return 1;
+    }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-22
+     * 임시 비밀번호 메일 발송 로직
+     */
+    public void sendResetPwEmail(String memberEmail, String tempPw) {
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+        
+        try {
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setTo(memberEmail);
+            helper.setSubject("[늦지마] 임시 비밀번호가 발송되었습니다.");
+            
+            helper.setText(loadhtml(tempPw, "resetPassword"), true);
+            helper.addInline("logo", new ClassPathResource("static/images/logo.jpg"));
+            
+            mailHandler.sendMail(mimeMessage);
+        } catch (Exception e) {
+            log.error("임시 비밀번호 메일 발송 중 에러 발생: {}", e.getMessage());
+        }
+    }
 }
