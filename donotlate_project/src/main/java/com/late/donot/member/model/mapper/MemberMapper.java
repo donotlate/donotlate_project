@@ -48,4 +48,11 @@ public interface MemberMapper {
      */
     void deleteAuthKey(String string);
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 회원가입
+     */
+    int signup(Member inputMember);
+
 }

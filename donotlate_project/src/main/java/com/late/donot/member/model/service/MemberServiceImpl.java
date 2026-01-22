@@ -158,5 +158,18 @@ public class MemberServiceImpl implements MemberService {
         
         return 0;
     }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 회원가입
+     */
+    @Override
+    public int signup(Member inputMember) {
+        String encPw = encoder.encode(inputMember.getMemberPw());
+		inputMember.setMemberPw(encPw);
+		
+		return mapper.signup(inputMember);
+    }
     
 }
