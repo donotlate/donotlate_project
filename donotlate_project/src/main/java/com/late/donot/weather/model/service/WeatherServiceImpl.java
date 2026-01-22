@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.late.donot.weather.client.WeatherClient;
+import com.late.donot.weather.model.dto.BaseDateTime;
 import com.late.donot.weather.model.dto.Weather;
 import com.late.donot.weather.model.dto.WeatherApi;
 import com.late.donot.weather.model.mapper.WeatherMapper;
@@ -42,7 +43,7 @@ public class WeatherServiceImpl implements WeatherService{
 	 *  기상청 API 호출후 가공해서 반환
 	 */
 	@Override
-	public Weather mainWeatherDto(int nx, int ny) {
+	public Weather mainWeatherDto(int nx, int ny, double lat, double lon) {
 		List<WeatherApi> items = callWeatherApi(nx,ny);
 		
 		Map<String, String> valueMap = items.stream()
@@ -55,10 +56,15 @@ public class WeatherServiceImpl implements WeatherService{
 		String date = formatDate(first.getBaseDate());
 		String time = formatTime(first.getBaseTime());
 		
-		String location = weatherLocationService.getLocationName(nx,ny);
+		String location = weatherLocationService.getLocationName(lat,lon);
+		
+		double temp = parseDouble(valueMap.get("T1H"));
+	    double wind = parseDouble(valueMap.get("WSD"));
+	    double feelsLike = calculateFeelslike(temp, wind);
 				
 		return Weather.builder()
 				.temperature(parseDouble(valueMap.get("T1H")))
+				.feelsLike(feelsLike)
 				.humidity(parseInt(valueMap.get("REH")))
 				.windSpeed(parseDouble(valueMap.get("WSD")))
 				.condition(resolveCondition(valueMap))
@@ -97,8 +103,8 @@ public class WeatherServiceImpl implements WeatherService{
 				1,
 				1000,
 				"JSON",
-				base.
-				base.
+				base.getBaseDate(),
+				base.getBaseTime(),
 				nx,
 				ny);
 		
@@ -181,6 +187,23 @@ public class WeatherServiceImpl implements WeatherService{
 	private int parseInt(String value) {
 		
 		return value == null ? 0 : Integer.parseInt(value);
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-22
+	 *  체감온도 계산식
+	 */
+	private double calculateFeelslike(double temp, double windSpeed) {
+		
+		if(windSpeed < 1.3) {
+			return temp;
+		}
+		
+		double windKmh = windSpeed * 3.6;
+		
+		double feelslike = 13.12 + 0.6215*temp - 11.37*Math.pow(windKmh, 0.16) +0.3965*temp*Math.pow(windKmh, 0.16);
+		
+		return Math.round(feelslike*10) / 10.0;
 	}
 	
 	

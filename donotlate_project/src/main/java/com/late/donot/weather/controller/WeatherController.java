@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.late.donot.weather.model.dto.CoordinatePoint;
 import com.late.donot.weather.model.dto.Weather;
 import com.late.donot.weather.model.service.WeatherService;
+import com.late.donot.weather.uitl.CoordinateConverter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -24,10 +26,12 @@ public class WeatherController {
 	 *  메인 날씨 화면
 	 */
 	@GetMapping("/main")
-	public Weather MainWeather(@RequestParam("nx") int nx, 
-							   @RequestParam("ny") int ny) {
+	public Weather mainWeather(@RequestParam("lat") double lat, 
+							   @RequestParam("lon") double lon) {	
 		
-		return service.mainWeatherDto(nx, ny);
+		CoordinatePoint coordinate = CoordinateConverter.toCoordinate(lat,lon);
+		
+		return service.mainWeatherDto(coordinate.getNx(), coordinate.getNy(), lat, lon);
 	}
 	
 	

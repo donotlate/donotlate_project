@@ -15,6 +15,7 @@ public class Weather {
 	private int humidity;
 	private double windSpeed;
 	private String condition;
+	private double feelsLike;
 	
 	private String date;
 	private String time;

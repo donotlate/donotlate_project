@@ -4,6 +4,6 @@ import com.late.donot.weather.model.dto.Weather;
 
 public interface WeatherService {
 	
-	Weather mainWeatherDto(int nx, int ny);
+	Weather mainWeatherDto(int nx, int ny, double lat, double lon);
 
 }
