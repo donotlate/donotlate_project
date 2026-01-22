@@ -114,6 +114,11 @@ let authTimer;
 const authMaxSeconds = 300; 
 
 sendAuthKeyBtn.addEventListener("click", function() {
+    if(!checkObj.email) {
+        alert("이메일을 입력해주세요.");
+        return;
+    }
+
     checkObj.authKey = false;
     authKeyInput.disabled = false;
     authKeyInput.value = "";
@@ -132,7 +137,6 @@ sendAuthKeyBtn.addEventListener("click", function() {
     })
     .then(resp => resp.text())
     .then(result => {
-        // 서버 컨트롤러에서 return 1; 을 하므로 result는 "1"이 옴
         if (result.trim() == "1") { 
             alert("인증번호가 발송되었습니다.");
             
@@ -196,14 +200,17 @@ authKeyInput.addEventListener("input", function() {
         if (result.trim() === "1") { 
             // 인증 성공 시
             authKeyCheckMessage.innerText = "인증되었습니다.";
-            authKeyCheckMessage.classList.replace("text-red-500", "text-green-500");
+            authKeyCheckMessage.classList.add("text-green-500");
             
             clearInterval(authTimer); // 타이머 정지
             emailAuthMessage.innerText = "인증 완료"; 
             emailAuthMessage.classList.replace("text-blue-600", "text-green-500");
+
+            sendAuthKeyBtn.innerText = "인증 완료"; 
             
             checkObj.authKey = true;   // 유효성 체크 객체 업데이트
-            authKeyInput.disabled = true; // 입력창 잠금
+            authKeyInput.readOnly = true; // 입력창 잠금
+            emailInput.readOnly = true; // 이메일 입력창 잠금
             sendAuthKeyBtn.disabled = true; // 전송 버튼 잠금
         } else {
             // 인증 실패 시
@@ -258,7 +265,8 @@ pwInput.addEventListener("input", function() {
         pwCheck.classList.replace("text-red-500", "text-green-500");
         checkObj.password = true;
     } else {
-        pwCheck.innerText = "8~15자 영문, 숫자, 특수문자 조합";
+        pwCheck.innerText = "8~15자 영문, 숫자, 특수문자(!, @, #, $, %, ^, &, *)로 조합해주세요.";
+        pwCheck.classList.remove("text-green-500");
         pwCheck.classList.add("text-red-500");
         checkObj.password = false;
     }

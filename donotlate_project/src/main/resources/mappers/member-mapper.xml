@@ -46,4 +46,11 @@
         DELETE FROM "TB_AUTH_KEY"
         WHERE EMAIL = #{email}
     </delete>
+
+    <insert id="signup">
+        INSERT INTO "MEMBER"
+            (MEMBER_NO, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PW, MEMBER_DEL_FL, 
+            AUTHORITY, PROFILE_IMG, ENROLL_DATE, UPDATE_DATE, SOCIAL_TYPE, SOCIAL_ID)
+        VALUES(SEQ_MEMBER.NEXTVAL, #{memberEmail}, #{memberName}, #{memberPw}, 'N', 1, NULL, SYSTIMESTAMP, NULL, NULL, NULL)
+    </insert>
 </mapper>
