@@ -19,8 +19,8 @@ public class EmailConfig {
 	@Value("${spring.mail.password}")
 	private String password;
 	
-	/** 작성자 : 이승준
-	 * 작성일자 : 2025-12-22
+	/** 작성자 : 유건우
+	 * 작성일자 : 2026-01-22
 	 * 이메일 전송 설정
 	 */
 	@Bean

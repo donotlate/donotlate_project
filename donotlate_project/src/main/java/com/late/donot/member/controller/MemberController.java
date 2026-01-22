@@ -98,4 +98,29 @@ public class MemberController {
         return service.checkAuthKey(map);
     }
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 회원가입
+     */
+    @PostMapping("signup")
+    public String signup(Member inputMember, RedirectAttributes ra) {
+        int result = service.signup(inputMember);
+		
+		String path = null;
+		String message = null;
+		
+		if(result > 0) {
+			message = inputMember.getMemberName() + "님 환영합니다!";
+			path =  "/?login=true";
+			
+		}else {
+			message = "회원가입에 실패하였습니다.";
+			path = "signup";
+		}
+		
+		ra.addFlashAttribute("message", message);
+		
+		return "redirect:" + path;
+    }
 }

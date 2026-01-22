@@ -470,5 +470,8 @@
 <script th:if="${message}" th:inline="javascript">
     alert(/*[[${message}]]*/"");
 </script>
+<script th:if="${param.loginError}" th:inline="javascript">
+    alert("로그인이 필요한 서비스입니다.");
+</script>
 </body>
 </html>

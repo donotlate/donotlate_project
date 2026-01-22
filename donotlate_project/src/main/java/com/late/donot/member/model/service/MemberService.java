@@ -34,4 +34,11 @@ public interface MemberService {
      */
     int checkAuthKey(Map<String,String> map);
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 회원가입
+     */
+    int signup(Member inputMember);
+
 }
