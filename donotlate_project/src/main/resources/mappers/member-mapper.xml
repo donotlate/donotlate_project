@@ -53,4 +53,10 @@
             AUTHORITY, PROFILE_IMG, ENROLL_DATE, UPDATE_DATE, SOCIAL_TYPE, SOCIAL_ID)
         VALUES(SEQ_MEMBER.NEXTVAL, #{memberEmail}, #{memberName}, #{memberPw}, 'N', 1, NULL, SYSTIMESTAMP, NULL, NULL, NULL)
     </insert>
+
+    <update id="resetPassword">
+        UPDATE "MEMBER"
+        SET MEMBER_PW = #{memberPw}
+        WHERE MEMBER_EMAIL = #{memberEmail}
+    </update>
 </mapper>

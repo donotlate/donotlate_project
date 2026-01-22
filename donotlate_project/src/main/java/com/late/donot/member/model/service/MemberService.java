@@ -41,4 +41,10 @@ public interface MemberService {
      */
     int signup(Member inputMember);
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-21
+     * 비밀번호 초기화
+     */
+    int resetPw(String memberEmail);
 }
