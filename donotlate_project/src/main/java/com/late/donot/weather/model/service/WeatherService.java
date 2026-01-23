@@ -1,9 +1,14 @@
 package com.late.donot.weather.model.service;
 
-import com.late.donot.weather.model.dto.Weather;
+import java.util.List;
+
+import com.late.donot.api.dto.Weather;
+import com.late.donot.api.dto.WeatherHour;
 
 public interface WeatherService {
 	
 	Weather mainWeatherDto(int nx, int ny, double lat, double lon);
+	
+	List<WeatherHour> getHourWeather(int nx, int ny);
 
 }

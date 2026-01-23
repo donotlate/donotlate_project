@@ -13,10 +13,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.late.donot.api.dto.BaseDateTime;
+import com.late.donot.api.dto.Weather;
+import com.late.donot.api.dto.WeatherApi;
+import com.late.donot.api.dto.WeatherHour;
+import com.late.donot.api.dto.WeatherHourApi;
 import com.late.donot.weather.client.WeatherClient;
-import com.late.donot.weather.model.dto.BaseDateTime;
-import com.late.donot.weather.model.dto.Weather;
-import com.late.donot.weather.model.dto.WeatherApi;
 import com.late.donot.weather.model.mapper.WeatherMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -139,6 +141,10 @@ public class WeatherServiceImpl implements WeatherService{
 		
 	}
 	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-22
+	 *  시간대 설정
+	 */
 	private BaseDateTime getBaseDateTime() {
 		
 		LocalDateTime now = LocalDateTime.now();
@@ -205,6 +211,170 @@ public class WeatherServiceImpl implements WeatherService{
 		
 		return Math.round(feelslike*10) / 10.0;
 	}
+
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-22
+	 *  기상청 단기예보 API 호출후 반환
+	 */
+	@Override
+	public List<WeatherHour> getHourWeather(int nx, int ny) {
+		
+		BaseDateTime base = getVilageBaseDateTime();
+		
+		String response = weatherClient.getVilageFcst(
+				serviceKey,
+				1,
+				1000,
+				"JSON",
+				base.getBaseDate(),
+				base.getBaseTime(),
+				nx,
+				ny);
+		
+		log.info("단기예보 raw response = {}", response);
+		
+		List<WeatherHourApi> items = parseVilageItems(response);
+		
+		if (items.isEmpty()) {
+	        return List.of();
+	    }
+		
+		LocalDateTime now = LocalDateTime.now();
+		
+		LocalDateTime hourBase = now.withMinute(0).withSecond(0).withNano(0);
+		
+		List<WeatherHourApi> filtered =
+	            items.stream()
+	                 .filter(item -> {
+	                     LocalDateTime fcstDateTime = LocalDateTime.parse(
+	                             						item.getFcstDate() + item.getFcstTime(),
+	                             						DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+	                     return !fcstDateTime.isBefore(hourBase)
+	                         && fcstDateTime.isBefore(hourBase.plusHours(8));
+	                 })
+	                 .collect(Collectors.toList());
+
+	    if (filtered.isEmpty()) {
+	        return List.of();
+	    }
+		
+		Map<String, List<WeatherHourApi>> timeGroup = filtered.stream()
+													     .collect(Collectors.groupingBy(WeatherHourApi::getFcstTime));
+		
+		
+		return timeGroup.entrySet().stream()
+		        .sorted(Map.Entry.comparingByKey())
+		        .limit(8)
+		        .map(entry -> toWeatherHour(entry.getKey(), entry.getValue()))
+		        .collect(Collectors.toList());
+	}
 	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-22
+	 *  시간 계산 과 예외처리
+	 */
+	private BaseDateTime getVilageBaseDateTime() {
+
+	    LocalDateTime now = LocalDateTime.now();
+
+	    int hour = now.getHour();
+	    int baseHour;
+
+	    if (hour < 2) baseHour = 23;
+	    else if (hour < 5) baseHour = 2;
+	    else if (hour < 8) baseHour = 5;
+	    else if (hour < 11) baseHour = 8;
+	    else if (hour < 14) baseHour = 11;
+	    else if (hour < 17) baseHour = 14;
+	    else if (hour < 20) baseHour = 17;
+	    else if (hour < 23) baseHour = 20;
+	    else baseHour = 23;
+
+	    LocalDateTime baseTime = now.withHour(baseHour).withMinute(0);
+
+	    if (baseHour == 23 && hour < 2) {
+	        baseTime = baseTime.minusDays(1);
+	    }
+
+	    String baseDate = baseTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+	    String baseTimeStr = String.format("%02d00", baseHour);
+
+	    return new BaseDateTime(baseDate, baseTimeStr);
+	}
 	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-22
+	 *  API DTO로 반환
+	 */
+	private List<WeatherHourApi> parseVilageItems(String response) {
+
+	    try {
+	        ObjectMapper mapper = new ObjectMapper();
+
+	        JsonNode root = mapper.readTree(response);
+	        JsonNode itemsNode = root
+	                .path("response")
+	                .path("body")
+	                .path("items")
+	                .path("item");
+
+	        if (!itemsNode.isArray()) {
+	            return List.of();
+	        }
+
+	        return mapper.convertValue(
+	            itemsNode,
+	            mapper.getTypeFactory()
+	                  .constructCollectionType(List.class, WeatherHourApi.class)
+	        );
+
+	    } catch (Exception e) {
+	        log.error("단기예보 파싱 실패", e);
+	        return List.of();
+	    }
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-22
+	 *  시간대 예보들을 합성
+	 */
+	private WeatherHour toWeatherHour(String fcstTime, List<WeatherHourApi> list) {
+
+	    Map<String, String> valueMap =
+	        list.stream()
+	            .collect(Collectors.toMap(
+	                WeatherHourApi::getCategory,
+	                WeatherHourApi::getFcstValue,
+	                (a, b) -> a
+	            ));
+
+	    return WeatherHour.builder()
+	        .time(formatTime(fcstTime))
+	        .temp(parseInt(valueMap.get("TMP")))
+	        .rainProb(parseInt(valueMap.get("POP")))
+	        .icon(resolveHourIcon(valueMap))
+	        .build();
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-22
+	 *  상황에 맞는 날씨 아이콘 설정
+	 */
+	private String resolveHourIcon(Map<String, String> map) {
+
+	    String pty = map.get("PTY");
+	    String sky = map.get("SKY");
+
+	    if (pty != null && !"0".equals(pty)) {
+	        if ("1".equals(pty) || "2".equals(pty)) return "rain";
+	        if ("3".equals(pty)) return "snow";
+	        if ("4".equals(pty)) return "shower";
+	    }
+
+	    if ("1".equals(sky)) return "sun";
+	    if ("3".equals(sky)) return "cloud";
+	    if ("4".equals(sky)) return "overcast";
+
+	    return "unknown";
+	}
 }

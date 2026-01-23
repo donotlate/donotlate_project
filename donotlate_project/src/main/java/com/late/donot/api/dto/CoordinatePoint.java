@@ -1,4 +1,4 @@
-package com.late.donot.weather.model.dto;
+package com.late.donot.api.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

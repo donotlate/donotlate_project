@@ -19,4 +19,18 @@ public interface WeatherClient {
 			@RequestParam("nx") int nx,
 			@RequestParam("ny") int ny
 			);
+	
+	@GetMapping("/getVilageFcst")
+	String getVilageFcst(
+			
+			@RequestParam("serviceKey") String serviceKey,
+			@RequestParam("pageNo") int pageNo,
+	        @RequestParam("numOfRows") int numOfRows,
+	        @RequestParam("dataType") String dataType,
+	        @RequestParam("base_date") String baseDate,
+	        @RequestParam("base_time") String baseTime,
+	        @RequestParam("nx") int nx,
+	        @RequestParam("ny") int ny
+			);
+	
 }

@@ -1,6 +1,6 @@
 package com.late.donot.weather.uitl;
 
-import com.late.donot.weather.model.dto.CoordinatePoint;
+import com.late.donot.api.dto.CoordinatePoint;
 
 public class CoordinateConverter {
 	 private static final double RE = 6371.00877; // 지구 반경 (km)
