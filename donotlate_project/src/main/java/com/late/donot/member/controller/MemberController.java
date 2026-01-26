@@ -26,16 +26,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("member")
-@Slf4j
 public class MemberController {
 
     @Autowired
     private MemberService service;
 
-    @Value("${kakao.client_id}")
+    @Value("${kakao.client-id}")
     private String client_id;
 
-    @Value("${kakao.redirect_uri}")
+    @Value("${kakao.redirect-uri}")
     private String redirect_uri;
     
     @Autowired
