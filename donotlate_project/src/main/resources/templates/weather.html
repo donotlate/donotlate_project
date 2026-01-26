@@ -21,7 +21,7 @@
                                 </div>
                                 <p id="weather-datetime" class="text-blue-100 text-sm">날짜 로딩중...</p>
                             </div>
-                            <button onclick="loadWeather()" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 sm:px-4 sm:py-2 rounded-full flex-center-gap-2">
+                            <button onclick="loadWeather(true)" class="bg-white bg-opacity-20 hover:bg-opacity-30 p-2 sm:px-4 sm:py-2 rounded-full flex-center-gap-2">
                                 <i class="fa-solid fa-sync-alt"></i>
                                 <span class="hidden sm:inline">새로고침</span>
                             </button>
@@ -30,14 +30,14 @@
                             <!-- 왼쪽: 현재 온도 -->
                             <div class="flex items-center gap-6 lg:gap-8">
                                 <div>
-                                    <div class="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2">
+                                    <div class="text-6xl sm:text-7xl lg:text-8xl font-bold mb-2">   
                                         <span id="weather-temp">--</span>°
                                     </div>
                                     <div id="weather-condition" class="text-xl sm:text-2xl font-medium">
                                         --
                                     </div>
                                 </div>
-                                <i class="fa-solid fa-sun text-7xl sm:text-8xl lg:text-9xl text-yellow-300 opacity-90"></i>
+                                <i id="current-weather-icon" class="fa-solid fa-sun text-7xl sm:text-8xl lg:text-9xl text-yellow-300 opacity-90"></i>
                             </div>
                             <!-- 오른쪽: 체감온도 / 습도 / 풍속 -->
                             <div class="flex flex-row justify-between lg:flex-col text-left lg:text-right gap-3">
@@ -77,80 +77,97 @@
                 <div class="section-card">
                     <div class="flex space-x-4 overflow-x-auto pb-2">
                         <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
-                            <span class="text-sm font-medium text-secondary mb-2">지금</span>
-                            <i class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">15°</span>
+                            <span id="hour-time-0" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-0" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-0">--</span>°
+                            </span>
                             <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>10%</span>
+                                <span id="hour-rain-0">--%</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center min-w-[100px] p-4 hover:bg-gray-50 rounded-xl transition">
-                            <span class="text-sm font-medium text-gray-600 mb-2">08:00</span>
-                            <i class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">16°</span>
-                            <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
+                            <span id="hour-time-1" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-1" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-1">--</span>°
+                            </span>
+                            <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>5%</span>
+                                <span id="hour-rain-1">--%</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center min-w-[100px] p-4 hover:bg-gray-50 rounded-xl transition">
-                            <span class="text-sm font-medium text-gray-600 mb-2">09:00</span>
-                            <i class="fa-solid fa-cloud-sun text-3xl text-gray-400 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">17°</span>
-                            <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
+                            <span id="hour-time-2" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-2" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-2">--</span>°
+                            </span>
+                            <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>15%</span>
+                                <span id="hour-rain-2">--%</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center min-w-[100px] p-4 hover:bg-gray-50 rounded-xl transition">
-                            <span class="text-sm font-medium text-gray-600 mb-2">10:00</span>
-                            <i class="fa-solid fa-cloud-sun text-3xl text-gray-400 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">18°</span>
-                            <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
+                            <span id="hour-time-3" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-3" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-3">--</span>°
+                            </span>
+                            <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>20%</span>
+                                <span id="hour-rain-3">--%</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center min-w-[100px] p-4 hover:bg-gray-50 rounded-xl transition">
-                            <span class="text-sm font-medium text-gray-600 mb-2">11:00</span>
-                            <i class="fa-solid fa-cloud text-3xl text-gray-400 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">19°</span>
-                            <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
+                            <span id="hour-time-4" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-4" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-4">--</span>°
+                            </span>
+                            <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>25%</span>
+                                <span id="hour-rain-4">--%</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center min-w-[100px] p-4 hover:bg-gray-50 rounded-xl transition">
-                            <span class="text-sm font-medium text-gray-600 mb-2">12:00</span>
-                            <i class="fa-solid fa-cloud text-3xl text-gray-400 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">20°</span>
-                            <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
+                            <span id="hour-time-5" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-5" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-5">--</span>°
+                            </span>
+                            <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>30%</span>
+                                <span id="hour-rain-5">--%</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center min-w-[100px] p-4 hover:bg-gray-50 rounded-xl transition">
-                            <span class="text-sm font-medium text-gray-600 mb-2">13:00</span>
-                            <i class="fa-solid fa-cloud-rain text-3xl text-blue-400 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">19°</span>
-                            <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
+                            <span id="hour-time-6" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-6" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-6">--</span>°
+                            </span>
+                            <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>60%</span>
+                                <span id="hour-rain-6">--%</span>
                             </div>
                         </div>
-                        <div class="flex flex-col items-center min-w-[100px] p-4 hover:bg-gray-50 rounded-xl transition">
-                            <span class="text-sm font-medium text-gray-600 mb-2">14:00</span>
-                            <i class="fa-solid fa-cloud-rain text-3xl text-blue-400 my-3"></i>
-                            <span class="text-2xl font-bold text-gray-800 mb-1">18°</span>
-                            <div class="flex items-center text-xs text-gray-500">
+                        <div class="flex flex-col items-center min-w-[100px] p-4 bg-blue-50 rounded-xl">
+                            <span id="hour-time-7" class="text-sm font-medium text-secondary mb-2">--</span>
+                            <i id="hour-icon-7" class="fa-solid fa-sun text-3xl text-yellow-500 my-3"></i>
+                            <span class="text-2xl font-bold text-gray-800 mb-1">
+                                <span id="hour-temp-7">--</span>°
+                            </span>
+                            <div class="flex-center text-xs text-muted">
                                 <i class="fa-solid fa-droplet mr-1"></i>
-                                <span>70%</span>
+                                <span id="hour-rain-7">--%</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
+
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
                 <section id="daily-forecast" class="lg:col-span-2">
                     <h2 class="heading-2">주간 날씨</h2>

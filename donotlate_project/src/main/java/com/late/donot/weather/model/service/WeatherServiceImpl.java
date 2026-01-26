@@ -8,6 +8,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +20,7 @@ import com.late.donot.api.dto.Weather;
 import com.late.donot.api.dto.WeatherApi;
 import com.late.donot.api.dto.WeatherHour;
 import com.late.donot.api.dto.WeatherHourApi;
+import com.late.donot.api.dto.WeekWeather;
 import com.late.donot.weather.client.WeatherClient;
 import com.late.donot.weather.model.mapper.WeatherMapper;
 
@@ -40,10 +43,14 @@ public class WeatherServiceImpl implements WeatherService{
 	@Value("${weather.api.key}")
 	private String serviceKey;
 	
+	@Value("${weather.week.api.key}")
+	private String weekServiceKey;
+	
 	/** 작성자 : 이승준
 	 *  작성일 : 2026-01-22
 	 *  기상청 API 호출후 가공해서 반환
 	 */
+	@Cacheable(value = "weatherMain", key = "#nx + ':' + #ny", unless = "#result == null")
 	@Override
 	public Weather mainWeatherDto(int nx, int ny, double lat, double lon) {
 		List<WeatherApi> items = callWeatherApi(nx,ny);
@@ -216,6 +223,7 @@ public class WeatherServiceImpl implements WeatherService{
 	 *  작성일 : 2026-01-22
 	 *  기상청 단기예보 API 호출후 반환
 	 */
+	@Cacheable(value = "weatherHour", key = "#nx + ':' + #ny", unless = "#result == null || #result.isEmpty()")
 	@Override
 	public List<WeatherHour> getHourWeather(int nx, int ny) {
 		
@@ -376,5 +384,21 @@ public class WeatherServiceImpl implements WeatherService{
 	    if ("4".equals(sky)) return "overcast";
 
 	    return "unknown";
+	}
+
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  현재날씨 새로고침
+	 */
+	@CacheEvict(value = "weatherMain", key = "#nx + ':' + #ny")
+	@Override
+	public Weather mainWeatherRefresh(int nx, int ny, double lat, double lon) {
+		return mainWeatherDto(nx, ny, lat, lon);
+	}
+
+	@Override
+	public List<WeekWeather> getWeekWeather(int nx, int ny, double lat, double lon) {
+		
+		return null;
 	}
 }

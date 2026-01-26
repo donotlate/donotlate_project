@@ -6,14 +6,14 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class WeatherHour {
-	
-    private String time;
-    private Integer temp;
-    private Integer rainProb;
+public class WeekWeather {
+	private String dayLabel;
     private String icon;
-    
+    private String condition;
+    private int rainProb;
+    private int minTemp;
+    private int maxTemp;   
 }

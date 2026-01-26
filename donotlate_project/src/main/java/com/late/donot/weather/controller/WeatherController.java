@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.late.donot.api.dto.CoordinatePoint;
 import com.late.donot.api.dto.Weather;
 import com.late.donot.api.dto.WeatherHour;
+import com.late.donot.api.dto.WeekWeather;
 import com.late.donot.weather.model.service.WeatherService;
 import com.late.donot.weather.uitl.CoordinateConverter;
 
@@ -30,9 +31,14 @@ public class WeatherController {
 	 */
 	@GetMapping("/main")
 	public Weather mainWeather(@RequestParam("lat") double lat, 
-							   @RequestParam("lon") double lon) {	
+							   @RequestParam("lon") double lon,
+							   @RequestParam(name = "refresh", required = false, defaultValue = "false") boolean refresh) {	
 		
 		CoordinatePoint coordinate = CoordinateConverter.toCoordinate(lat,lon);
+		
+		if(refresh) {
+			return service.mainWeatherRefresh(coordinate.getNx(), coordinate.getNy(), lat, lon);
+		}
 		
 		return service.mainWeatherDto(coordinate.getNx(), coordinate.getNy(), lat, lon);
 	}
@@ -53,6 +59,30 @@ public class WeatherController {
         return service.getHourWeather(coordinate.getNx(),
                 				      coordinate.getNy());
 		
+	}
+	
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  주간 날씨 
+	 */
+	@GetMapping("/week")
+	public List<WeekWeather> getWeekWeather(
+	        @RequestParam("lat") double lat,
+	        @RequestParam("lon") double lon) {
+
+	    CoordinatePoint coordinate =
+	        CoordinateConverter.toCoordinate(lat, lon);
+
+	    log.info("주간 날씨 조회 lat={}, lon={} → nx={}, ny={}",
+	             lat, lon, coordinate.getNx(), coordinate.getNy());
+
+	    return service.getWeekWeather(
+	            coordinate.getNx(),
+	            coordinate.getNy(),
+	            lat,
+	            lon
+	    );
 	}
 	
 	
