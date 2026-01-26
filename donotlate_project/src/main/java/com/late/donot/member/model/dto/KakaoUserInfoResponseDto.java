@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
  * 작성일 : 2026-01-26
  * 카카오 API 로그인 후 응답값 DTO
  */
-public class KakaoUserInfoResponseDto {
+public class KakaoUserInfoResponseDTO {
 
     //회원 번호
     @JsonProperty("id")

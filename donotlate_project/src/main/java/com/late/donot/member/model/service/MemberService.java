@@ -2,8 +2,9 @@ package com.late.donot.member.model.service;
 
 import java.util.Map;
 
-import com.late.donot.member.model.dto.KakaoUserInfoResponseDto;
+import com.late.donot.member.model.dto.KakaoUserInfoResponseDTO;
 import com.late.donot.member.model.dto.Member;
+import com.late.donot.member.model.dto.NaverUserInfoResponseDTO;
 
 public interface MemberService {
 
@@ -54,5 +55,12 @@ public interface MemberService {
      * 작성일 : 2026-01-26
      * 카카오 계정 로그인
      */
-    Member kakaoLogin(KakaoUserInfoResponseDto userInfo);
+    Member kakaoLogin(KakaoUserInfoResponseDTO userInfo);
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 네이버 계정 로그인
+     */
+	Member naverLogin(NaverUserInfoResponseDTO userInfo);
 }
