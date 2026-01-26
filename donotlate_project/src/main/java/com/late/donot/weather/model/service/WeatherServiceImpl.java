@@ -531,22 +531,25 @@ public class WeatherServiceImpl implements WeatherService{
 	            .get(0);
 
 	        for (int day = 3; day <= 10; day++) {
+
 	            WeekWeather.WeekWeatherBuilder builder =
 	                map.computeIfAbsent(day, d -> WeekWeather.builder());
 
-	            if (day <= 7) {
-	                String wfPm = landItems.path("wf" + day + "Pm").asText();
-	                int rnPm = landItems.path("rnSt" + day + "Pm").asInt();
+	            String wf;
+	            int rn;
 
-	                builder.condition(wfPm)
-	                       .rainProb(rnPm);
+	            if (day == 3 || day == 4) {
+	                wf = landItems.path("wf" + day + "Pm").asText();
+	                rn = landItems.path("rnSt" + day + "Pm").asInt();
 	            } else {
-	                String wf = landItems.path("wf" + day).asText();
-	                int rn = landItems.path("rnSt" + day).asInt();
-
-	                builder.condition(wf)
-	                       .rainProb(rn);
+	                wf = landItems.path("wf" + day).asText();
+	                rn = landItems.path("rnSt" + day).asInt();
 	            }
+
+	            builder.condition(wf)
+	                   .rainProb(rn);
+	            log.info("DAY {} wf={}, rn={}", day, wf, rn);
+	        
 	        }
 
 	        JsonNode taItems = mapper.readTree(taJson)

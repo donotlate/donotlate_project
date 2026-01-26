@@ -175,7 +175,84 @@ function getIconName(icon) {
   }
 }
 
+function loadWeekWeather() {
+  if (!navigator.geolocation) {
+    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      fetch(`/weather/week?lat=${lat}&lon=${lon}`)
+        .then(res => {
+          if (!res.ok) throw new Error("주간 날씨 응답 오류");
+          return res.json();
+        })
+        .then(data => {
+          console.log("주간 날씨:", data);
+          renderWeekWeather(data);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
+}
+
+function renderWeekWeather(list) {
+  for (let i = 0; i < 8; i++) {
+    const data = list[i];
+    if (!data) break;
+
+    document.getElementById(`week-day-${i}`).innerText =
+      data.dayLabel;
+
+    document.getElementById(`week-condition-${i}`).innerText =
+      data.condition;
+
+    document.getElementById(`week-rain-${i}`).innerText =
+      `${data.rainProb}%`;
+
+    document.getElementById(`week-min-${i}`).innerText =
+      `${data.minTemp}°`;
+
+    document.getElementById(`week-max-${i}`).innerText =
+      `${data.maxTemp}°`;
+
+    const iconEl = document.getElementById(`week-icon-${i}`);
+    iconEl.className =
+      "fa-solid text-2xl w-8 text-center " +
+      getWeekIconClass(data.icon);
+  }
+}
+
+function getWeekIconClass(icon) {
+  switch (icon) {
+    case "sun":
+      return "fa-sun text-yellow-500";
+    case "cloud":
+      return "fa-cloud text-gray-400";
+    case "overcast":
+      return "fa-cloud text-gray-500";
+    case "rain":
+      return "fa-cloud-rain text-blue-400";
+    case "shower":
+      return "fa-cloud-showers-heavy text-blue-400";
+    case "snow":
+      return "fa-snowflake text-blue-300";
+    default:
+      return "fa-question text-gray-400";
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   loadWeather(false);
   loadHourWeather();
+  loadWeekWeather(); 
 });

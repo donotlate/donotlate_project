@@ -172,170 +172,164 @@
                 <section id="daily-forecast" class="lg:col-span-2">
                     <h2 class="heading-2">주간 날씨</h2>
                     <div class="section-card">
-                        <div class="space-y-4">
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-semibold text-gray-800">오늘</span>
-                                </div>
+                        <div id="week-weather-list" class="space-y-4">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-0" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-sun text-2xl text-yellow-500 w-8 text-center"></i>
-                                    <span class="text-secondary">맑음</span>
-                                </div>
-                                <div class="flex items-center gap-2 w-full sm:w-auto">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">10%</span>
-                                </div>
-                                <div class="flex items-center gap-2 w-full sm:w-auto">
-                                    <span class="text-gray-500">8°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">20°</span>
+                                  <i id="week-icon-0" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-0" class="text-secondary">--</span>
+                                </div>                            
+                                <div class="flex items-center gap-2">
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-0">--%</span>
+                                </div>                            
+                                <div class="flex items-center gap-2">
+                                  <span id="week-min-0" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-0" class="text-gray-800 font-semibold">--°</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-medium text-gray-700">월요일</span>
-                                </div>
+
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-1" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-cloud-sun text-2xl text-gray-400 w-8 text-center"></i>
-                                    <span class="text-secondary">구름 많음</span>
-                                </div>
+                                  <i id="week-icon-1" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-1" class="text-secondary">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">20%</span>
-                                </div>
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-1">--%</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">10°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">18°</span>
+                                  <span id="week-min-1" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-1" class="text-gray-800 font-semibold">--°</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-medium text-gray-700">화요일</span>
-                                </div>
+
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-2" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-cloud-sun text-2xl text-gray-400 w-8 text-center"></i>
-                                    <span class="text-secondary">구름 많음</span>
-                                </div>
+                                  <i id="week-icon-2" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-2" class="text-secondary">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">20%</span>
-                                </div>
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-2">--%</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">10°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">18°</span>
+                                  <span id="week-min-2" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-2" class="text-gray-800 font-semibold">--°</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-medium text-gray-700">수요일</span>
-                                </div>
+
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-3" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-cloud-sun text-2xl text-gray-400 w-8 text-center"></i>
-                                    <span class="text-secondary">구름 많음</span>
-                                </div>
+                                  <i id="week-icon-3" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-3" class="text-secondary">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">20%</span>
-                                </div>
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-3">--%</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">10°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">18°</span>
+                                  <span id="week-min-3" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-3" class="text-gray-800 font-semibold">--°</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-medium text-gray-700">목요일</span>
-                                </div>
+
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-4" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-cloud-sun text-2xl text-gray-400 w-8 text-center"></i>
-                                    <span class="text-secondary">구름 많음</span>
-                                </div>
+                                  <i id="week-icon-4" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-4" class="text-secondary">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">20%</span>
-                                </div>
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-4">--%</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">10°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">18°</span>
+                                  <span id="week-min-4" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-4" class="text-gray-800 font-semibold">--°</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-medium text-gray-700">금요일</span>
-                                </div>
+
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-5" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-cloud-sun text-2xl text-gray-400 w-8 text-center"></i>
-                                    <span class="text-secondary">구름 많음</span>
-                                </div>
+                                  <i id="week-icon-5" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-5" class="text-secondary">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">20%</span>
-                                </div>
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-5">--%</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">10°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">18°</span>
+                                  <span id="week-min-5" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-5" class="text-gray-800 font-semibold">--°</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-medium text-gray-700">토요일</span>
-                                </div>
+
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-6" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-cloud-sun text-2xl text-gray-400 w-8 text-center"></i>
-                                    <span class="text-secondary">구름 많음</span>
-                                </div>
+                                  <i id="week-icon-6" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-6" class="text-secondary">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">20%</span>
-                                </div>
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-6">--%</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">10°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">18°</span>
+                                  <span id="week-min-6" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-6" class="text-gray-800 font-semibold">--°</span>
                                 </div>
                             </div>
-                            <div class="flex flex-col gap-3
-                                    sm:flex-row sm:items-center sm:justify-between
-                                    p-4 hover:bg-gray-50 rounded-xl transition">
-                                <div class="flex items-center gap-4 w-full sm:w-32">
-                                    <span class="font-medium text-gray-700">일요일</span>
-                                </div>
+
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 hover:bg-gray-50 rounded-xl transition">
+                                <div class="w-full sm:w-32">
+                                  <span id="week-day-7" class="font-semibold text-gray-800">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-4 flex-1">
-                                    <i class="fa-solid fa-cloud-sun text-2xl text-gray-400 w-8 text-center"></i>
-                                    <span class="text-secondary">구름 많음</span>
-                                </div>
+                                  <i id="week-icon-7" class="fa-solid fa-question text-2xl w-8 text-center"></i>
+                                  <span id="week-condition-7" class="text-secondary">--</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
-                                    <span class="text-secondary">20%</span>
-                                </div>
+                                  <i class="fa-solid fa-droplet text-blue-400 text-sm"></i>
+                                  <span id="week-rain-7">--%</span>
+                                </div>                            
                                 <div class="flex items-center gap-2">
-                                    <span class="text-gray-500">10°</span>
-                                    <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
-                                    <span class="text-gray-800 font-semibold">18°</span>
+                                  <span id="week-min-7" class="text-gray-500">--°</span>
+                                  <div class="flex-1 sm:w-24 h-2 bg-gradient-to-r from-blue-300 to-red-400 rounded-full"></div>
+                                  <span id="week-max-7" class="text-gray-800 font-semibold">--°</span>
                                 </div>
+                            </div>
+
                             </div>
                         </div>
                     </div>
                 </section>
+
                 <section id="weather-details">
                     <h2 class="heading-2">상세 정보</h2>
                     <div class="space-y-4">
