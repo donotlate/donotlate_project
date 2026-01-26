@@ -1,0 +1,181 @@
+// 현재날씨 JS
+function loadWeather(refresh = false) {
+  if (!navigator.geolocation) {
+    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+    return;
+  }
+
+  renderLoadingState();
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      const url = refresh
+        ? `/weather/main?lat=${lat}&lon=${lon}&refresh=true`
+        : `/weather/main?lat=${lat}&lon=${lon}`;
+
+      fetch(url)
+        .then(res => {
+          if (!res.ok) throw new Error("서버 응답 오류");
+          return res.json();
+        })
+        .then(data => {
+          renderWeather(data);
+        })
+        .catch(err => {
+          console.error(err);
+          alert("날씨 정보를 불러오지 못했습니다.");
+        });
+    }
+  );
+}
+
+function syncCurrentIconFromHour(hourList) {
+  if (!hourList || hourList.length === 0) return;
+
+  const icon = hourList[0].icon;
+  const iconEl = document.getElementById("current-weather-icon");
+
+  iconEl.className = "text-7xl sm:text-8xl lg:text-9xl opacity-90 " + getCurrentIconClass(icon);
+}
+
+function getCurrentIconClass(icon) {
+  switch (icon) {
+    case "sun":
+      return "fa-solid fa-sun text-yellow-300";
+    case "cloud":
+      return "fa-solid fa-cloud text-gray-300";
+    case "overcast":
+      return "fa-solid fa-cloud text-gray-400";
+    case "rain":
+      return "fa-solid fa-cloud-rain text-blue-300";
+    case "shower":
+      return "fa-solid fa-cloud-showers-heavy text-blue-300";
+    case "snow":
+      return "fa-solid fa-snowflake text-blue-200";
+    default:
+      return "fa-solid fa-question text-gray-400";
+  }
+}
+
+function renderWeather(data) {
+  document.getElementById("weather-location").innerText = data.location;
+
+  document.getElementById("weather-datetime").innerText = `${data.date} ${data.time}`;
+
+  document.getElementById("weather-temp").innerText = Math.round(data.temperature);
+
+  document.getElementById("weather-condition").innerText = data.condition;
+
+  document.getElementById("weather-humidity").innerText = `${data.humidity}%`;
+
+  document.getElementById("weather-wind").innerText = `${data.windSpeed}m/s`;
+
+  document.getElementById("weather-feelslike").innerText = data.feelsLike + "°";
+}
+
+function renderLoadingState() {
+  document.getElementById("weather-location").innerText = "위치 불러오는 중...";
+
+  document.getElementById("weather-datetime").innerText = "--";
+
+  document.getElementById("weather-temp").innerText = "--";
+
+  document.getElementById("weather-condition").innerText = "--";
+
+  document.getElementById("weather-humidity").innerText = "--%";
+
+  document.getElementById("weather-wind").innerText = "--m/s";
+
+  document.getElementById("weather-feelslike").innerText = "--°";
+}
+
+// 시간대 날씨 JS
+function loadHourWeather() {
+  if (!navigator.geolocation) {
+    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      fetch(`/weather/hour?lat=${lat}&lon=${lon}`)
+        .then(res => {
+          if (!res.ok) throw new Error("시간별 날씨 응답 오류");
+          return res.json();
+        })
+        .then(data => {
+          console.log("시간별 날씨:", data);
+          renderHourWeather(data);
+        })
+        .catch(err => {
+          console.error(err);
+        });
+    },
+    (error) => {
+      console.error(error);
+    }
+  );
+}
+
+function renderHourWeather(list) {
+  for (let i = 0; i < 8; i++) {
+    const data = list[i];
+    if (!data) break;
+
+    document.getElementById(`hour-time-${i}`).innerText =
+      i === 0 ? "지금" : data.time;
+
+    document.getElementById(`hour-temp-${i}`).innerText =
+      data.temp;
+
+    document.getElementById(`hour-rain-${i}`).innerText =
+      `${data.rainProb}%`;
+
+    const iconEl = document.getElementById(`hour-icon-${i}`);
+    iconEl.className = getHourIconClass(data.icon);
+  }
+
+  syncCurrentIconFromHour(list);
+}
+
+function getHourIconClass(icon) {
+  switch (icon) {
+    case "sun":
+      return "fa-solid fa-sun text-3xl text-yellow-500 my-3";
+    case "cloud":
+      return "fa-solid fa-cloud text-3xl text-gray-400 my-3";
+    case "overcast":
+      return "fa-solid fa-cloud text-3xl text-gray-500 my-3";
+    case "rain":
+      return "fa-solid fa-cloud-rain text-3xl text-blue-400 my-3";
+    case "shower":
+      return "fa-solid fa-cloud-showers-heavy text-3xl text-blue-400 my-3";
+    case "snow":
+      return "fa-solid fa-snowflake text-3xl text-blue-200 my-3";
+    default:
+      return "fa-solid fa-question text-3xl text-gray-400 my-3";
+  }
+}
+
+function getIconName(icon) {
+  switch (icon) {
+    case "sun": return "fa-sun";
+    case "cloud": return "fa-cloud";
+    case "overcast": return "fa-cloud";
+    case "rain": return "fa-cloud-rain";
+    case "shower": return "fa-cloud-showers-heavy";
+    case "snow": return "fa-snowflake";
+    default: return "fa-question";
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadWeather(false);
+  loadHourWeather();
+});
