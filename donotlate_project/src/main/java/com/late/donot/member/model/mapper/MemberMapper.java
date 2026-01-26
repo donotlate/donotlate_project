@@ -3,6 +3,7 @@ package com.late.donot.member.model.mapper;
 import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import com.late.donot.member.model.dto.Member;
 
@@ -61,5 +62,10 @@ public interface MemberMapper {
      * 비밀번호 초기화
      */
     int resetPassword(Member resetPwMember);
+
+    Member findMemberBySocial(@Param("socialId") String socialId, 
+                            @Param("socialType") String socialType);
+
+    void insertSocialMember(Member member);
 
 }
