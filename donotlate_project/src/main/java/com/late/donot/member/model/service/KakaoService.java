@@ -11,20 +11,17 @@ import com.late.donot.member.model.dto.KakaoTokenResponseDTO;
 import com.late.donot.member.model.dto.KakaoUserInfoResponseDto;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class KakaoService {
-    private String clientId;
+    private final String clientId;
     private final String redirectUri;
     private final String KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com";
     private final String KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
 
-    @Autowired
     public KakaoService(@Value("${kakao.client_id}") String clientId, @Value("${kakao.redirect_uri}") String redirectUri) {
         this.clientId = clientId;
 		this.redirectUri = redirectUri;
