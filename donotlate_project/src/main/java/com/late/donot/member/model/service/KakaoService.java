@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.late.donot.member.model.dto.KakaoTokenResponseDTO;
-import com.late.donot.member.model.dto.KakaoUserInfoResponseDto;
+import com.late.donot.member.model.dto.KakaoUserInfoResponseDTO;
 
 import io.netty.handler.codec.http.HttpHeaderValues;
 import lombok.extern.slf4j.Slf4j;
@@ -29,11 +29,15 @@ public class KakaoService {
 		this.redirectUri = redirectUri;
     }
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 카카오 액세스 토큰 받기 (DTO 활용)
+     */
     public String getAccessTokenFromKakao(String code) {
         KakaoTokenResponseDTO kakaoTokenResponseDto = WebClient.create(KAUTH_TOKEN_URL_HOST).post()
                 .uri("/oauth/token")
                 .header(HttpHeaders.CONTENT_TYPE, HttpHeaderValues.APPLICATION_X_WWW_FORM_URLENCODED.toString())
-                // queryParam 대신 body에 담아 전송
                 .bodyValue("grant_type=authorization_code" +
                            "&client_id=" + clientId +
                            "&redirect_uri=" + redirectUri + // 필수 추가
@@ -50,7 +54,12 @@ public class KakaoService {
         return kakaoTokenResponseDto.getAccessToken();
     }
 
-    public KakaoUserInfoResponseDto getUserInfo(String accessToken) {
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 카카오 사용자 정보 가져오기 (DTO 활용)
+     */
+    public KakaoUserInfoResponseDTO getUserInfo(String accessToken) {
         return WebClient.create(KAUTH_USER_URL_HOST)
                 .get()
                 .uri("/v2/user/me")
@@ -61,7 +70,7 @@ public class KakaoService {
                         log.error("[Kakao User Error] {}", errorBody);
                         return Mono.error(new RuntimeException("카카오 사용자 정보 조회 실패"));
                     }))
-                .bodyToMono(KakaoUserInfoResponseDto.class)
+                .bodyToMono(KakaoUserInfoResponseDTO.class)
                 .block();
     }
 }

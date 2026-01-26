@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor //역직렬화를 위한 기본 생성자
 @JsonIgnoreProperties(ignoreUnknown = true)
+
 /**
  * 작성자 : 유건우
  * 작성일 : 2026-01-26
  * 카카오 API 토큰 응답값 DTO
  */
+
 public class KakaoTokenResponseDTO {
     @JsonProperty("token_type")
     public String tokenType;
