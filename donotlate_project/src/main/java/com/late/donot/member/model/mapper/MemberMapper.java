@@ -63,9 +63,19 @@ public interface MemberMapper {
      */
     int resetPassword(Member resetPwMember);
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 소셜 계정 로그인 회원 조회
+     */
     Member findMemberBySocial(@Param("socialId") String socialId, 
                             @Param("socialType") String socialType);
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 웹서비스에 맞는 형식으로 소셜 계정 생성
+     */
     void insertSocialMember(Member member);
 
 }
