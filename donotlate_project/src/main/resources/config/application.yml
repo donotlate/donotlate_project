@@ -1,0 +1,4 @@
+#카카오 인증 API 키 및 리다이렉트 URI
+kakao:
+  client_id: '395c4e18edc9125d19afcc8a56ee24db'
+  redirect_uri: 'http://localhost/member/login/oauth2/kakao'

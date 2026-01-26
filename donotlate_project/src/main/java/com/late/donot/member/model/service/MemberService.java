@@ -2,6 +2,7 @@ package com.late.donot.member.model.service;
 
 import java.util.Map;
 
+import com.late.donot.member.model.dto.KakaoUserInfoResponseDto;
 import com.late.donot.member.model.dto.Member;
 
 public interface MemberService {
@@ -47,4 +48,11 @@ public interface MemberService {
      * 비밀번호 초기화
      */
     int resetPw(String memberEmail);
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 카카오 계정 로그인
+     */
+    Member kakaoLogin(KakaoUserInfoResponseDto userInfo);
 }
