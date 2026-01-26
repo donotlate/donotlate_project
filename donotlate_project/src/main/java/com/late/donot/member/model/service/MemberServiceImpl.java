@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import com.late.donot.member.model.dto.KakaoUserInfoResponseDto;
 import com.late.donot.member.model.dto.Member;
 import com.late.donot.member.model.mapper.MemberMapper;
 
@@ -214,5 +215,34 @@ public class MemberServiceImpl implements MemberService {
         } catch (Exception e) {
             log.error("임시 비밀번호 메일 발송 중 에러 발생: {}", e.getMessage());
         }
+    }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 카카오 계정 로그인
+     */
+    @Override
+    public Member kakaoLogin(KakaoUserInfoResponseDto userInfo) {
+        // 1. 카카오 고유 ID (long 또는 String) 추출
+        String socialId = String.valueOf(userInfo.getId());
+        String email = userInfo.getKakaoAccount().getEmail();
+        String nickname = userInfo.getKakaoAccount().getProfile().getNickName();
+
+        // 2. DB에서 해당 소셜 정보로 가입된 회원이 있는지 확인
+        Member member = mapper.findMemberBySocial(socialId, "KAKAO");
+
+        if (member == null) {
+            // 3. 없다면 신규 회원 가입 처리
+            member = new Member();
+            member.setMemberEmail(email);
+            member.setMemberName(nickname);
+            member.setSocialId(socialId);
+            member.setSocialType("KAKAO");
+            // member.setMemberPw(null); // 소셜 회원은 비번 없음
+            mapper.insertSocialMember(member);
+        }
+
+        return member;
     }
 }
