@@ -1,8 +1,12 @@
 package com.late.donot.weather.model.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.TextStyle;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -22,6 +26,7 @@ import com.late.donot.api.dto.WeatherHour;
 import com.late.donot.api.dto.WeatherHourApi;
 import com.late.donot.api.dto.WeekWeather;
 import com.late.donot.weather.client.WeatherClient;
+import com.late.donot.weather.client.WeekWeatherClient;
 import com.late.donot.weather.model.mapper.WeatherMapper;
 
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +41,9 @@ public class WeatherServiceImpl implements WeatherService{
 	
 	@Autowired
 	private WeatherClient weatherClient;
+	
+	@Autowired
+	private WeekWeatherClient weekWeatherClient;
 	
 	@Autowired
 	private WeatherLocationService weatherLocationService;
@@ -396,9 +404,335 @@ public class WeatherServiceImpl implements WeatherService{
 		return mainWeatherDto(nx, ny, lat, lon);
 	}
 
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  주간날씨 
+	 */
+	@Cacheable(value = "weatherWeek", key = "#nx + ':' + #ny", unless = "#result == null || #result.isEmpty()")
 	@Override
 	public List<WeekWeather> getWeekWeather(int nx, int ny, double lat, double lon) {
-		
-		return null;
+
+	    List<WeekWeather> shortList =
+	        buildWeekFromShortForecast(nx, ny);
+
+	    String tmFc = getMidTmFc();
+	    String regId = resolveRegId(lat, lon);
+
+	    String landJson = callMidLandFcst(regId, tmFc);
+	    String taJson   = callMidTa(regId, tmFc);
+
+	    List<WeekWeather> midList =
+	        mergeWeekWeather(landJson, taJson)
+	            .stream()
+	            .limit(5)
+	            .toList();
+
+	    shortList.addAll(midList);
+	    return shortList;
 	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  tmFc 시간대 계산 
+	 */
+	private String getMidTmFc() {
+	    LocalDateTime now = LocalDateTime.now();
+
+	    LocalDateTime tmFc;
+	    if (now.getHour() < 6) {
+	        tmFc = now.minusDays(1).withHour(18);
+	    } else if (now.getHour() < 18) {
+	        tmFc = now.withHour(6);
+	    } else {
+	        tmFc = now.withHour(18);
+	    }
+
+	    tmFc = tmFc.withMinute(0).withSecond(0).withNano(0);
+
+	    return tmFc.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  지역코드 구분
+	 */
+	private String resolveRegId(double lat, double lon) {
+
+	    if (lat >= 37.0 && lat <= 38.5 && lon >= 126.0 && lon <= 128.0) {
+	        return "11B00000";
+	    }
+
+	    if (lat >= 37.0 && lon >= 128.0) {
+	        return "11D10000";
+	    }
+
+	    if (lat >= 36.0 && lat < 37.0) {
+	        return "11C20000";
+	    }
+
+	    if (lat >= 34.5 && lat < 36.0) {
+	        return "11F20000";
+	    }
+
+	    if (lat >= 35.0 && lon >= 128.0) {
+	        return "11H20000";
+	    }
+
+	    if (lat < 34.5) {
+	        return "11G00000";
+	    }
+
+	    return "11B00000";
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  중기 육상예보
+	 */
+	private String callMidLandFcst(String regId, String tmFc) {
+	    return weekWeatherClient.getMidLandFcst(
+	    	weekServiceKey,
+	        1,
+	        10,
+	        "JSON",
+	        regId,
+	        tmFc);
+	}
+
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  중기 기온예보
+	 */
+	private String callMidTa(String regId, String tmFc) {
+	    return weekWeatherClient.getMidTa(
+	        weekServiceKey,
+	        1,
+	        10,
+	        "JSON",
+	        regId,
+	        tmFc);
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  실제 계산로직
+	 */
+	private List<WeekWeather> mergeWeekWeather(String landJson, String taJson) {
+	    ObjectMapper mapper = new ObjectMapper();
+
+	    Map<Integer, WeekWeather.WeekWeatherBuilder> map = new HashMap<>();
+
+	    try {
+	        JsonNode landItems = mapper.readTree(landJson)
+	            .path("response")
+	            .path("body")
+	            .path("items")
+	            .path("item")
+	            .get(0);
+
+	        for (int day = 3; day <= 10; day++) {
+	            WeekWeather.WeekWeatherBuilder builder =
+	                map.computeIfAbsent(day, d -> WeekWeather.builder());
+
+	            if (day <= 7) {
+	                String wfPm = landItems.path("wf" + day + "Pm").asText();
+	                int rnPm = landItems.path("rnSt" + day + "Pm").asInt();
+
+	                builder.condition(wfPm)
+	                       .rainProb(rnPm);
+	            } else {
+	                String wf = landItems.path("wf" + day).asText();
+	                int rn = landItems.path("rnSt" + day).asInt();
+
+	                builder.condition(wf)
+	                       .rainProb(rn);
+	            }
+	        }
+
+	        JsonNode taItems = mapper.readTree(taJson)
+	            .path("response")
+	            .path("body")
+	            .path("items")
+	            .path("item")
+	            .get(0);
+
+	        for (int day = 3; day <= 10; day++) {
+	            WeekWeather.WeekWeatherBuilder builder = map.get(day);
+
+	            int min = taItems.path("taMin" + day).asInt();
+	            int max = taItems.path("taMax" + day).asInt();
+
+	            builder.minTemp(min)
+	                   .maxTemp(max);
+	        }
+
+	        return map.entrySet().stream()
+	        	    .sorted(Map.Entry.comparingByKey())
+	        	    .map(e -> {
+	        	        int day = e.getKey(); // 3 ~ 10
+	        	        WeekWeather.WeekWeatherBuilder b = e.getValue();
+
+	        	        String condition = b.build().getCondition();
+
+	        	        return b
+	        	            .dayLabel(resolveDayLabelFromToday(day))
+	        	            .icon(resolveWeekIcon(condition))
+	        	            .build();
+	        	    })
+	        	    .toList();
+
+	    } catch (Exception e) {
+	        log.error("주간 날씨 병합 실패", e);
+	        throw new RuntimeException("주간 날씨 처리 실패");
+	    }
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  요일 라벨 계산
+	 */
+	private String resolveDayLabelFromToday(int diffDay) {
+	    if (diffDay == 0) return "오늘";
+	    if (diffDay == 1) return "내일";
+	    if (diffDay == 2) return "모레";
+
+	    return LocalDate.now()
+	        .plusDays(diffDay)
+	        .getDayOfWeek()
+	        .getDisplayName(TextStyle.SHORT, Locale.KOREAN);
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  아이콘 결정 계산
+	 */
+	private String resolveWeekIcon(String condition) {
+	    if (condition.contains("비")) return "rain";
+	    if (condition.contains("눈")) return "snow";
+	    if (condition.contains("맑")) return "sun";
+	    if (condition.contains("흐")) return "overcast";
+	    return "cloud";
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  단기예보 -> 하루별로 변경
+	 */
+	private List<WeekWeather> buildWeekFromShortForecast(int nx, int ny) {
+
+	    BaseDateTime base = getVilageBaseDateTime();
+
+	    String response = weatherClient.getVilageFcst(
+	        serviceKey,
+	        1,
+	        1000,
+	        "JSON",
+	        base.getBaseDate(),
+	        base.getBaseTime(),
+	        nx,
+	        ny
+	    );
+
+	    List<WeatherHourApi> items = parseVilageItems(response);
+	    if (items.isEmpty()) return List.of();
+
+	    Map<LocalDate, List<WeatherHourApi>> dayMap =
+	        items.stream()
+	            .collect(Collectors.groupingBy(item ->
+	                LocalDate.parse(
+	                    item.getFcstDate(),
+	                    DateTimeFormatter.ofPattern("yyyyMMdd")
+	                )
+	            ));
+
+	    LocalDate today = LocalDate.now();
+
+	    return dayMap.entrySet().stream()
+	        .filter(e -> {
+	            long diff = java.time.temporal.ChronoUnit.DAYS
+	                .between(today, e.getKey());
+	            return diff >= 0 && diff <= 2;
+	        })
+	        .sorted(Map.Entry.comparingByKey())
+	        .map(e -> buildOneDayFromHours(today, e.getKey(), e.getValue()))
+	        .collect(Collectors.toList());
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-26
+	 *  단기예보 -> 하루 로직
+	 */
+	private WeekWeather buildOneDayFromHours(
+	        LocalDate today,
+	        LocalDate date,
+	        List<WeatherHourApi> list) {
+
+	    int minTemp = Integer.MAX_VALUE;
+	    int maxTemp = Integer.MIN_VALUE;
+	    int maxRain = 0;
+
+	    Map<String, Long> skyCount = new HashMap<>();
+	    boolean hasRainOrSnow = false;
+	    String ptyResult = null;
+
+	    for (WeatherHourApi item : list) {
+	        String cat = item.getCategory();
+	        String val = item.getFcstValue();
+
+	        switch (cat) {
+	            case "TMP" -> {
+	                int t = Integer.parseInt(val);
+	                minTemp = Math.min(minTemp, t);
+	                maxTemp = Math.max(maxTemp, t);
+	            }
+	            case "POP" -> maxRain = Math.max(maxRain, Integer.parseInt(val));
+	            case "PTY" -> {
+	                if (!"0".equals(val)) {
+	                    hasRainOrSnow = true;
+	                    ptyResult = val;
+	                }
+	            }
+	            case "SKY" -> skyCount.merge(val, 1L, Long::sum);
+	        }
+	    }
+
+	    String condition;
+	    if (hasRainOrSnow) {
+	        condition = switch (ptyResult) {
+	            case "1", "2" -> "비";
+	            case "3" -> "눈";
+	            case "4" -> "소나기";
+	            default -> "비";
+	        };
+	    } else {
+	        String sky = skyCount.entrySet().stream()
+	            .max(Map.Entry.comparingByValue())
+	            .map(Map.Entry::getKey)
+	            .orElse("1");
+
+	        condition = switch (sky) {
+	            case "1" -> "맑음";
+	            case "3" -> "구름 많음";
+	            case "4" -> "흐림";
+	            default -> "구름 많음";
+	        };
+	    }
+
+	    String label;
+	    long diff = java.time.temporal.ChronoUnit.DAYS.between(today, date);
+	    if (diff == 0) label = "오늘";
+	    else if (diff == 1) label = "내일";
+	    else label = "모레";
+
+	    return WeekWeather.builder()
+	        .dayLabel(label)
+	        .condition(condition)
+	        .icon(resolveWeekIcon(condition))
+	        .minTemp(minTemp)
+	        .maxTemp(maxTemp)
+	        .rainProb(maxRain)
+	        .build();
+	}
+	
+	
 }
