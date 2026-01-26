@@ -24,7 +24,7 @@ public class KakaoService {
     private final String KAUTH_TOKEN_URL_HOST = "https://kauth.kakao.com";
     private final String KAUTH_USER_URL_HOST = "https://kapi.kakao.com";
 
-    public KakaoService(@Value("${kakao.client_id}") String clientId, @Value("${kakao.redirect_uri}") String redirectUri) {
+    public KakaoService(@Value("${kakao.client-id}") String clientId, @Value("${kakao.redirect-uri}") String redirectUri) {
         this.clientId = clientId;
 		this.redirectUri = redirectUri;
     }
