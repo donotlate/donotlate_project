@@ -12,6 +12,16 @@ public class InterceptorConfig implements WebMvcConfigurer{
 
     @Autowired
 	private LoginCheckInterceptor loginCheckInterceptor;
+    
+	// 1. CORS 설정 추가: 프론트엔드(5173)의 접근을 허용합니다.
+    @Override
+    public void addCorsMappings(org.springframework.web.servlet.config.annotation.CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("http://localhost:5173") // 리액트 주소
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
 	
 	/** 작성자 : 유건우
 	 *  작성일 : 2026-01-22
@@ -23,6 +33,8 @@ public class InterceptorConfig implements WebMvcConfigurer{
 		registry.addInterceptor(loginCheckInterceptor)
 		.addPathPatterns("/**")
 		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**",
-                            "/css/**", "/js/**", "/favicon.ico");		
+                            "/css/**", "/js/**", "/favicon.ico","/admin/adminLogin");		
 	}
+	
+
 }

@@ -30,6 +30,7 @@ public class AdminController {
 		Member loginMember = service.login(inputMember);
 		
 		session.setAttribute("loginMember", loginMember);
+		
 		return loginMember;
 		
 	}
