@@ -35,6 +35,9 @@ public class MemberController {
 		
 		Member loginMember = service.login(inputMember);
 		
+		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+		
+		
 		if(loginMember == null) {
 			ra.addFlashAttribute("message", "로그인 실패, 아이디 또는 비밀번호가 일치하지 않습니다");		
 			return "redirect:/";
