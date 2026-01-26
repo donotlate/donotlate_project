@@ -4,8 +4,6 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,14 +13,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.late.donot.member.model.dto.KakaoUserInfoResponseDto;
+import com.late.donot.member.model.dto.KakaoUserInfoResponseDTO;
 import com.late.donot.member.model.dto.Member;
+import com.late.donot.member.model.dto.NaverUserInfoResponseDTO;
 import com.late.donot.member.model.service.KakaoService;
 import com.late.donot.member.model.service.MemberService;
+import com.late.donot.member.model.service.NaverService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.extern.slf4j.Slf4j;
 
 @Controller
 @RequestMapping("member")
@@ -32,13 +31,23 @@ public class MemberController {
     private MemberService service;
 
     @Value("${kakao.client-id}")
-    private String client_id;
+    private String kakaoClientId;
 
     @Value("${kakao.redirect-uri}")
-    private String redirect_uri;
+    private String kakaoRedirectUri;
     
     @Autowired
     private KakaoService KakaoService;
+    
+    @Value("${naver.client-id}")
+    private String naverClientId;
+    
+    @Value("${naver.redirect-uri}")
+    private String naverRedirectUri;
+    
+    @Autowired
+    private NaverService naverService;
+    
 
     /**
      * 작성자 : 유건우
@@ -169,7 +178,7 @@ public class MemberController {
      */
     @GetMapping("kakaoLogin")
     public String kakaoLogin() {
-        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&client_id="+client_id+"&redirect_uri="+redirect_uri;
+        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&kakaoClientId="+kakaoClientId+"&kakaoRedirectUri="+kakaoRedirectUri;
 
         return "redirect:"+location;
     }
@@ -180,21 +189,76 @@ public class MemberController {
      * 카카오 인증 API 호출 후 리다이렉트 메소드
      * 토큰 확인 -> 멤버 DTO에 대입 -> 로그인 처리
      */
-    @GetMapping("login/oauth2/kakao") // yml에 등록한 redirect_uri의 경로
+    @GetMapping("login/oauth2/kakao") // yml에 등록한 kakaoRedirectUri의 경로
     public String callback(@RequestParam("code") String code, HttpServletRequest req, RedirectAttributes ra) {
-        String accessToken = KakaoService.getAccessTokenFromKakao(code);
-        KakaoUserInfoResponseDto userInfo = KakaoService.getUserInfo(accessToken);
+        // 1. 토큰 획득
+    	String accessToken = KakaoService.getAccessTokenFromKakao(code);
+    	// 2. 유저 정보 획득
+        KakaoUserInfoResponseDTO userInfo = KakaoService.getUserInfo(accessToken);
 
-        // 2. 로그인/회원가입 처리
+        // 3. 로그인/회원가입 처리
         // memberService.kakaoLogin 내에서 DB 조회 후 없으면 INSERT, 있으면 로그인 처리
         Member loginMember = service.kakaoLogin(userInfo);
 
         if (loginMember != null) {
-            // 3. 기존 일반 로그인과 동일하게 세션에 정보 저장
             req.getSession().setAttribute("loginMember", loginMember);
             return "redirect:/main";
         } else {
             ra.addFlashAttribute("message", "카카오 로그인 중 오류가 발생했습니다.");
+            return "redirect:/";
+        }
+    }
+    
+    
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 네이버 인증 API 호출
+     */
+    @GetMapping("naverLogin")
+    public String naverLogin() {
+        // state: 사이트 간 요청 위조(CSRF) 공격 방지를 위한 임의의 상태 토큰 (보통 난수 생성 권장)
+        // 여기서는 테스트를 위해 고정 문자열을 사용하거나 UUID를 활용할 수 있습니다. (추후 수정 필요)
+        String state = "naver_login_state_test"; 
+        
+        String location = "https://nid.naver.com/oauth2.0/authorize"
+                + "?response_type=code"
+                + "&client_id=" + naverClientId
+                + "&redirect_uri=" + naverRedirectUri
+                + "&state=" + state;
+
+        return "redirect:" + location;
+    }
+    
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-26
+     * 네이버 인증 API 호출 후 리다이렉트 메소드
+     * 토큰 확인 -> 네이버 DTO 대입 -> 로그인 처리
+     */
+    @GetMapping("login/oauth2/naver")
+    public String naverCallback(@RequestParam("code") String code, 
+                                @RequestParam("state") String state, 
+                                HttpServletRequest req, 
+                                RedirectAttributes ra) {
+
+        // 1. 네이버로부터 액세스 토큰 획득
+        String accessToken = naverService.getAccessTokenFromNaver(code, state);
+
+        // 2. 유저 정보 획득 (Map 대신 NaverUserInfoResponseDto 사용)
+        NaverUserInfoResponseDTO userInfo = naverService.getUserInfo(accessToken);
+
+        // 3. 로그인/회원가입 처리
+        // memberService.naverLogin 메서드 매개변수 타입을 NaverUserInfoResponseDto로 변경해야 합니다.
+        Member loginMember = service.naverLogin(userInfo);
+
+        if (loginMember != null) {
+            // 세션에 로그인 정보 저장
+            req.getSession().setAttribute("loginMember", loginMember);
+            return "redirect:/main";
+        } else {
+            // 에러 메시지 수정 (네이버 로그인으로 변경)
+            ra.addFlashAttribute("message", "네이버 로그인 중 오류가 발생했습니다.");
             return "redirect:/";
         }
     }
