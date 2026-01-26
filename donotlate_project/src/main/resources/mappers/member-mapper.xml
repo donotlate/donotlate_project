@@ -59,4 +59,53 @@
         SET MEMBER_PW = #{memberPw}
         WHERE MEMBER_EMAIL = #{memberEmail}
     </update>
+
+    <select id="findMemberBySocial" resultType="com.late.donot.member.model.dto.Member">
+        SELECT 
+            MEMBER_NO, 
+            MEMBER_EMAIL, 
+            MEMBER_NAME, 
+            MEMBER_PW, 
+            MEMBER_DEL_FL, 
+            AUTHORITY, 
+            PROFILE_IMG, 
+            ENROLL_DATE, 
+            UPDATE_DATE, 
+            SOCIAL_TYPE, 
+            SOCIAL_ID
+        FROM DNL."MEMBER"
+        WHERE SOCIAL_ID = #{socialId}
+        AND SOCIAL_TYPE = #{socialType}
+        AND MEMBER_DEL_FL = 'N'
+    </select>
+
+    <insert id="insertSocialMember" parameterType="com.late.donot.member.model.dto.Member" useGeneratedKeys="true">
+        <selectKey keyProperty="memberNo" resultType="_int" order="BEFORE">
+            SELECT SEQ_MEMBER.NEXTVAL FROM DUAL
+        </selectKey>
+        
+        INSERT INTO DNL."MEMBER" (
+            MEMBER_NO,
+            MEMBER_EMAIL,
+            MEMBER_NAME,
+            MEMBER_PW,
+            MEMBER_DEL_FL,
+            AUTHORITY,
+            PROFILE_IMG,
+            ENROLL_DATE,
+            SOCIAL_TYPE,
+            SOCIAL_ID
+        ) VALUES (
+            #{memberNo},
+            #{memberEmail},
+            #{memberName},
+            NULL,
+            'N',
+            1,
+            #{profileImg},
+            SYSDATE,
+            #{socialType},
+            #{socialId}
+        )
+    </insert>
 </mapper>
