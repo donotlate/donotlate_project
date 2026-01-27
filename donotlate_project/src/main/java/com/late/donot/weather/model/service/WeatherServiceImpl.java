@@ -72,11 +72,11 @@ public class WeatherServiceImpl implements WeatherService{
 		Double precipitation = null;
 		Double snowfall = null;
 
-		if ("1".equals(pty) || "4".equals(pty)) { // 비 / 소나기
+		if ("1".equals(pty) || "4".equals(pty)) {
 		    precipitation = parseDoubleSafe(valueMap.get("RN1"));
 		}
 
-		if ("3".equals(pty)) { // 눈
+		if ("3".equals(pty)) {
 		    snowfall = parseDoubleSafe(valueMap.get("SNO"));
 		}
 		
@@ -247,53 +247,30 @@ public class WeatherServiceImpl implements WeatherService{
 	@Cacheable(value = "weatherHour", key = "#nx + ':' + #ny", unless = "#result == null || #result.isEmpty()")
 	@Override
 	public List<WeatherHour> getHourWeather(int nx, int ny) {
-		
-		BaseDateTime base = getVilageBaseDateTime();
-		
-		String response = weatherClient.getVilageFcst(
-				serviceKey,
-				1,
-				1000,
-				"JSON",
-				base.getBaseDate(),
-				base.getBaseTime(),
-				nx,
-				ny);
-		
-		log.info("단기예보 raw response = {}", response);
-		
-		List<WeatherHourApi> items = parseVilageItems(response);
-		
-		if (items.isEmpty()) {
-	        return List.of();
-	    }
-		
-		LocalDateTime now = LocalDateTime.now();
-		
-		LocalDateTime hourBase = now.withMinute(0).withSecond(0).withNano(0);
-		
-		List<WeatherHourApi> filtered = items.stream().filter(item -> {
-	                     LocalDateTime fcstDateTime = LocalDateTime.parse(
-	                             						item.getFcstDate() + item.getFcstTime(),
-	                             						DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
-	                     return !fcstDateTime.isBefore(hourBase)
-	                         && fcstDateTime.isBefore(hourBase.plusHours(10));
-	                 })
-	                 .collect(Collectors.toList());
+	    BaseDateTime base = getVilageBaseDateTime();
+	    String response = weatherClient.getVilageFcst(serviceKey, 1, 1000, "JSON", base.getBaseDate(), base.getBaseTime(), nx, ny);
+	    
+	    List<WeatherHourApi> items = parseVilageItems(response);
+	    if (items.isEmpty()) return List.of();
 
-	    if (filtered.isEmpty()) {
-	        return List.of();
-	    }
-		
-		Map<String, List<WeatherHourApi>> timeGroup = filtered.stream()
-													     .collect(Collectors.groupingBy(WeatherHourApi::getFcstTime));
-		
-		
-		return timeGroup.entrySet().stream()
-		        .sorted(Map.Entry.comparingByKey())
-		        .limit(8)
-		        .map(entry -> toWeatherHour(entry.getKey(), entry.getValue()))
-		        .collect(Collectors.toList());
+	    LocalDateTime now = LocalDateTime.now();
+	    LocalDateTime hourBase = now.withMinute(0).withSecond(0).withNano(0);
+
+	    Map<String, List<WeatherHourApi>> timeGroup = items.stream()
+	        .collect(Collectors.groupingBy(item -> item.getFcstDate() + item.getFcstTime()));
+
+	    return timeGroup.entrySet().stream()
+	    		.sorted(Map.Entry.comparingByKey()) 
+	    		.map(entry -> {	
+	    			String fcstTime = entry.getKey().substring(8);
+	    			LocalDateTime fcstDateTime = LocalDateTime.parse(entry.getKey(), DateTimeFormatter.ofPattern("yyyyMMddHHmm"));
+	    			
+	            return Map.entry(fcstDateTime, toWeatherHour(fcstTime, entry.getValue()));
+	        })
+	        .filter(entry -> !entry.getKey().isBefore(hourBase))
+	        .limit(12) 
+	        .map(Map.Entry::getValue)
+	        .collect(Collectors.toList());
 	}
 	
 	/** 작성자 : 이승준
