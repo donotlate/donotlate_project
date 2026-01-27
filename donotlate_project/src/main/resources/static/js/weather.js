@@ -13,8 +13,8 @@ function loadWeather(refresh = false) {
       const lon = position.coords.longitude;
 
       const url = refresh
-        ? `/weather/main?lat=${lat}&lon=${lon}&refresh=true`
-        : `/weather/main?lat=${lat}&lon=${lon}`;
+      ? `/weather/dust?lat=${lat}&lon=${lon}&refresh=true`
+      : `/weather/dust?lat=${lat}&lon=${lon}`;
 
       fetch(url)
         .then(res => {
@@ -23,6 +23,7 @@ function loadWeather(refresh = false) {
         })
         .then(data => {
           renderWeather(data);
+          loadUltraviolet();
         })
         .catch(err => {
           console.error(err);
@@ -63,6 +64,12 @@ function getCurrentIconClass(icon) {
 function renderWeather(data) {
   document.getElementById("weather-location").innerText = data.location;
 
+  document.getElementById("detail-wind-speed").textContent = `${data.windSpeed} m/s`;
+
+  document.getElementById("detail-humidity").textContent = `${data.humidity}%`;
+
+  document.getElementById("detail-humidity-bar").style.width = `${data.humidity}%`;
+
   document.getElementById("weather-datetime").innerText = `${data.date} ${data.time}`;
 
   document.getElementById("weather-temp").innerText = Math.round(data.temperature);
@@ -74,6 +81,23 @@ function renderWeather(data) {
   document.getElementById("weather-wind").innerText = `${data.windSpeed}m/s`;
 
   document.getElementById("weather-feelslike").innerText = data.feelsLike + "°";
+
+  if (data.pm25 !== null && data.pm25 !== undefined) {
+  const pmEl = document.getElementById("detail-pm");
+  const gradeEl = document.getElementById("detail-pm-grade");
+
+  pmEl.innerText = `${data.pm25} ㎍/㎥`;
+  gradeEl.innerText = data.pmGrade;
+
+  gradeEl.className = "text-muted";
+  if (data.pmGrade.includes("매우")) gradeEl.classList.add("text-blue-600");
+  else if (data.pmGrade.includes("좋음")) gradeEl.classList.add("text-green-600");
+  else if (data.pmGrade.includes("보통")) gradeEl.classList.add("text-yellow-600");
+  else if (data.pmGrade.includes("나쁨")) gradeEl.classList.add("text-orange-600");
+  } else {
+  document.getElementById("detail-pm").innerText = "- ㎍/㎥";
+  document.getElementById("detail-pm-grade").innerText = "정보 없음";
+  }
 }
 
 function renderLoadingState() {
@@ -209,26 +233,30 @@ function renderWeekWeather(list) {
   for (let i = 0; i < 8; i++) {
     const data = list[i];
     if (!data) break;
+    
+    const conditionText = data.condition && data.condition.includes("/")? data.condition.replace(" / ", " → ") : data.condition ?? "";
 
-    document.getElementById(`week-day-${i}`).innerText =
-      data.dayLabel;
+    console.log(`[WEEK ${i}]`, {
+      day: data.dayLabel,
+      condition_raw: data.condition,
+      condition_render: conditionText,
+      icon: data.icon,
+      rain: data.rainProb
+    });
+    
+    document.getElementById(`week-day-${i}`).innerText = data.dayLabel;
 
-    document.getElementById(`week-condition-${i}`).innerText =
-      data.condition;
+    document.getElementById(`week-condition-${i}`).innerText = conditionText;
 
-    document.getElementById(`week-rain-${i}`).innerText =
-      `${data.rainProb}%`;
+    document.getElementById(`week-rain-${i}`).innerText = `${data.rainProb}%`;
 
-    document.getElementById(`week-min-${i}`).innerText =
-      `${data.minTemp}°`;
+    document.getElementById(`week-min-${i}`).innerText = `${data.minTemp}°`;
 
-    document.getElementById(`week-max-${i}`).innerText =
-      `${data.maxTemp}°`;
+    document.getElementById(`week-max-${i}`).innerText = `${data.maxTemp}°`;
 
     const iconEl = document.getElementById(`week-icon-${i}`);
-    iconEl.className =
-      "fa-solid text-2xl w-8 text-center " +
-      getWeekIconClass(data.icon);
+
+    iconEl.className ="fa-solid text-2xl w-8 text-center " + getWeekIconClass(data.icon);
   }
 }
 
@@ -249,6 +277,45 @@ function getWeekIconClass(icon) {
     default:
       return "fa-question text-gray-400";
   }
+}
+
+function loadUltraviolet() {
+
+  const areaNo = "1100000000";
+
+  fetch(`/weather/ultraviolet?areaNo=${areaNo}`)
+    .then(res => {
+      if (!res.ok) throw new Error("자외선 응답 오류");
+      return res.json();
+    })
+    .then(data => {
+      const levelEl = document.getElementById("detail-uv-level");
+      const indexEl = document.getElementById("detail-uv-index");
+
+      if (!levelEl || !indexEl) return;
+
+      if (data.uvIndex < 0) {
+        levelEl.innerText = "-";
+        indexEl.innerText = "UV 지수 -";
+        return;
+      }
+
+      levelEl.innerText = data.level;
+      indexEl.innerText = `UV 지수 ${data.uvIndex}`;
+
+      levelEl.className = "text-3xl font-bold mb-1";
+      if (data.level === "낮음") levelEl.classList.add("text-green-600");
+      else if (data.level === "보통") levelEl.classList.add("text-yellow-600");
+      else if (data.level === "높음") levelEl.classList.add("text-orange-600");
+      else levelEl.classList.add("text-red-600");
+    })
+    .catch(err => {
+      console.error("자외선 지수 조회 실패", err);
+      const levelEl = document.getElementById("detail-uv-level");
+      const indexEl = document.getElementById("detail-uv-index");
+      if (levelEl) levelEl.innerText = "-";
+      if (indexEl) indexEl.innerText = "UV 지수 -";
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
