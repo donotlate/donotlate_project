@@ -44,10 +44,10 @@ public class KakaoService {
                            "&code=" + code)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> 
-                    response.bodyToMono(String.class).flatMap(errorBody -> {
-                        log.error("[Kakao Token Error] {}", errorBody);
-                        return Mono.error(new RuntimeException("카카오 토큰 발급 실패"));
-                    }))
+                response.bodyToMono(String.class).flatMap(errorBody -> {
+                    log.error("[Kakao Token Error] 상태코드: {}, 에러내용: {}", response.statusCode(), errorBody);
+                    return Mono.error(new RuntimeException("카카오 토큰 발급 중 오류 발생"));
+                }))
                 .bodyToMono(KakaoTokenResponseDTO.class)
                 .block();
 
@@ -66,10 +66,10 @@ public class KakaoService {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> 
-                    response.bodyToMono(String.class).flatMap(errorBody -> {
-                        log.error("[Kakao User Error] {}", errorBody);
-                        return Mono.error(new RuntimeException("카카오 사용자 정보 조회 실패"));
-                    }))
+                response.bodyToMono(String.class).flatMap(errorBody -> {
+                    log.error("[Kakao User Info Error] 상태코드: {}, 에러내용: {}", response.statusCode(), errorBody);
+                    return Mono.error(new RuntimeException("카카오 사용자 정보 조회 중 오류 발생"));
+                }))
                 .bodyToMono(KakaoUserInfoResponseDTO.class)
                 .block();
     }

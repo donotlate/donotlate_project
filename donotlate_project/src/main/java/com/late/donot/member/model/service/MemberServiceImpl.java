@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.context.Context;
 import org.thymeleaf.spring6.SpringTemplateEngine;
 
+import com.late.donot.member.model.dto.GoogleUserInfoResponseDTO;
 import com.late.donot.member.model.dto.KakaoUserInfoResponseDTO;
 import com.late.donot.member.model.dto.Member;
 import com.late.donot.member.model.dto.NaverUserInfoResponseDTO;
@@ -225,7 +226,7 @@ public class MemberServiceImpl implements MemberService {
      */
     @Override
     public Member kakaoLogin(KakaoUserInfoResponseDTO userInfo) {
-        // 1. 카카오 고유 ID (long 또는 String) 추출
+        // 1. 카카오 고유 ID (DTO 구조에 맞춰 접근, 카카오는 long 또는 String) 추출
         String socialId = String.valueOf(userInfo.getId());
         String email = userInfo.getKakaoAccount().getEmail();
         String nickname = userInfo.getKakaoAccount().getProfile().getNickName();
@@ -234,6 +235,10 @@ public class MemberServiceImpl implements MemberService {
         Member member = mapper.findMemberBySocial(socialId, "KAKAO");
 
         if (member == null) {
+        	//중복확인
+        	if (checkId(email) > 0) {
+        		return null;
+            }
             // 3. 없다면 신규 회원 가입 처리
             member = new Member();
             member.setMemberEmail(email);
@@ -262,12 +267,48 @@ public class MemberServiceImpl implements MemberService {
         Member member = mapper.findMemberBySocial(socialId, "NAVER");
 
         if (member == null) {
+        	//중복확인
+        	if (checkId(email) > 0) {
+                return null;
+            }
             // 3. 없다면 신규 회원 가입 처리
             member = new Member();
             member.setMemberEmail(email);
             member.setMemberName(nickname);
             member.setSocialId(socialId);
             member.setSocialType("NAVER");
+            mapper.insertSocialMember(member);
+        }
+
+        return member;
+    }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-27
+     * 구글 계정 로그인
+     */
+    @Override
+    public Member googleLogin(GoogleUserInfoResponseDTO userInfo) {
+        // 1. 구글 정보 추출 (DTO 구조에 맞춰 접근, 구글은 최상위에 id, email, name이 바로 있음)
+        String socialId = userInfo.getId();
+        String email = userInfo.getEmail();
+        String name = userInfo.getName();
+
+        // 2. DB에서 해당 소셜 정보로 가입된 회원이 있는지 확인
+        Member member = mapper.findMemberBySocial(socialId, "GOOGLE");
+
+        if (member == null) {
+        	//중복확인
+        	if (checkId(email) > 0) {
+        		return null;
+            }
+            // 3. 없다면 신규 회원 가입 처리
+            member = new Member();
+            member.setMemberEmail(email);
+            member.setMemberName(name);
+            member.setSocialId(socialId);
+            member.setSocialType("GOOGLE");
             mapper.insertSocialMember(member);
         }
 
