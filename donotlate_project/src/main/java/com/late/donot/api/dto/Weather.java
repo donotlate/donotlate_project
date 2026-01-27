@@ -20,4 +20,10 @@ public class Weather {
 	private String date;
 	private String time;
 	private String location;
+	
+	private Integer pm25;
+    private String pmGrade;
+    
+    private Double precipitation;
+    private Double snowfall;
 }
