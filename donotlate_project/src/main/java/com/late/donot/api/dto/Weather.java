@@ -23,4 +23,7 @@ public class Weather {
 	
 	private Integer pm25;
     private String pmGrade;
+    
+    private Double precipitation;
+    private Double snowfall;
 }

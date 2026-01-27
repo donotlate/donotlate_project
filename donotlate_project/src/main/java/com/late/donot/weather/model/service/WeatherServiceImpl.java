@@ -67,6 +67,19 @@ public class WeatherServiceImpl implements WeatherService{
 						WeatherApi :: getObsrValue,
 						(a,b) -> a));
 		
+		String pty = valueMap.get("PTY");
+
+		Double precipitation = null;
+		Double snowfall = null;
+
+		if ("1".equals(pty) || "4".equals(pty)) { // 비 / 소나기
+		    precipitation = parseDoubleSafe(valueMap.get("RN1"));
+		}
+
+		if ("3".equals(pty)) { // 눈
+		    snowfall = parseDoubleSafe(valueMap.get("SNO"));
+		}
+		
 		WeatherApi first = items.get(0);
 		String date = formatDate(first.getBaseDate());
 		String time = formatTime(first.getBaseTime());
@@ -77,16 +90,18 @@ public class WeatherServiceImpl implements WeatherService{
 	    double wind = parseDouble(valueMap.get("WSD"));
 	    double feelsLike = calculateFeelslike(temp, wind);
 				
-		return Weather.builder()
-				.temperature(parseDouble(valueMap.get("T1H")))
-				.feelsLike(feelsLike)
-				.humidity(parseInt(valueMap.get("REH")))
-				.windSpeed(parseDouble(valueMap.get("WSD")))
-				.condition(resolveCondition(valueMap))
-				.date(date)
-				.time(time)
-				.location(location)
-				.build();
+	    return Weather.builder()
+	    	    .temperature(temp)
+	    	    .feelsLike(feelsLike)
+	    	    .humidity(parseInt(valueMap.get("REH")))
+	    	    .windSpeed(parseDouble(valueMap.get("WSD")))
+	    	    .condition(resolveCondition(valueMap))
+	    	    .precipitation(precipitation)
+	    	    .snowfall(snowfall)
+	    	    .date(date)
+	    	    .time(time)
+	    	    .location(location)
+	    	    .build();
 	}
 	
 	/** 작성자 : 이승준
@@ -749,6 +764,15 @@ public class WeatherServiceImpl implements WeatherService{
 	        .maxTemp(maxTemp)
 	        .rainProb(maxRain)
 	        .build();
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-27
+	 *  강수량,적살량 에러방지코드
+	 */
+	private Double parseDoubleSafe(String value) {
+	    if (value == null || value.contains("없음")) return null;
+	    return Double.parseDouble(value);
 	}
 	
 	

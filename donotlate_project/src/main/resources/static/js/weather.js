@@ -1,4 +1,3 @@
-// 현재날씨 JS
 function loadWeather(refresh = false) {
   if (!navigator.geolocation) {
     alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
@@ -23,7 +22,6 @@ function loadWeather(refresh = false) {
         })
         .then(data => {
           renderWeather(data);
-          loadUltraviolet();
         })
         .catch(err => {
           console.error(err);
@@ -98,6 +96,9 @@ function renderWeather(data) {
   document.getElementById("detail-pm").innerText = "- ㎍/㎥";
   document.getElementById("detail-pm-grade").innerText = "정보 없음";
   }
+
+  renderPrecipitationDetail(data);
+  
 }
 
 function renderLoadingState() {
@@ -147,10 +148,30 @@ function loadHourWeather() {
   );
 }
 
+function getHourNumber(timeStr) {
+  return parseInt(timeStr.split(":")[0], 10);
+}
+
 function renderHourWeather(list) {
-  for (let i = 0; i < 8; i++) {
-    const data = list[i];
-    if (!data) break;
+  if (!list || list.length === 0) return;
+
+  const now = new Date();
+  const nowHour = now.getHours();
+
+  const todayList = list.filter(item => {
+    const hour = getHourNumber(item.time);
+    return hour >= nowHour;
+  });
+
+  const nextDayList = list.filter(item => {
+    const hour = getHourNumber(item.time);
+    return hour < nowHour;
+  });
+
+  const finalList = [...todayList, ...nextDayList].slice(0, 8);
+
+  for (let i = 0; i < finalList.length; i++) {
+    const data = finalList[i];
 
     document.getElementById(`hour-time-${i}`).innerText =
       i === 0 ? "지금" : data.time;
@@ -165,7 +186,7 @@ function renderHourWeather(list) {
     iconEl.className = getHourIconClass(data.icon);
   }
 
-  syncCurrentIconFromHour(list);
+  syncCurrentIconFromHour(finalList);
 }
 
 function getHourIconClass(icon) {
@@ -279,43 +300,38 @@ function getWeekIconClass(icon) {
   }
 }
 
-function loadUltraviolet() {
+function renderPrecipitationDetail(weather) {
+    const iconEl  = document.getElementById("detail-precip-icon");
+    const titleEl = document.getElementById("detail-precip-title");
+    const valueEl = document.getElementById("detail-precip-value");
+    const descEl  = document.getElementById("detail-precip-desc");
 
-  const areaNo = "1100000000";
-
-  fetch(`/weather/ultraviolet?areaNo=${areaNo}`)
-    .then(res => {
-      if (!res.ok) throw new Error("자외선 응답 오류");
-      return res.json();
-    })
-    .then(data => {
-      const levelEl = document.getElementById("detail-uv-level");
-      const indexEl = document.getElementById("detail-uv-index");
-
-      if (!levelEl || !indexEl) return;
-
-      if (data.uvIndex < 0) {
-        levelEl.innerText = "-";
-        indexEl.innerText = "UV 지수 -";
+    if (!weather) {
+        valueEl.textContent = "-";
+        descEl.textContent = "강수 정보 없음";
         return;
-      }
+    }
 
-      levelEl.innerText = data.level;
-      indexEl.innerText = `UV 지수 ${data.uvIndex}`;
+    if (weather.snowfall !== null) {
+        iconEl.className = "fa-solid fa-snowflake text-blue-500";
+        titleEl.textContent = "적설 정보";
+        valueEl.textContent = `${weather.snowfall.toFixed(1)} cm`;
+        descEl.textContent = "최근 1시간 적설량";
+        return;
+    }
 
-      levelEl.className = "text-3xl font-bold mb-1";
-      if (data.level === "낮음") levelEl.classList.add("text-green-600");
-      else if (data.level === "보통") levelEl.classList.add("text-yellow-600");
-      else if (data.level === "높음") levelEl.classList.add("text-orange-600");
-      else levelEl.classList.add("text-red-600");
-    })
-    .catch(err => {
-      console.error("자외선 지수 조회 실패", err);
-      const levelEl = document.getElementById("detail-uv-level");
-      const indexEl = document.getElementById("detail-uv-index");
-      if (levelEl) levelEl.innerText = "-";
-      if (indexEl) indexEl.innerText = "UV 지수 -";
-    });
+    if (weather.precipitation !== null) {
+        iconEl.className = "fa-solid fa-cloud-rain text-blue-600";
+        titleEl.textContent = "강수 정보";
+        valueEl.textContent = `${weather.precipitation.toFixed(1)} mm`;
+        descEl.textContent = "최근 1시간 강수량";
+        return;
+    }
+
+    iconEl.className = "fa-solid fa-cloud-sun text-gray-400";
+    titleEl.textContent = "강수 정보";
+    valueEl.textContent = "0.0 mm";
+    descEl.textContent = "최근 1시간 강수량";
 }
 
 document.addEventListener("DOMContentLoaded", () => {
