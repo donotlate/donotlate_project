@@ -188,7 +188,10 @@ public class MemberController {
      */
     @GetMapping("kakaoLogin")
     public String kakaoLogin() {
-        String location = "https://kauth.kakao.com/oauth/authorize?response_type=code&kakaoClientId="+kakaoClientId+"&kakaoRedirectUri="+kakaoRedirectUri;
+    	String location = "https://kauth.kakao.com/oauth/authorize"
+                + "?client_id=" + kakaoClientId 
+                + "&redirect_uri=" + kakaoRedirectUri 
+                + "&response_type=code";
 
         return "redirect:"+location;
     }
