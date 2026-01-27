@@ -9,9 +9,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.late.donot.api.dto.CoordinatePoint;
+import com.late.donot.api.dto.DustWeather;
+//import com.late.donot.api.dto.UltravioletWeather;
 import com.late.donot.api.dto.Weather;
 import com.late.donot.api.dto.WeatherHour;
 import com.late.donot.api.dto.WeekWeather;
+import com.late.donot.weather.model.service.DustWeatherService;
+//import com.late.donot.weather.model.service.UltravioletWeatherService;
 import com.late.donot.weather.model.service.WeatherService;
 import com.late.donot.weather.uitl.CoordinateConverter;
 
@@ -24,6 +28,12 @@ public class WeatherController {
 	
 	@Autowired
 	private WeatherService service;
+	
+	@Autowired
+	private DustWeatherService dustService;
+	
+//	@Autowired
+//	private UltravioletWeatherService ultravioletService;
 	
 	/** 작성자 : 이승준
 	 *  작성일 : 2026-01-22
@@ -67,9 +77,8 @@ public class WeatherController {
 	 *  주간 날씨 
 	 */
 	@GetMapping("/week")
-	public List<WeekWeather> getWeekWeather(
-	        @RequestParam("lat") double lat,
-	        @RequestParam("lon") double lon) {
+	public List<WeekWeather> getWeekWeather(@RequestParam("lat") double lat,
+	        								@RequestParam("lon") double lon) {
 
 	    CoordinatePoint coordinate =
 	        CoordinateConverter.toCoordinate(lat, lon);
@@ -85,6 +94,42 @@ public class WeatherController {
 	    );
 	}
 	
+	 /** 작성자 : 이승준
+	  *  작성일 : 2026-01-27
+	  *  미세먼지
+	 */
+	@GetMapping("/dust")
+	public Weather getMainWeatherWithDust(@RequestParam("lat") double lat,
+	        							  @RequestParam("lon") double lon,
+	        							  @RequestParam(value = "refresh", defaultValue = "false") boolean refresh) {
+		CoordinatePoint point = CoordinateConverter.toCoordinate(lat, lon);
+		int nx = point.getNx();
+		int ny = point.getNy();
+		
+	    Weather weather = refresh
+	        ? service.mainWeatherRefresh(nx, ny, lat, lon)
+	        : service.mainWeatherDto(nx, ny, lat, lon);
+
+	    DustWeather dust = dustService.getSeoulDust();
+	    if (dust != null) {
+	        weather.setPm25(dust.getPm25());
+	        weather.setPmGrade(dust.getGrade());
+	    }
+
+	    return weather;
+	}
 	
+//	/** 작성자 : 이승준
+//	 *  작성일 : 2026-01-27
+//	 *  자외선
+//	 */
+//	@GetMapping("/ultraviolet")
+//    public UltravioletWeather getUltraviolet(
+//            @RequestParam("areaNo") String areaNo
+//    ) {
+//        return ultravioletService.getTodayUv(areaNo);
+//    }
 
 }
+
+
