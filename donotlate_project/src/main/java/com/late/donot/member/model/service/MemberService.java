@@ -2,6 +2,7 @@ package com.late.donot.member.model.service;
 
 import java.util.Map;
 
+import com.late.donot.member.model.dto.GoogleUserInfoResponseDTO;
 import com.late.donot.member.model.dto.KakaoUserInfoResponseDTO;
 import com.late.donot.member.model.dto.Member;
 import com.late.donot.member.model.dto.NaverUserInfoResponseDTO;
@@ -63,4 +64,11 @@ public interface MemberService {
      * 네이버 계정 로그인
      */
 	Member naverLogin(NaverUserInfoResponseDTO userInfo);
+
+	/**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-27
+     * 구글 계정 로그인
+     */
+	Member googleLogin(GoogleUserInfoResponseDTO userInfo);
 }

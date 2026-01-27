@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.late.donot.member.model.dto.GoogleUserInfoResponseDTO;
 import com.late.donot.member.model.dto.KakaoUserInfoResponseDTO;
 import com.late.donot.member.model.dto.Member;
 import com.late.donot.member.model.dto.NaverUserInfoResponseDTO;
+import com.late.donot.member.model.service.GoogleService;
 import com.late.donot.member.model.service.KakaoService;
 import com.late.donot.member.model.service.MemberService;
 import com.late.donot.member.model.service.NaverService;
@@ -44,11 +46,19 @@ public class MemberController {
     
     @Value("${naver.redirect-uri}")
     private String naverRedirectUri;
-    
+       
     @Autowired
     private NaverService naverService;
-    
 
+    @Value("${google.client-id}")
+	private String googleClientId;
+
+	@Value("${google.redirect-uri}")
+	private String googleRedirectUri;
+	
+	@Autowired
+	private GoogleService googleService;
+    
     /**
      * 작성자 : 유건우
      * 작성일 : 2026-01-21
@@ -193,7 +203,7 @@ public class MemberController {
      * 토큰 확인 -> 멤버 DTO에 대입 -> 로그인 처리
      */
     @GetMapping("login/oauth2/kakao") // yml에 등록한 kakaoRedirectUri의 경로
-    public String callback(@RequestParam("code") String code, HttpServletRequest req, RedirectAttributes ra) {
+    public String kakaoCallback(@RequestParam("code") String code, HttpServletRequest req, RedirectAttributes ra) {
         // 1. 토큰 획득
     	String accessToken = KakaoService.getAccessTokenFromKakao(code);
     	// 2. 유저 정보 획득
@@ -207,7 +217,7 @@ public class MemberController {
             req.getSession().setAttribute("loginMember", loginMember);
             return "redirect:/main";
         } else {
-            ra.addFlashAttribute("message", "카카오 로그인 중 오류가 발생했습니다.");
+            ra.addFlashAttribute("message", "이미 동일한 이메일로 가입된 계정이 존재합니다. 일반 로그인을 이용해 주세요.");
             return "redirect:/";
         }
     }
@@ -252,7 +262,6 @@ public class MemberController {
         NaverUserInfoResponseDTO userInfo = naverService.getUserInfo(accessToken);
 
         // 3. 로그인/회원가입 처리
-        // memberService.naverLogin 메서드 매개변수 타입을 NaverUserInfoResponseDto로 변경해야 합니다.
         Member loginMember = service.naverLogin(userInfo);
 
         if (loginMember != null) {
@@ -261,7 +270,52 @@ public class MemberController {
             return "redirect:/main";
         } else {
             // 에러 메시지 수정 (네이버 로그인으로 변경)
-            ra.addFlashAttribute("message", "네이버 로그인 중 오류가 발생했습니다.");
+            ra.addFlashAttribute("message", "이미 동일한 이메일로 가입된 계정이 존재합니다. 일반 로그인을 이용해 주세요.");
+            return "redirect:/";
+        }
+    }
+    
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-27
+     * 구글 인증 API 호출
+     */
+    @GetMapping("googleLogin")
+    public String googleLogin() {
+        String location = "https://accounts.google.com/o/oauth2/v2/auth"
+                + "?client_id=" + googleClientId
+                + "&redirect_uri=" + googleRedirectUri
+                + "&response_type=code"
+                + "&scope=email profile"; // 이메일과 프로필 정보를 가져오겠다는 권한 범위
+
+        return "redirect:" + location;
+    }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-27
+     * 구글 인증 API 호출 후 리다이렉트 메소드
+     * 토큰 확인 -> 네이버 DTO 대입 -> 로그인 처리
+     */
+    @GetMapping("login/oauth2/google")
+    public String googleCallback(@RequestParam("code") String code, 
+                                 HttpServletRequest req, 
+                                 RedirectAttributes ra) {
+        
+        // 1. 구글로부터 액세스 토큰 획득
+        String accessToken = googleService.getAccessTokenFromGoogle(code);
+        
+        // 2. 유저 정보 획득 (DTO 활용)
+        GoogleUserInfoResponseDTO userInfo = googleService.getUserInfo(accessToken);
+        
+        // 3. 로그인/회원가입 처리
+        Member loginMember = service.googleLogin(userInfo);
+        
+        if (loginMember != null) {
+            req.getSession().setAttribute("loginMember", loginMember);
+            return "redirect:/main";
+        } else {
+            ra.addFlashAttribute("message", "이미 동일한 이메일로 가입된 계정이 존재합니다. 일반 로그인을 이용해 주세요.");
             return "redirect:/";
         }
     }

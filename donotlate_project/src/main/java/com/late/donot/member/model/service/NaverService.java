@@ -46,10 +46,10 @@ public class NaverService {
                         .build())
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> 
-                    response.bodyToMono(String.class).flatMap(errorBody -> {
-                        log.error("[Naver Token Error] {}", errorBody);
-                        return Mono.error(new RuntimeException("네이버 토큰 발급 실패"));
-                    }))
+                response.bodyToMono(String.class).flatMap(errorBody -> {
+                    log.error("[Naver Token Error] 상태코드: {}, 에러내용: {}", response.statusCode(), errorBody);
+                    return Mono.error(new RuntimeException("네이버 토큰 발급 중 오류 발생"));
+                }))
                 .bodyToMono(NaverTokenResponseDTO.class)
                 .block();
 
@@ -68,10 +68,10 @@ public class NaverService {
                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .retrieve()
                 .onStatus(HttpStatusCode::is4xxClientError, response -> 
-                    response.bodyToMono(String.class).flatMap(errorBody -> {
-                        log.error("[Naver User Error] {}", errorBody);
-                        return Mono.error(new RuntimeException("네이버 사용자 정보 조회 실패"));
-                    }))
+                response.bodyToMono(String.class).flatMap(errorBody -> {
+                    log.error("[Naver User Info Error] 상태코드: {}, 에러내용: {}", response.statusCode(), errorBody);
+                    return Mono.error(new RuntimeException("네이버 사용자 정보 조회 중 오류 발생"));
+                }))
                 .bodyToMono(NaverUserInfoResponseDTO.class)
                 .block();
     }
