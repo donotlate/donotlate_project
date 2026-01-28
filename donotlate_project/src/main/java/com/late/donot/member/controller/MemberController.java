@@ -69,7 +69,6 @@ public class MemberController {
 		
 		Member loginMember = service.login(inputMember);
 		
-		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		
 		
 		if(loginMember == null) {

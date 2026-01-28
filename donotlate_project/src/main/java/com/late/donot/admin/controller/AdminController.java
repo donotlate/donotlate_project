@@ -1,14 +1,17 @@
 package com.late.donot.admin.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.support.SessionStatus;
 
 import com.late.donot.admin.model.service.AdminService;
 import com.late.donot.member.model.dto.Member;
 
+import jakarta.mail.Session;
 import jakarta.servlet.http.HttpSession;
 
 
@@ -19,6 +22,13 @@ public class AdminController {
 	@Autowired
 	private AdminService service;
 	
+	/** 작성자 양충모
+	 *  작성일 2026-01-26
+	 *  로그인
+	 * @param inputMember
+	 * @param session
+	 * @return
+	 */
 	@PostMapping("login")
 	public Member login(@RequestBody Member inputMember , HttpSession session) {
 		
@@ -31,5 +41,20 @@ public class AdminController {
 		System.out.println("관지자 정보" +loginMember);
 		return loginMember;
 
+	}
+	
+	/** 작성자: 양충모
+	 *  작성일: 01-28
+	 *  로그아웃
+	 * @param sessionStatus
+	 * @return
+	 */
+	@GetMapping("logout")
+	public String logout(HttpSession session) {
+		
+		session.invalidate();
+		
+		return "redirect:/";
+		
 	}
 }
