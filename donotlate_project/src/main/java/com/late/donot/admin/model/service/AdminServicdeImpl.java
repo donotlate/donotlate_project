@@ -45,7 +45,7 @@ public class AdminServicdeImpl implements AdminService {
 	// 유저 조회
 	@Override
 	public List<Member> getUsers(Member member) {
-		return mapper.getUsers(member);
+		return mapper.getUsers(member); 
 	}
 
 }
