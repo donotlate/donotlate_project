@@ -334,8 +334,74 @@ function renderPrecipitationDetail(weather) {
     descEl.textContent = "최근 1시간 강수량";
 }
 
+function loadUltraviolet() {
+
+  const SEOUL_AREA_NO = "1100000000";
+
+  fetch(`/weather/ultraviolet?areaNo=${SEOUL_AREA_NO}`)
+    .then(res => {
+      if (!res.ok) throw new Error("자외선 응답 오류");
+      return res.json();
+    })
+    .then(data => {
+      renderUltraviolet(data);
+    })
+    .catch(err => {
+      console.error(err);
+      renderUltraviolet(null);
+    });
+}
+
+function renderUltraviolet(data) {
+  const stateEl = document.getElementById("detail-uv-index");
+  const levelEl = document.getElementById("detail-uv-level");
+  const descEl  = document.getElementById("detail-uv-desc");
+
+  if (!data || data.uvIndex < 0) {
+    stateEl.textContent = "-";
+    levelEl.textContent = "";
+    descEl.textContent = "UV 지수 -";
+    return;
+  }
+
+  const UV_META = {
+    "낮음": {
+      color: "text-green-600",
+      label: "낮음"
+    },
+    "보통": {
+      color: "text-yellow-500",
+      label: "보통"
+    },
+    "높음": {
+      color: "text-orange-500",
+      label: "높음"
+    },
+    "매우높음": {
+      color: "text-red-600",
+      label: "매우 높음"
+    },
+    "위험": {
+      color: "text-purple-700",
+      label: "위험"
+    }
+  };
+
+    const meta = UV_META[data.level] ?? {};
+
+  stateEl.textContent = meta.label || data.level;
+  stateEl.className = `text-3xl font-bold mb-1 ${meta.color || "text-gray-800"}`;
+
+  levelEl.textContent = "";
+  levelEl.className = "";
+
+  descEl.textContent = `UV 지수 ${data.uvIndex}`;
+}
+
+
 document.addEventListener("DOMContentLoaded", () => {
   loadWeather(false);
   loadHourWeather();
   loadWeekWeather(); 
+  loadUltraviolet();
 });

@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.late.donot.api.dto.CoordinatePoint;
 import com.late.donot.api.dto.DustWeather;
-//import com.late.donot.api.dto.UltravioletWeather;
+import com.late.donot.api.dto.UltravioletWeather;
 import com.late.donot.api.dto.Weather;
 import com.late.donot.api.dto.WeatherHour;
 import com.late.donot.api.dto.WeekWeather;
 import com.late.donot.weather.model.service.DustWeatherService;
-//import com.late.donot.weather.model.service.UltravioletWeatherService;
+import com.late.donot.weather.model.service.UltravioletWeatherService;
 import com.late.donot.weather.model.service.WeatherService;
 import com.late.donot.weather.uitl.CoordinateConverter;
 
@@ -32,8 +32,8 @@ public class WeatherController {
 	@Autowired
 	private DustWeatherService dustService;
 	
-//	@Autowired
-//	private UltravioletWeatherService ultravioletService;
+	@Autowired
+	private UltravioletWeatherService ultravioletService;
 	
 	/** 작성자 : 이승준
 	 *  작성일 : 2026-01-22
@@ -119,16 +119,16 @@ public class WeatherController {
 	    return weather;
 	}
 	
-//	/** 작성자 : 이승준
-//	 *  작성일 : 2026-01-27
-//	 *  자외선
-//	 */
-//	@GetMapping("/ultraviolet")
-//    public UltravioletWeather getUltraviolet(
-//            @RequestParam("areaNo") String areaNo
-//    ) {
-//        return ultravioletService.getTodayUv(areaNo);
-//    }
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-01-27
+	 *  자외선
+	 */
+	@GetMapping("/ultraviolet")
+    public UltravioletWeather getUltraviolet(
+            @RequestParam("areaNo") String areaNo
+    ) {
+        return ultravioletService.getTodayUv(areaNo);
+    }
 
 }
 
