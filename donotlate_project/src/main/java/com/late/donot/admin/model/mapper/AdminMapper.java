@@ -1,4 +1,4 @@
-package com.late.donot.admin.mapper;
+package com.late.donot.admin.model.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 

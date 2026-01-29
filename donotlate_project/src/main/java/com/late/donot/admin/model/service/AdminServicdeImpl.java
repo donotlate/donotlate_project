@@ -6,7 +6,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.late.donot.admin.mapper.AdminMapper;
+import com.late.donot.admin.model.mapper.AdminMapper;
 import com.late.donot.member.model.dto.Member;
 
 import lombok.RequiredArgsConstructor;

@@ -40,4 +40,6 @@ public class InterceptorConfig implements WebMvcConfigurer{
 		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**", "/admin/**",
                             "/css/**", "/js/**", "/favicon.ico");		
 	}
+	
+
 }
