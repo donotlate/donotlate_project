@@ -44,7 +44,7 @@
                                 <i class="fa-solid fa-user-pen mr-3 w-5"></i>
                                 <span class="font-medium">이름 변경</span>
                             </a>
-                            <a href="#password-change" class="sidebar-link">
+                            <a href="#password-change" class="sidebar-link" th:if="${session.loginMember != null and session.loginMember.socialType == null}">
                                 <i class="fa-solid fa-lock mr-3 w-5"></i>
                                 <span class="font-medium">비밀번호 변경</span>
                             </a>

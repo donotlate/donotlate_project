@@ -302,3 +302,24 @@ signupForm.addEventListener("submit", function(e) {
         }
     }
 });
+
+/**
+ * 작성자 : 유건우
+ * 작성일 : 2026-01-29
+ * 비밀번호 보임 & 숨김 (구조 변경 대응)
+ */
+document.querySelectorAll('.pw-toggle').forEach(button => {
+    button.addEventListener('click', function() {
+        // 현재 버튼과 가장 가까운 relative 박스 안의 input 찾기
+        const input = this.closest('.relative').querySelector('input');
+        const icon = this.querySelector('i');
+
+        if (input.type === 'password') {
+            input.type = 'text';
+            icon.classList.replace('fa-eye', 'fa-eye-slash');
+        } else {
+            input.type = 'password';
+            icon.classList.replace('fa-eye-slash', 'fa-eye');
+        }
+    });
+});

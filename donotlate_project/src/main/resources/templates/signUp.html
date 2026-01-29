@@ -77,13 +77,23 @@
 
                 <div id="password-field">
                     <label class="block text-sm font-semibold text-gray-700 mb-2" for="password">비밀번호</label>
-                    <input class="input-field" id="password" name="memberPw" type="password" minlength="8" maxlength="15" placeholder="8~15자 이내로 입력해주세요"/>
+                    <div class="relative">
+                        <input class="input-field pr-12" id="password" name="memberPw" type="password" minlength="8" maxlength="15" placeholder="8~15자 이내로 입력해주세요"/>
+                        <button type="button" class="pw-toggle absolute right-0 top-0 h-full px-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                     <label id="password-check" class="text-xs mt-1 block min-h-[1.25rem]"></label>
                 </div>
-
+                
                 <div id="password-confirm-field">
                     <label class="block text-sm font-semibold text-gray-700 mb-2" for="password-confirm">비밀번호 확인</label>
-                    <input class="input-field" id="password-confirm" type="password" minlength="8" maxlength="15" placeholder="비밀번호를 다시 입력해주세요"/>
+                    <div class="relative">
+                        <input class="input-field pr-12" id="password-confirm" type="password" minlength="8" maxlength="15" placeholder="비밀번호를 다시 입력해주세요"/>
+                        <button type="button" class="pw-toggle absolute right-0 top-0 h-full px-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                            <i class="fa-solid fa-eye"></i>
+                        </button>
+                    </div>
                     <label id="password-confirm-check" class="text-xs mt-1 block min-h-[1.25rem]"></label>
                 </div>
 
