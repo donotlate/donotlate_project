@@ -277,9 +277,18 @@
                         <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">이메일</label>
                         <input type="email" id="savedUserId" name="memberEmail" class="input-field text-sm sm:text-base" placeholder="example@gmail.com">
                     </div>
-                    <div>
+                    <div class="mb-4">
                         <label class="block text-xs sm:text-sm font-medium text-gray-700 mb-1 sm:mb-2">비밀번호</label>
-                        <input type="password" name="memberPw" class="input-field text-sm sm:text-base" placeholder="••••••••">
+                        <div class="relative">
+                            <input type="password" name="memberPw" 
+                                   class="input-field text-sm sm:text-base w-full pr-12" 
+                                   placeholder="••••••••" minlength="8" maxlength="15">
+                            
+                            <button type="button" id="pwToggle"
+                                    class="absolute right-0 top-0 h-full px-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                                <i class="fa-solid fa-eye"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="flex-between text-xs sm:text-sm">
                         <label class="flex-center">
@@ -493,6 +502,27 @@
         });
     }
 
+/**
+ * 작성자 : 유건우
+ * 작성일 : 2026-01-29
+ * 비밀번호 보임 & 숨김 (구조 변경 대응)
+ */
+const pwToggleBtn = document.querySelector('#pwToggle');
+const pwInput = document.querySelector('input[name="memberPw"]');
+
+if (pwToggleBtn && pwInput) {
+    pwToggleBtn.addEventListener('click', function() {
+        const icon = this.querySelector('i');
+
+        // 비밀번호 타입 전환
+        const isPassword = pwInput.type === 'password';
+        pwInput.type = isPassword ? 'text' : 'password';
+
+        // 아이콘 클래스 교체
+        icon.classList.toggle('fa-eye', !isPassword);
+        icon.classList.toggle('fa-eye-slash', isPassword);
+    });
+}
 </script>
 <script th:if="${message}" th:inline="javascript">
     alert(/*[[${message}]]*/"");
