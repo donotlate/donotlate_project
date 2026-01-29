@@ -9,5 +9,12 @@
 		WHERE MEMBER_EMAIL = #{memberEmail}
 		AND MEMBER_DEL_FL = 'N'
 	</select>
+	
+    <select id="getUsers">
+		SELECT MEMBER_NO, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PW, AUTHORITY,MEMBER_DEL_FL,
+        PROFILE_IMG, ENROLL_DATE, UPDATE_DATE, SOCIAL_TYPE, SOCIAL_ID
+		FROM "MEMBER"
+	</select>
+
 
 </mapper>

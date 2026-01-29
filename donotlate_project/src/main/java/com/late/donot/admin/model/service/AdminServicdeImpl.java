@@ -1,5 +1,7 @@
 package com.late.donot.admin.model.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -38,6 +40,12 @@ public class AdminServicdeImpl implements AdminService {
 		return loginMember;
 		
 
+	}
+
+	// 유저 조회
+	@Override
+	public List<Member> getUsers(Member member) {
+		return mapper.getUsers(member);
 	}
 
 }

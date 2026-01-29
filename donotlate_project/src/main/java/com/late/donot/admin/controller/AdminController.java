@@ -1,5 +1,7 @@
 package com.late.donot.admin.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,4 +61,22 @@ public class AdminController {
 		return "redirect:/";
 
 	}
+	
+	/** 작성자: 양충모 
+	 * 	작성일: 01-29
+	 *  유저 조회
+	 * @param member
+	 * @return
+	 */
+	@GetMapping("Users")
+	public List<Member> getUsers(Member member) {
+		
+		List<Member> userList = service.getUsers(member);
+		
+		return userList;
+		
+	}
+	
+	
+	
 }
