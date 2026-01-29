@@ -22,3 +22,4 @@ import org.springframework.web.bind.annotation.RequestParam;
 	        @RequestParam("time") String time
 	    );
 	}
+
