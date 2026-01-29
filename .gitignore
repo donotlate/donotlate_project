@@ -84,3 +84,4 @@ thumb
 sketch
 
 # End of https://www.toptal.com/developers/gitignore/api/eclipse,react
+donotlate_project/src/main/resources/config.properties
