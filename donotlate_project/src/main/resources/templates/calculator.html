@@ -362,37 +362,6 @@
         </div>
     </main>
 </div>
-<script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
-<script>
-    function swapLocations() {
-        const startInput = document.getElementById('departure-input');
-        const endInput = document.getElementById('arrival-input');
-        
-        // 두 값을 임시 변수를 활용해 교체
-        const tempValue = startInput.value;
-        startInput.value = endInput.value;
-        endInput.value = tempValue;
-    }
-
-    // 카카오 주소 찾기
-    function sample4_execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                var roadAddr = data.roadAddress;
-                document.getElementById("departure-input").value = roadAddr;
-            }
-        }).open();
-    }
-
-    // 카카오 주소 찾기
-    function sample5_execDaumPostcode() {
-        new daum.Postcode({
-            oncomplete: function(data) {
-                var roadAddr = data.roadAddress;
-                document.getElementById("arrival-input").value = roadAddr;
-            }
-        }).open();
-    }
-</script>
+<script src="/js/calculator.js"></script>
 </body>
 </html>
