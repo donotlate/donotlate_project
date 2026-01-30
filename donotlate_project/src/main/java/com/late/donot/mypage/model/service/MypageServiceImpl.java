@@ -56,4 +56,21 @@ public class MypageServiceImpl implements MyPageService {
 		return myPageMapper.changePw(data);
     }
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-30
+     * 마이페이지 - 회원탈퇴
+     */
+    @Override
+    public boolean deleteMember(int memberNo, String deletePW) {
+        String originPw = myPageMapper.selectPw(memberNo);
+
+		// 다를 경우
+		if (!bcrypt.matches(deletePW, originPw)) {
+            return false;
+        }
+
+        return myPageMapper.deleteMember(memberNo);
+    }
+
 }

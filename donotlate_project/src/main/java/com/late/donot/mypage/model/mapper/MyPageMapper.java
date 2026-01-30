@@ -29,4 +29,11 @@ public interface MyPageMapper {
      */
     boolean changePw(Map<String,Object> data);
 
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-01-30
+     * 마이페이지 - 회원탈퇴
+     */
+    boolean deleteMember(@Param("memberNo") int memberNo);
+
 }
