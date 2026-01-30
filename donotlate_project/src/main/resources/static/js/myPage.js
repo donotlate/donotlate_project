@@ -42,6 +42,11 @@ document.querySelectorAll('.relative button').forEach(button => {
     });
 });
 
+/**
+ * 작성자 : 유건우
+ * 작성일 : 2026-01-29
+ * 마이페이지 - 비밀번호 변경 검증 로직
+ */
 const checkObj = {
     "currentPw": false,
     "newPw": false,
@@ -53,8 +58,6 @@ const newPw = document.getElementById("newPw");
 const newPwConfirm = document.getElementById("newPw-confirm");
 const pwMessage = document.getElementById("pwMessage");
 const pwConfirmMessage = document.getElementById("pwConfirmMessage");
-
-
 
 //공백 제거 로직 추가
 currentPw.addEventListener("input", function() {
@@ -149,4 +152,51 @@ function changePassword() {
             alert("비밀번호 변경에 실패하였습니다.\n 사유 : " + data.message);
         }
     });
+}
+
+/**
+ * 작성자 : 유건우
+ * 작성일 : 2026-01-30
+ * 마이페이지 - 회원탈퇴
+ */
+function deleteAccount(){
+    if(!document.getElementById("agree-delete").checked){
+        alert("위 내용에 동의하셔야 회원탈퇴가 가능합니다.");
+        return;
+    }
+
+    const deletePW = document.getElementById("deletePW").value;
+
+    if(deletePW.trim().length == 0) {
+        alert("비밀번호를 입력해주세요.");
+        return;
+    }
+
+    // 데이터를 담을 폼 객체 생성
+    const formData = new FormData();
+    formData.append("deletePW", deletePW); 
+
+    fetch("/myPage/deleteMember", {
+        method: "POST",
+        body: formData
+    })
+    .then(res => res.json())
+    .then(data => {
+        if(data.status === "success"){
+            alert("회원탈퇴가 성공적으로 완료되었습니다.\n이용해주셔서 감사합니다.");
+            location.href = "/";
+        } else {
+            alert("회원탈퇴에 실패하였습니다.\n사유 : " + data.message);
+        }
+    });
+}
+
+/**
+ * 작성자 : 유건우
+ * 작성일 : 2026-01-30
+ * 마이페이지 - 회원탈퇴 취소
+ */
+function cancelDeleteAccount() {
+    document.getElementById("agree-delete").checked = false;
+    document.getElementById("deletePW").value = "";
 }
