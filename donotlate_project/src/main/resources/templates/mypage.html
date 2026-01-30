@@ -19,8 +19,10 @@
                         <div class="flex-start flex-center-gap-8 justify-center flex-col sm:flex-row">
                             <div class="flex flex-col items-center">
                                 <div class="relative flex justify-center">
-                                    <div class="profile-image-large">
-                                        <span class="w-full h-full flex-center justify-center text-center">유</span>
+                                    <div th:unless="${session.loginMember.profileImg != null}" 
+                                        class="profile-image-large">
+                                        <span class="w-full h-full flex-center justify-center text-center"
+                                        th:text="${#strings.substring(session.loginMember.memberName, 0, 1)}">유</span>
                                     </div>
                                     <button class="absolute bottom-1 right-1 w-10 h-10 bg-primary text-white rounded-full flex-center justify-center shadow-lg hover:bg-indigo-600 transition-colors">
                                         <i class="fa-solid fa-camera"></i>
@@ -93,7 +95,7 @@
                                         <span class="text-red-500">*</span>
                                     </label>
                                     <div class="relative">
-                                        <input type="password" placeholder="현재 비밀번호 입력" class="input-field pr-12" minlength="8" maxlength="15" id="currentPw">
+                                        <input type="password" placeholder="현재 비밀번호 입력" class="input-field pr-12" maxlength="15" id="currentPw">
                                         <button class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                             <i class="fa-solid fa-eye relative button"></i>
                                         </button>
@@ -179,7 +181,7 @@
                                     비밀번호 확인
                                     <span class="text-red-500">*</span>
                                 </label>
-                                <input type="password" placeholder="탈퇴를 위해 비밀번호를 입력하세요" class="input-field"  minlength="8" maxlength="20">
+                                <input type="password" placeholder="탈퇴를 위해 비밀번호를 입력하세요" class="input-field" maxlength="15" id="deletePW">
                             </div>
                             
                             <div class="flex-start mb-6 w-full">
@@ -190,11 +192,11 @@
                             </div>
                             
                             <div class="flex-center-gap-3 w-full flex-col sm:flex-row">
-                                <button class="flex-1 bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition-colors w-full">
+                                <button class="flex-1 bg-red-600 text-white font-semibold py-3 rounded-lg hover:bg-red-700 transition-colors w-full" onclick="deleteAccount()">
                                     <i class="fa-solid fa-user-xmark mr-2"></i>
                                     회원 탈퇴하기
                                 </button>
-                                <button class="btn-secondary w-full sm:w-auto">
+                                <button class="btn-secondary w-full sm:w-auto" onclick="cancelDeleteAccount()">
                                     취소
                                 </button>
                             </div>
