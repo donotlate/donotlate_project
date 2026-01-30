@@ -48,4 +48,10 @@ public class AdminServicdeImpl implements AdminService {
 		return mapper.getUsers(member); 
 	}
 
+	// 유저 수정
+	@Override
+	public int editUser(Member member) {
+		return mapper.editUser(member); 
+	}
+
 }

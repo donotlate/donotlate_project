@@ -10,4 +10,6 @@ public interface AdminService {
 
 	List<Member> getUsers(Member member);
 
+	int editUser(Member member);
+
 }

@@ -13,4 +13,6 @@ public interface AdminMapper {
 
 	List<Member> getUsers(Member member);
 
+	int editUser(Member member);
+
 }

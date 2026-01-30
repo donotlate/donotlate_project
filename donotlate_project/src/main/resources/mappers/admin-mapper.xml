@@ -15,6 +15,17 @@
         PROFILE_IMG, ENROLL_DATE, UPDATE_DATE, SOCIAL_TYPE, SOCIAL_ID
 		FROM "MEMBER"
 	</select>
+	
+	<update id="editUser">
+		  UPDATE "MEMBER"
+		  SET
+		    MEMBER_NAME   = #{memberName},
+		    MEMBER_EMAIL  = #{memberEmail},
+		    AUTHORITY     = #{authority},
+		    MEMBER_DEL_FL = #{memberDelFl}
+		  WHERE MEMBER_NO = #{memberNo}
+	</update>
+
 
 
 </mapper>

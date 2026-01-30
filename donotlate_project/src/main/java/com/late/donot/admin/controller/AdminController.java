@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -74,6 +75,21 @@ public class AdminController {
 		List<Member> userList = service.getUsers(member);
 		
 		return userList;
+		
+	}
+	
+	/** 작성자: 양충모
+	 *  작성일: 01-30
+	 *  유저 수정
+	 * @param member
+	 * @return
+	 */
+	@PutMapping("editUser")
+	public int editUser(@RequestBody Member member) {
+		
+		int setuser = service.editUser(member);
+		
+		return setuser;
 		
 	}
 	
