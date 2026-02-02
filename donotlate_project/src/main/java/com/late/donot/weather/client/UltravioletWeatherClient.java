@@ -5,10 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(
-	    name = "ultravioletWeatherClient",
-	    url = "https://apis.data.go.kr/1360000/LivingWthrIdxServiceV4"
-	)
+@FeignClient(name = "ultravioletWeatherClient", url = "https://apis.data.go.kr/1360000/LivingWthrIdxServiceV4")
 	public interface UltravioletWeatherClient {
 
 	    @GetMapping("/getUVIdxV4")
