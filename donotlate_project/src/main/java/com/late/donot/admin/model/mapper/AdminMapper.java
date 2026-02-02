@@ -11,8 +11,11 @@ public interface AdminMapper {
 
 	Member login(String memberEmail);
 
-	List<Member> getUsers(Member member);
+	List<Member> getUsers();
 
 	int editUser(Member member);
+
+	void removeUser(int memberNo);
+
 
 }

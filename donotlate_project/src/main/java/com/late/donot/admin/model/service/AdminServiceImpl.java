@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.late.donot.admin.model.mapper.AdminMapper;
 import com.late.donot.member.model.dto.Member;
@@ -16,7 +17,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @Transactional(rollbackFor = Exception.class)
 @RequiredArgsConstructor
-public class AdminServicdeImpl implements AdminService {
+public class AdminServiceImpl implements AdminService {
 	
 	
 	@Autowired
@@ -44,14 +45,23 @@ public class AdminServicdeImpl implements AdminService {
 
 	// 유저 조회
 	@Override
-	public List<Member> getUsers(Member member) {
-		return mapper.getUsers(member); 
+	public List<Member> getUsers() {
+		return mapper.getUsers(); 
 	}
 
 	// 유저 수정
 	@Override
 	public int editUser(Member member) {
 		return mapper.editUser(member); 
+	}
+
+	// 유저 삭제
+	@Override
+	public List<Member> removeUser(int memberNo) {
+		
+		mapper.removeUser(memberNo);
+		
+		return mapper.getUsers(); 
 	}
 
 }

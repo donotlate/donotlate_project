@@ -8,8 +8,11 @@ public interface AdminService {
 
 	Member login(Member inputMember);
 
-	List<Member> getUsers(Member member);
+	List<Member> getUsers();
 
 	int editUser(Member member);
+
+	List<Member> removeUser(int memberNo);
+
 
 }

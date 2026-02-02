@@ -4,11 +4,13 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
@@ -70,9 +72,9 @@ public class AdminController {
 	 * @return
 	 */
 	@GetMapping("Users")
-	public List<Member> getUsers(Member member) {
+	public List<Member> getUsers() {
 		
-		List<Member> userList = service.getUsers(member);
+		List<Member> userList = service.getUsers();
 		
 		return userList;
 		
@@ -91,6 +93,17 @@ public class AdminController {
 		
 		return setuser;
 		
+	}
+	
+	/** 작성자: 양충모
+	 *  작성일: 02-02
+	 *  유저 삭제
+	 * @param member
+	 * @return
+	 */
+	@DeleteMapping("removeUser")
+	public List<Member> removeUser(@RequestParam("memberNo")  int memberNo) {
+	    return service.removeUser(memberNo);
 	}
 	
 	

@@ -25,6 +25,12 @@
 		    MEMBER_DEL_FL = #{memberDelFl}
 		  WHERE MEMBER_NO = #{memberNo}
 	</update>
+	
+	<delete id="removeUser">
+		DELETE 
+		FROM  MEMBER
+		WHERE MEMBER_NO = #{memberNo}
+	</delete>
 
 
 
