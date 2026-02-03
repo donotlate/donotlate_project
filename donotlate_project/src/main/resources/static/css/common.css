@@ -603,7 +603,6 @@ body {
     border: 1px solid #d1d5db;
     border-radius: 0.5rem;
     outline: none;
-    /* width: 20rem; 은 모바일을 위해 가급적 삭제하거나 max-width로 변경을 추천합니다 */
     max-width: 100%; 
     transition: all 0.2s;
     box-sizing: border-box; /* 패딩이 너비를 계산할 때 밖으로 삐져나가지 않게 함 */
@@ -774,8 +773,8 @@ body {
 }
 
 .profile-image-large {
-    width: 8rem;
-    height: 8rem;
+    width: 7rem;
+    height: 7rem;
     border-radius: 9999px;
     background: linear-gradient(to bottom right, #3b82f6, #9333ea);
     display: flex;
@@ -787,6 +786,26 @@ body {
     border: 4px solid #e5e7eb;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     font-size: 40px;
+    position: relative;
+}
+
+.imageButton {
+    cursor: pointer;
+}
+
+.profile-delete-icon {
+    width: 36px; 
+    height: 36px;
+    background: #4f46e5;
+    border-radius: 50%;
+    color: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); /* shadow-md와 동일 */
+    transition: all 0.2s;
+    text-align: center;
+    line-height: 36px;
+}
+.profile-delete-icon > i {
+    font-size: 20px;
 }
 
 /* ============================================
