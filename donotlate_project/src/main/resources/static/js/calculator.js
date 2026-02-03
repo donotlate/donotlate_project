@@ -94,3 +94,36 @@ function setDepartureToCurrentLocation() {
     }
   );
 }
+
+let currentMode = "SUBWAY";
+
+document.querySelectorAll(".transport-btn").forEach(btn => {
+    btn.addEventListener("click", () => {
+
+        const nextMode = btn.dataset.mode;
+        if (currentMode === nextMode) return;
+
+        document.querySelectorAll(".transport-btn").forEach(b => {
+            b.classList.remove("bg-blue-50", "border-blue-500");
+            b.classList.add("bg-gray-50", "border-gray-200");
+
+            b.querySelector("i").classList.remove("text-blue-600");
+            b.querySelector("i").classList.add("text-gray-600");
+
+            b.querySelector("span").classList.remove("text-blue-600");
+            b.querySelector("span").classList.add("text-gray-600");
+        });
+
+        btn.classList.remove("bg-gray-50", "border-gray-200");
+        btn.classList.add("bg-blue-50", "border-blue-500");
+
+        btn.querySelector("i").classList.remove("text-gray-600");
+        btn.querySelector("i").classList.add("text-blue-600");
+
+        btn.querySelector("span").classList.remove("text-gray-600");
+        btn.querySelector("span").classList.add("text-blue-600");
+
+        currentMode = nextMode;
+        loadRoutes();
+    });
+});
