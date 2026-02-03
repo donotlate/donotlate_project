@@ -14,5 +14,7 @@ public interface AdminService {
 
 	List<Member> removeUser(int memberNo);
 
+	List<Member> createUser(Member inputMember);
+
 
 }

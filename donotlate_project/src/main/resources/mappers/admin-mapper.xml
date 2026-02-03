@@ -3,11 +3,12 @@
 <mapper namespace="com.late.donot.admin.model.mapper.AdminMapper">
 
     <select id="login">
-		SELECT MEMBER_NO, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PW, AUTHORITY,
+		SELECT MEMBER_NO, MEMBER_EMAIL, MEMBER_NAME, MEMBER_PW, AUTHORITY,MEMBER_DEL_FL
         PROFILE_IMG, ENROLL_DATE, UPDATE_DATE, SOCIAL_TYPE, SOCIAL_ID
 		FROM "MEMBER"
 		WHERE MEMBER_EMAIL = #{memberEmail}
 		AND MEMBER_DEL_FL = 'N'
+		AND AUTHORITY = '3'
 	</select>
 	
     <select id="getUsers">
@@ -31,6 +32,29 @@
 		FROM  MEMBER
 		WHERE MEMBER_NO = #{memberNo}
 	</delete>
+	
+	<insert id="createUser">
+		INSERT INTO "MEMBER"
+		(
+		    MEMBER_NO,
+		    MEMBER_EMAIL,
+		    MEMBER_NAME,
+		    MEMBER_PW,
+		    AUTHORITY,
+		    MEMBER_DEL_FL,
+		    ENROLL_DATE
+		)
+		VALUES
+		(
+		    SEQ_MEMBER.NEXTVAL,
+		    #{memberEmail},
+		    #{memberName},
+		    #{memberPw},
+		    #{authority},
+		    #{memberDelFl},
+		    SYSTIMESTAMP
+		)
+	</insert>
 
 
 

@@ -106,6 +106,17 @@ public class AdminController {
 	    return service.removeUser(memberNo);
 	}
 	
+	/** 작성자: 양충모
+	 *  작성일: 02-03
+	 *  유저 추가
+	 * @param member
+	 * @return
+	 */
+	@PostMapping("createUser")
+	public List<Member> createUser(@RequestBody Member inputMember) {
+		return service.createUser(inputMember);
+	}
+	
 	
 	
 }

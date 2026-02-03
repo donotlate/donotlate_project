@@ -64,4 +64,19 @@ public class AdminServiceImpl implements AdminService {
 		return mapper.getUsers(); 
 	}
 
+	// 유저 추가
+	@Override
+	public List<Member> createUser(Member inputMember) {
+
+		String rawPw =  inputMember.getMemberPw();
+		
+		String encPw = bcrypt.encode(rawPw);
+		
+		inputMember.setMemberPw(encPw);		
+		
+		mapper.createUser(inputMember);
+		
+		return mapper.getUsers();
+	}
+
 }

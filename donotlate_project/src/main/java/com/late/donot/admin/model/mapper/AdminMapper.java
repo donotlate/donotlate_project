@@ -17,5 +17,7 @@ public interface AdminMapper {
 
 	void removeUser(int memberNo);
 
+	void createUser(Member inputMember);
+
 
 }
