@@ -5,6 +5,8 @@ import java.util.Map;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+import com.late.donot.member.model.dto.Member;
+
 @Mapper
 public interface MyPageMapper {
 
@@ -35,5 +37,12 @@ public interface MyPageMapper {
      * 마이페이지 - 회원탈퇴
      */
     boolean deleteMember(@Param("memberNo") int memberNo);
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-02-02
+     * 마이페이지 - 프로필 사진 변경
+     */
+    int updateProfileImg(Member loginMember);
 
 }

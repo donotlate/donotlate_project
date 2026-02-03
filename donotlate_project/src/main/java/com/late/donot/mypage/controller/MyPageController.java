@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.late.donot.member.model.dto.Member;
 import com.late.donot.mypage.model.service.MyPageService;
@@ -87,6 +89,34 @@ public class MyPageController {
         } else {
             result.put("status", "fail");
             result.put("message", "현재 비밀번호가 일치하지 않습니다.");
+        }
+
+        return result;
+    }
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-02-02
+     * 마이페이지 - 프로필 사진 변경
+     */
+    @PostMapping("/saveProfileImage")
+    @ResponseBody
+    public Map<String, Object> saveProfileImage(
+            @RequestParam("status") String status,
+            @RequestParam(value = "profileImg", required = false) MultipartFile profileImg,
+            @SessionAttribute("loginMember") Member loginMember) throws Exception {
+        
+        // 서비스 호출 결과 (성공 시 1, 실패 시 0)
+        int resultCount = service.saveProfileImage(loginMember, status, profileImg);
+        
+        Map<String, Object> result = new HashMap<>();
+
+        if (resultCount > 0) {
+            result.put("status", "success");
+            result.put("message", "프로필 설정이 변경되었습니다.");
+        } else {
+            result.put("status", "fail");
+            result.put("message", "변경사항이 없거나 처리에 실패했습니다.");
         }
 
         return result;

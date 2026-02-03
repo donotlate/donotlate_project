@@ -44,8 +44,8 @@
             </button>
             <button onclick="location.href='/mypage'" class="profile-button">
                 <img th:if="${session.loginMember.profileImg != null}" 
-                    th:src="${session.loginMember.profileImg}" 
-                    class="profile-avatar-img">
+                    th:src="@{${session.loginMember.profileImg}}" 
+                    class="profile-avatar">
                 <div th:unless="${session.loginMember.profileImg != null}" 
                     class="profile-avatar" 
                     th:text="${#strings.substring(session.loginMember.memberName, 0, 1)}">

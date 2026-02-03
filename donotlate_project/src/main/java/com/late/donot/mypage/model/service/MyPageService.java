@@ -2,6 +2,10 @@ package com.late.donot.mypage.model.service;
 
 import java.util.Map;
 
+import org.springframework.web.multipart.MultipartFile;
+
+import com.late.donot.member.model.dto.Member;
+
 public interface MyPageService {
 
     /**
@@ -24,5 +28,13 @@ public interface MyPageService {
      * 마이페이지 - 회원탈퇴
      */
     boolean deleteMember(int memberNo, String deletePW);
+
+    /**
+     * 작성자 : 유건우
+     * 작성일 : 2026-02-02
+     * 마이페이지 - 프로필 사진 변경
+     * @throws Exception 
+     */
+    int saveProfileImage(Member loginMember, String status, MultipartFile profileImg) throws Exception;
 
 }
