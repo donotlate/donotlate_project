@@ -2,6 +2,7 @@ package com.late.donot.common.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -12,6 +13,20 @@ public class InterceptorConfig implements WebMvcConfigurer{
 
     @Autowired
 	private LoginCheckInterceptor loginCheckInterceptor;
+    
+    /** 작성자 : 양충모
+     *	작성일: 2026-01-26
+     *  cors 풀림
+     */
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/admin/**")
+                .allowedOrigins("http://192.168.32.19:5173")
+                .allowCredentials(true)
+                .allowedMethods("*")
+                .allowedHeaders("*");
+
+    }
 	
 	/** 작성자 : 유건우
 	 *  작성일 : 2026-01-22
@@ -22,7 +37,9 @@ public class InterceptorConfig implements WebMvcConfigurer{
 		
 		registry.addInterceptor(loginCheckInterceptor)
 		.addPathPatterns("/**")
-		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**",
+		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**", "/admin/**",
                             "/css/**", "/js/**", "/favicon.ico");		
 	}
+	
+
 }

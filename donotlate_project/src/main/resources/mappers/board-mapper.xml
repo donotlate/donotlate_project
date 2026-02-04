@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.late.donot.board.model.mapper.BoardMapper">
+
+
+	<select id="Notices">
+		SELECT BOARD_NO,
+		    BOARD_TITLE,
+		    BOARD_CONTENT,
+		    BOARD_VIEW_COUNT,
+		    BOARD_WRITE_DATE,
+		    BOARD_DEL_FL,
+		    CATEGORY_NO,
+		    MEMBER_NO
+		 FROM "NOTICE"
+	</select>
+
+
+
+</mapper>
