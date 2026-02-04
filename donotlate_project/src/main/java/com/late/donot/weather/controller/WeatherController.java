@@ -17,7 +17,7 @@ import com.late.donot.api.dto.WeekWeather;
 import com.late.donot.weather.model.service.DustWeatherService;
 import com.late.donot.weather.model.service.UltravioletWeatherService;
 import com.late.donot.weather.model.service.WeatherService;
-import com.late.donot.weather.uitl.CoordinateConverter;
+import com.late.donot.weather.util.CoordinateConverter;
 
 import lombok.extern.slf4j.Slf4j;
 

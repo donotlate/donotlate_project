@@ -16,19 +16,26 @@ import com.late.donot.api.dto.Route;
 import com.late.donot.api.dto.RouteStep;
 import com.late.donot.api.dto.RouteStepType;
 import com.late.donot.calculator.client.OdsaylabClient;
-
+import com.late.donot.common.config.AsyncConfig;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
 @Slf4j
 public class CalculatorServiceImpl implements CalculatorService{
+
+    private final AsyncConfig asyncConfig;
 	
 	@Autowired
 	private OdsaylabClient odsayClient;
 	
 	@Value("${odsay.api.key}")
 	private String apiKey;
+
+
+    CalculatorServiceImpl(AsyncConfig asyncConfig) {
+        this.asyncConfig = asyncConfig;
+    }
 	
 	
 	/** 작성자 : 이승준
@@ -37,6 +44,9 @@ public class CalculatorServiceImpl implements CalculatorService{
 	 */
 	@Override
 	public List<Route> findRoute(double sx, double sy, double ex, double ey, String mode) {
+		
+		String raw = odsayClient.searchPubTransPathRaw(sx, sy, ex, ey, apiKey);
+	    log.info("ODsay RAW = {}", raw);
 		
 		OdsayApi response = odsayClient.searchPubTransPath(sx, sy, ex, ey, apiKey);
 		
@@ -55,6 +65,7 @@ public class CalculatorServiceImpl implements CalculatorService{
 		
 		return routes;
 	}
+	
 
 
 	/** 작성자 : 이승준
@@ -86,21 +97,35 @@ public class CalculatorServiceImpl implements CalculatorService{
 			
 			RouteStepType type = resolveType(sp);
 			
-			steps.add(RouteStep.builder().type(type)
-									     .title(buildTitle(sp, type))
-									     .description(buildDescription(sp, type))
-									     .time(sp.getSectionTime())
-									     .build());
+			RouteStep.RouteStepBuilder builder = RouteStep.builder().type(type)
+																	.title(buildTitle(sp, type))
+																	.description(buildDescription(sp, type))
+																	.time(sp.getSectionTime());
+			
+			if(type == RouteStepType.SUBWAY || type == RouteStepType.BUS) {
+				builder.stationCount(sp.getStationCount());
+			}
+			
+			if(type == RouteStepType.BUS && sp.getLane() != null) {
+				List<String> busNames = sp.getLane().stream()
+													.map(lane -> lane.getBusNo())
+													.filter(no -> no != null && !no.isBlank())
+													.toList();
+				
+				builder.busNames(busNames);
+			}
+			
+			steps.add(builder.build());
 			
 		}
 		
-		int transferCount = path.getInfo().getBusTransitCount() +
-							path.getInfo().getSubwayTransitCount();
+		int transferCount = path.getInfo().getBusTransitCount() + path.getInfo().getSubwayTransitCount();
 		
-		return Route.builder().totalTime(path.getInfo().getTotalTime())
-							  .transferCount(transferCount)
-							  .steps(steps)
-							  .build();
+		return Route.builder()
+					.totalTime(path.getInfo().getTotalTime())
+					.transferCount(transferCount)
+					.steps(steps)
+					.build();
 	}
 	
 

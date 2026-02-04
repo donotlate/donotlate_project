@@ -1,5 +1,7 @@
 package com.late.donot.api.dto;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,4 +17,7 @@ public class RouteStep {
     private String title;
     private String description;
     private int time;
+    
+    private Integer stationCount;
+    private List<String> busNames;
 }

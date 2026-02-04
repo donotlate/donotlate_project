@@ -13,6 +13,15 @@ public interface OdsaylabClient {
 	OdsayApi searchPubTransPath(
 	        @RequestParam("SX") double sx,
 	        @RequestParam("SY") double sy,
+	        @RequestParam("EX") double ex,	
+	        @RequestParam("EY") double ey,
+	        @RequestParam("apiKey") String apiKey
+	    );
+	
+	 @GetMapping("/v1/api/searchPubTransPathT")
+	    String searchPubTransPathRaw(
+	        @RequestParam("SX") double sx,
+	        @RequestParam("SY") double sy,
 	        @RequestParam("EX") double ex,
 	        @RequestParam("EY") double ey,
 	        @RequestParam("apiKey") String apiKey

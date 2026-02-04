@@ -20,4 +20,6 @@ public class OdsaySubPath {
 
     private String startName;
     private String endName;
+    
+    private Integer stationCount;
 }
