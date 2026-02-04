@@ -1,4 +1,4 @@
-package com.late.donot.weather.uitl;
+package com.late.donot.weather.util;
 
 import com.late.donot.api.dto.CoordinatePoint;
 

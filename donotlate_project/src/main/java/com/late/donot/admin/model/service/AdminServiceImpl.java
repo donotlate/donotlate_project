@@ -16,7 +16,6 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @Transactional(rollbackFor = Exception.class)
-@RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService {
 	
 	
