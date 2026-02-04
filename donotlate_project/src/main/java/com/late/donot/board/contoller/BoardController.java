@@ -12,7 +12,7 @@ import com.late.donot.board.model.dto.Board;
 import com.late.donot.board.model.service.BoardService;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://192.168.32.19:5173")
 @RequestMapping("admin")
 public class BoardController {
 

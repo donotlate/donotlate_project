@@ -20,7 +20,7 @@ import com.late.donot.member.model.dto.Member;
 import jakarta.servlet.http.HttpSession;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://192.168.32.19:5173")
 @RequestMapping("admin")
 @SessionAttributes({ "loginMember" })
 public class AdminController {
