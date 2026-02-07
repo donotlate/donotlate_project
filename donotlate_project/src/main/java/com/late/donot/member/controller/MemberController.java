@@ -46,7 +46,7 @@ public class MemberController {
     
     @Value("${naver.redirect-uri}")
     private String naverRedirectUri;
-       
+    
     @Autowired
     private NaverService naverService;
 
@@ -68,8 +68,6 @@ public class MemberController {
 	public String login(Member inputMember, RedirectAttributes ra, HttpServletResponse resp, HttpServletRequest req) {
 		
 		Member loginMember = service.login(inputMember);
-		
-		
 		
 		if(loginMember == null) {
 			ra.addFlashAttribute("message", "로그인 실패, 아이디 또는 비밀번호가 일치하지 않습니다");		

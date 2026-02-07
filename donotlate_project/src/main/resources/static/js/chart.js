@@ -1,4 +1,32 @@
+/*
+    작성자 : 유건우
+    작성일자 : 2026-02-07
+    최상산 차트 로드 및 차트 시각화
+*/
+
 window.addEventListener('load', function() {
+    loadTopChartData();
+    loadChartData();
+});
+
+function loadTopChartData(){
+    fetch("/chart/topChart")
+        .then(res => res.json())
+        .then(data => {
+            const userCount = document.getElementById("userCount");
+            const avgPushTime = document.getElementById("avgPushTime");
+            const avgPrepareTime = document.getElementById("avgPrepareTime");
+            const avgTrafficTime = document.getElementById("avgTrafficTime");
+
+            userCount.innerText = data.userCount + "명";
+            avgPushTime.innerText = data.avgPushTime;
+            avgPrepareTime.innerText = data.avgPrepareTime + "분";
+            avgTrafficTime.innerText = data.avgTrafficTime + "분";
+        })
+        .catch(err => console.log(err));
+}
+
+function loadChartData(){
     try {
         var metroData = [{
             type: 'scatter',
@@ -173,4 +201,4 @@ window.addEventListener('load', function() {
     } catch(e) {
         console.error('Chart rendering error:', e);
     }
-});
+}
