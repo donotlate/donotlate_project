@@ -26,4 +26,6 @@ public class RouteStep {
     
     private LocalTime expectedDepartureTime;
     private LocalTime expectedArrivalTime;
+    
+    private String nextArrivalInfo;
 }

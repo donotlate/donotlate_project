@@ -32,6 +32,12 @@ public class CalculatorServiceImpl implements CalculatorService{
 	@Autowired
 	private OdsaylabClient odsayClient;
 	
+	@Autowired
+	private SubwayScheduleService subwayScheduleService;
+	
+	@Autowired
+	private BusScheduleService busScheduleService;
+	
 	@Value("${odsay.api.key}")
 	private String apiKey;
 
