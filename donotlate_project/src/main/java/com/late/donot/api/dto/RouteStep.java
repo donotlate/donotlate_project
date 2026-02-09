@@ -20,4 +20,6 @@ public class RouteStep {
     
     private Integer stationCount;
     private List<String> busNames;
+    
+    private List<String> stations;
 }

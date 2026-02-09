@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.late.donot.api.dto.OdsayApi;
 import com.late.donot.api.dto.OdsayPath;
+import com.late.donot.api.dto.OdsayStation;
 import com.late.donot.api.dto.OdsaySubPath;
 import com.late.donot.api.dto.Route;
 import com.late.donot.api.dto.RouteStep;
@@ -90,42 +91,56 @@ public class CalculatorServiceImpl implements CalculatorService{
 	 *  Odsay 경로를 Route로 변환
 	 */
 	private Route convertToRoute(OdsayPath path) {
-		
-		List<RouteStep> steps = new ArrayList<>();
-		
-		for(OdsaySubPath sp : path.getSubPath()) {
-			
-			RouteStepType type = resolveType(sp);
-			
-			RouteStep.RouteStepBuilder builder = RouteStep.builder().type(type)
-																	.title(buildTitle(sp, type))
-																	.description(buildDescription(sp, type))
-																	.time(sp.getSectionTime());
-			
-			if(type == RouteStepType.SUBWAY || type == RouteStepType.BUS) {
-				builder.stationCount(sp.getStationCount());
-			}
-			
-			if(type == RouteStepType.BUS && sp.getLane() != null) {
-				List<String> busNames = sp.getLane().stream()
-													.map(lane -> lane.getBusNo())
-													.filter(no -> no != null && !no.isBlank())
-													.toList();
-				
-				builder.busNames(busNames);
-			}
-			
-			steps.add(builder.build());
-			
-		}
-		
-		int transferCount = path.getInfo().getBusTransitCount() + path.getInfo().getSubwayTransitCount();
-		
-		return Route.builder()
-					.totalTime(path.getInfo().getTotalTime())
-					.transferCount(transferCount)
-					.steps(steps)
-					.build();
+
+	    List<RouteStep> steps = new ArrayList<>();
+
+	    for (OdsaySubPath sp : path.getSubPath()) {
+
+	        RouteStepType type = resolveType(sp);
+
+	        List<String> stations = null;
+	        if (sp.getPassStopList() != null &&
+	            sp.getPassStopList().getStations() != null &&
+	            sp.getPassStopList().getStations().size() >= 2) {
+
+	            stations = sp.getPassStopList().getStations()
+	                    .stream()
+	                    .map(OdsayStation::getStationName)
+	                    .toList();
+	        }
+
+	        RouteStep.RouteStepBuilder builder = RouteStep.builder()
+	                .type(type)
+	                .title(buildTitle(sp, type))
+	                .description(buildDescription(sp, type))
+	                .time(sp.getSectionTime());
+
+	        if (type == RouteStepType.SUBWAY || type == RouteStepType.BUS) {
+	            builder.stationCount(sp.getStationCount());
+	            builder.stations(stations);
+	        }
+
+	        if (type == RouteStepType.BUS && sp.getLane() != null) {
+	            List<String> busNames = sp.getLane().stream()
+	                    .map(lane -> lane.getBusNo())
+	                    .filter(no -> no != null && !no.isBlank())
+	                    .toList();
+
+	            builder.busNames(busNames);
+	        }
+
+	        steps.add(builder.build());
+	    }
+
+	    int transferCount =
+	            path.getInfo().getBusTransitCount() +
+	            path.getInfo().getSubwayTransitCount();
+
+	    return Route.builder()
+	            .totalTime(path.getInfo().getTotalTime())
+	            .transferCount(transferCount)
+	            .steps(steps)
+	            .build();
 	}
 	
 
