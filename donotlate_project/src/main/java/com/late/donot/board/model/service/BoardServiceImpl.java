@@ -21,4 +21,23 @@ public class BoardServiceImpl implements BoardService {
 		return mapper.Notices();
 	}
 
+	@Override
+	public List<Board> createBoard(Board inputBoard) {
+		
+		mapper.createBoard(inputBoard);
+		return mapper.Notices();
+	}
+
+	@Override
+	public List<Board> removeNotice(int boardNo) {
+		mapper.removeNotice(boardNo);
+		return mapper.Notices();
+	}
+
+	@Override
+	public List<Board> editBoard(Board board) {
+		mapper.editBoard(board);
+		return mapper.Notices();
+	}
+
 }

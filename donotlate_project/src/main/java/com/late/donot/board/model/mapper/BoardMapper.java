@@ -11,4 +11,12 @@ public interface BoardMapper {
 
 	List<Board> Notices();
 
+	void createBoard(Board inputBoard);
+
+	void removeNotice(int boardNo);
+
+	void editBoard(Board board);
+
+
+
 }

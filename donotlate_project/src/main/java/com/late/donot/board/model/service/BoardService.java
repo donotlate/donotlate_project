@@ -9,6 +9,12 @@ public interface BoardService {
 
 	List<Board> Notices();
 
+	List<Board> createBoard(Board inputBoard);
+
+	List<Board> removeNotice(int boardNo);
+
+	List<Board> editBoard(Board board);
+
 	
 	
 }
