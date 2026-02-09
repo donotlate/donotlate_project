@@ -6,13 +6,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 /** 작성자 : 유건우
  * 작성일자 : 2026-02-09
- * 지하철 요일별 이용자 수 api 통신 규격 선언
+ * 버스 요일별 이용자 수 api 통신 규격 선언
  */
-@FeignClient(name = "seoulSubwayClient", url = "http://openapi.seoul.go.kr:8088")
-public interface WeekSubwayClient {
-
-	@GetMapping("/{key}/json/CardSubwayStatsNew/{start}/{end}/{date}")
-    String getSubwayData(
+@FeignClient(name = "seoulBusClient", url = "http://openapi.seoul.go.kr:8088")
+public interface WeekBusClient {
+    
+    @GetMapping("/{key}/json/CardBusStatisticsServiceNew/{start}/{end}/{date}")
+    String getBusData(
         @PathVariable("key") String key,
         @PathVariable("start") int start,
         @PathVariable("end") int end,
