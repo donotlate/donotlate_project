@@ -60,7 +60,7 @@ public class ChartServiceImpl implements ChartService {
         
         for (int i = 6; i >= 0; i--) {
             String targetDate = endDate.minusDays(i).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            weeklyData.add(fetchDailyTotal(targetDate));
+            weeklyData.add(fetchSubwayDailyTotal(targetDate));
         }
         return weeklyData;
     }
@@ -68,13 +68,15 @@ public class ChartServiceImpl implements ChartService {
     /** 작성자 : 유건우
 	 * 작성일자 : 2026-02-09
 	 * 지하철 요일별 이용자 수 - 인원수 합산
+     * (서울 지하철역은 약 600개)
 	 */
-    private Long fetchDailyTotal(String date) {
+    private Long fetchSubwayDailyTotal(String date) {
         try {
-            // 서울 전체 역을 합산하기 위해 1번부터 1000번까지 호출 (서울 지하철역은 약 600개)
+            // 지하철 API 서비스명: CardSubwayStatsNew
             String response = weekSubwayClient.getSubwayData(subwayApiKey, 1, 1000, date);
             
             JsonNode root = objectMapper.readTree(response);
+            // 지하철 API 응답 계층 구조에 맞춰 경로 설정
             JsonNode rowArray = root.path("CardSubwayStatsNew").path("row");
 
             long dailyTotal = 0L;
@@ -94,16 +96,17 @@ public class ChartServiceImpl implements ChartService {
 
     /** 작성자 : 유건우
 	 * 작성일자 : 2026-02-09
-	 * 버스 요일별 이용자 수 (정류장 갯수가 약 4만개라 상위 1000개 정류장 기준으로 채택)
+	 * 버스 요일별 이용자 수 
+     * (정류장 갯수가 약 4만개라 상위 1000개 정류장 기준으로 채택)
 	 */
     @Override
     public List<Long> getWeeklyBusCount() {
         List<Long> weeklyData = new ArrayList<>();
+        //저번주 (월~일) 데이터
         LocalDate endDate = LocalDate.now().minusDays(8); 
         
         for (int i = 6; i >= 0; i--) {
             String targetDate = endDate.minusDays(i).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            // 버스용 fetch 메소드 호출
             weeklyData.add(fetchBusDailyTotal(targetDate));
         }
         return weeklyData;
