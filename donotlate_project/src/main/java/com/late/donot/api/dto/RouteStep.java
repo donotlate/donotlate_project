@@ -1,5 +1,6 @@
 package com.late.donot.api.dto;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
@@ -22,4 +23,7 @@ public class RouteStep {
     private List<String> busNames;
     
     private List<String> stations;
+    
+    private LocalTime expectedDepartureTime;
+    private LocalTime expectedArrivalTime;
 }

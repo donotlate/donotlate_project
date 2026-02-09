@@ -1,5 +1,6 @@
 package com.late.donot.calculator.controller;
 
+import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.late.donot.api.dto.DayType;
 import com.late.donot.api.dto.Route;
 import com.late.donot.calculator.model.service.CalculatorService;
 
@@ -30,9 +32,11 @@ public class CalculatorController {
 							  @RequestParam("sy") double sy,
 							  @RequestParam("ex") double ex,
 							  @RequestParam("ey") double ey,
-							  @RequestParam("mode") String mode) {
+							  @RequestParam("mode") String mode,
+							  @RequestParam("departureTime") LocalTime departureTime,
+							  @RequestParam("dayType") DayType dayType) {
 		
-		return calculatorService.findRoute(sx, sy, ex, ey, mode);
+		return calculatorService.findRoute(sx, sy, ex, ey, mode, departureTime, dayType);
 	}
 
 }

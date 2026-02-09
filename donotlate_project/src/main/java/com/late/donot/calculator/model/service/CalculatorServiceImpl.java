@@ -1,5 +1,6 @@
 package com.late.donot.calculator.model.service;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.late.donot.api.dto.DayType;
 import com.late.donot.api.dto.OdsayApi;
 import com.late.donot.api.dto.OdsayPath;
 import com.late.donot.api.dto.OdsayStation;
@@ -44,7 +46,7 @@ public class CalculatorServiceImpl implements CalculatorService{
 	 *  Odsay 조회후 반환
 	 */
 	@Override
-	public List<Route> findRoute(double sx, double sy, double ex, double ey, String mode) {
+	public List<Route> findRoute(double sx, double sy, double ex, double ey, String mode, LocalTime departureTime, DayType dayType) {
 		
 		String raw = odsayClient.searchPubTransPathRaw(sx, sy, ex, ey, apiKey);
 	    log.info("ODsay RAW = {}", raw);
@@ -59,7 +61,7 @@ public class CalculatorServiceImpl implements CalculatorService{
 			
 			if(!matchMode(path, mode)) continue;
 		
-			routes.add(convertToRoute(path));
+			routes.add(convertToRoute(path, departureTime, dayType));
 		}
 		
 		routes.sort(Comparator.comparingInt(Route::getTotalTime));
@@ -90,9 +92,14 @@ public class CalculatorServiceImpl implements CalculatorService{
 	 *  작성일 : 2026-02-03
 	 *  Odsay 경로를 Route로 변환
 	 */
-	private Route convertToRoute(OdsayPath path) {
+	private Route convertToRoute(
+	        OdsayPath path,
+	        LocalTime baseDepartureTime,
+	        DayType dayType
+	) {
 
 	    List<RouteStep> steps = new ArrayList<>();
+	    LocalTime cursor = baseDepartureTime;
 
 	    for (OdsaySubPath sp : path.getSubPath()) {
 
@@ -109,11 +116,17 @@ public class CalculatorServiceImpl implements CalculatorService{
 	                    .toList();
 	        }
 
+	        LocalTime expectedDeparture = cursor;
+	        LocalTime expectedArrival =
+	                cursor.plusMinutes(sp.getSectionTime());
+
 	        RouteStep.RouteStepBuilder builder = RouteStep.builder()
 	                .type(type)
 	                .title(buildTitle(sp, type))
 	                .description(buildDescription(sp, type))
-	                .time(sp.getSectionTime());
+	                .time(sp.getSectionTime())
+	                .expectedDepartureTime(expectedDeparture)
+	                .expectedArrivalTime(expectedArrival);
 
 	        if (type == RouteStepType.SUBWAY || type == RouteStepType.BUS) {
 	            builder.stationCount(sp.getStationCount());
@@ -129,7 +142,10 @@ public class CalculatorServiceImpl implements CalculatorService{
 	            builder.busNames(busNames);
 	        }
 
-	        steps.add(builder.build());
+	        RouteStep step = builder.build();
+	        steps.add(step);
+
+	        cursor = expectedArrival;
 	    }
 
 	    int transferCount =
@@ -142,8 +158,6 @@ public class CalculatorServiceImpl implements CalculatorService{
 	            .steps(steps)
 	            .build();
 	}
-	
-
 
 	/** 작성자 : 이승준
 	 *  작성일 : 2026-02-03
