@@ -7,13 +7,11 @@ import com.late.donot.board.model.dto.Board;
 
 public interface BoardService {
 
-	List<Board> Notices();
+	List<Board> selectNoticeList(int cp, int limit);
 
-	List<Board> createBoard(Board inputBoard);
+	int getListCount();
 
-	List<Board> removeNotice(int boardNo);
 
-	List<Board> editBoard(Board board);
 
 	
 	

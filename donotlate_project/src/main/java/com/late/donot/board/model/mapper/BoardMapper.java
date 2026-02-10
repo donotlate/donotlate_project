@@ -9,13 +9,11 @@ import com.late.donot.board.model.dto.Board;
 @Mapper
 public interface BoardMapper {
 
-	List<Board> Notices();
+	List<Board> selectNoticeList(int cp, int limit);
 
-	void createBoard(Board inputBoard);
+	int getListCount();
 
-	void removeNotice(int boardNo);
 
-	void editBoard(Board board);
 
 
 

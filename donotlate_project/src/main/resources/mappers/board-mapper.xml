@@ -3,7 +3,7 @@
 <mapper namespace="com.late.donot.board.model.mapper.BoardMapper">
 
 
-	<select id="Notices">
+	<select id="selectNoticeList">
 		SELECT
 		    N.BOARD_NO,
 		    N.BOARD_TITLE,
@@ -15,39 +15,13 @@
 		FROM NOTICE N
 		JOIN MEMBER M
 		USING (MEMBER_NO)
+		WHERE BOARD_DEL_FL = 'N'
 		ORDER BY N.BOARD_WRITE_DATE DESC
 	</select>
-
-
-	<insert id="createBoard">
-	    INSERT INTO NOTICE (
-	        BOARD_NO,
-	        BOARD_TITLE,
-	        BOARD_CONTENT,
-	        MEMBER_NO
-	    ) VALUES (
-	        SEQ_BOARD.NEXTVAL,
-	        #{boardTitle},
-	        #{boardContent},
-	        #{memberNo}
-	    )
-	</insert>
 	
-	
-	<delete id="removeNotice">
-		DELETE 
-		FROM  NOTICE
-		WHERE BOARD_NO = #{boardNo}
-	</delete>
-	
-	
-	<update id="editBoard">
-		UPDATE NOTICE
-		SET
-			BOARD_TITLE = #{boardTitle},
-			BOARD_CONTENT = #{boardContent},
-			BOARD_DEL_FL = #{boardDelFl}
-		WHERE BOARD_NO = #{boardNo}
-	</update>
+	<select id="getListCount">
+		SELECT COUNT(*) FROM NOTICE
+		WHERE BOARD_DEL_FL = 'N'
+	</select>
 
 </mapper>

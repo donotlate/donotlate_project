@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.late.donot.admin.model.service.AdminService;
+import com.late.donot.board.model.dto.Board;
 import com.late.donot.member.model.dto.Member;
 
 import jakarta.servlet.http.HttpSession;
@@ -117,6 +118,51 @@ public class AdminController {
 		return service.createUser(inputMember);
 	}
 	
+	//--------------------------------------------------------------------------------------------------
 	
+	
+	/** 게시판 조회
+	 * @return
+	 */
+	@GetMapping("Notices")
+	public List<Board> Notices(){
+		
+		List<Board> boardList = service.Notices();
+		
+		return boardList;
+
+	}
+	/** 게시판 생성
+	 * @return
+	 */
+	@PostMapping("createBoard")
+	public List<Board> createBoard(@RequestBody Board inputBoard,HttpSession session){
+		
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+	    
+	    inputBoard.setMemberNo(loginMember.getMemberNo());
+
+	    return service.createBoard(inputBoard);
+	}
+	
+	/** 게시판 삭제
+	 * @param boardNo
+	 * @return
+	 */
+	@DeleteMapping("removeBoard")
+	public List<Board> removeNotice(@RequestParam("boardNo")  int boardNo){
+		return service.removeNotice(boardNo);
+		
+	}
+	
+	/** 게시판 수정
+	 * @param board
+	 * @return
+	 */
+	@PutMapping("editBoard")
+	public List<Board> editBoard(@RequestBody Board board){
+		return service.editBoard(board);
+		
+	}
 	
 }

@@ -15,29 +15,16 @@ public class BoardServiceImpl implements BoardService {
 
 	@Autowired
 	private BoardMapper mapper;
+
+	@Override
+	public List<Board> selectNoticeList(int cp, int limit) {
+		return mapper.selectNoticeList(cp,limit);
+	}
+
+	@Override
+	public int getListCount() {
+		return mapper.getListCount();
+	}
 	
-	@Override
-	public List<Board> Notices() {
-		return mapper.Notices();
-	}
-
-	@Override
-	public List<Board> createBoard(Board inputBoard) {
-		
-		mapper.createBoard(inputBoard);
-		return mapper.Notices();
-	}
-
-	@Override
-	public List<Board> removeNotice(int boardNo) {
-		mapper.removeNotice(boardNo);
-		return mapper.Notices();
-	}
-
-	@Override
-	public List<Board> editBoard(Board board) {
-		mapper.editBoard(board);
-		return mapper.Notices();
-	}
 
 }
