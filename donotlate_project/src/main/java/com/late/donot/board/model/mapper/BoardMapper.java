@@ -9,9 +9,9 @@ import com.late.donot.board.model.dto.Board;
 @Mapper
 public interface BoardMapper {
 
-	List<Board> selectNoticeList(int cp, int limit);
+	List<Board> selectNoticeList(int cp, int limit,String query);
 
-	int getListCount();
+	int getListCount(String query);
 
 
 

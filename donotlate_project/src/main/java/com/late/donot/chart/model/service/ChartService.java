@@ -23,4 +23,16 @@ public interface ChartService {
 	 */
     List<Long> getWeeklyBusCount();
 
+	/** 작성자 : 유건우
+	 * 작성일자 : 2026-02-10
+	 * 환승 많은 노선 Top 10
+	 */
+    List<Map<String, Object>> getTransferCount();
+
+	/** 작성자 : 유건우
+	 * 작성일자 : 2026-02-10
+	 * 역 간 거리 긴 구간 Top 10
+	 */
+    List<Map<String, Object>> getStationDistance();
+
 }

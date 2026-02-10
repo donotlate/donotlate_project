@@ -3,6 +3,7 @@ package com.late.donot.chart.model.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.late.donot.chart.client.DistanceClient;
+import com.late.donot.chart.client.TransferClient;
 import com.late.donot.chart.client.WeekBusClient;
 import com.late.donot.chart.client.WeekSubwayClient;
 import com.late.donot.chart.model.mapper.ChartMapper;
@@ -24,14 +27,23 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ChartServiceImpl implements ChartService {
 
-    @Value("${chart.subway.week.api.key}")
+    @Value("${chart.traffic.week.api.key}")
     private String subwayApiKey;
+
+    @Value("${chart.subway.transfer.api.key}")
+    private String transferApiKey;
 
     @Autowired
     private WeekSubwayClient weekSubwayClient;
 
     @Autowired
     private WeekBusClient weekBusClient;
+
+    @Autowired
+    private TransferClient transferClient;
+
+    @Autowired
+    private DistanceClient distanceClient;
 
     @Autowired
     private ChartMapper mapper;
@@ -138,5 +150,70 @@ public class ChartServiceImpl implements ChartService {
             log.error("버스 데이터 호출 중 오류: {}", e.getMessage());
             return 0L;
         }
+    }
+
+    /** 작성자 : 유건우
+	 * 작성일자 : 2026-02-10
+	 * 환승 많은 노선 Top 10
+	 */
+    @Override
+    public List<Map<String, Object>> getTransferCount() {
+        try {
+            // FeignClient를 통해 데이터 호출
+            String response = transferClient.getTransferData(1, 10, transferApiKey);
+            
+            JsonNode root = objectMapper.readTree(response);
+            JsonNode dataArray = root.path("data");
+    
+            List<Map<String, Object>> result = new ArrayList<>();
+            if (dataArray.isArray()) {
+                for (JsonNode node : dataArray) {
+                    Map<String, Object> map = new HashMap<>();
+                    // API 필드명에 맞춰 매핑
+                    map.put("station", node.path("역명").asText());
+                    map.put("count", node.path("평일(일평균)").asLong());
+                    result.add(map);
+                }
+            }
+            return result;
+        } catch (Exception e) {
+            log.error("환승 데이터 파싱 실패: {}", e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    /** 작성자 : 유건우
+	 * 작성일자 : 2026-02-10
+	 * 역 간 거리 긴 구간 Top 10
+	 */
+    @Override
+    public List<Map<String, Object>> getStationDistance() {
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        try {
+            // 상위 8개만 가져오기
+            String response = distanceClient.getDistanceData(1, 10, transferApiKey);
+            JsonNode root = objectMapper.readTree(response);
+            JsonNode dataArray = root.path("data");
+
+            if (dataArray.isArray()) {
+                for (JsonNode node : dataArray) {
+                    Map<String, Object> map = new HashMap<>();
+                    
+                    // 역간 정보 (예: 강남-양재)
+                    // API 필드명에 맞춰 "역명" 혹은 "구간" 확인 필요 (Swagger 기준 "역명" 사용 가능성 높음)
+                    map.put("section", node.path("역명").asText());
+
+                    // 거리 정보 (소수점이 포함된 거리 데이터)
+                    double distance = node.path("역간거리").asDouble();
+                    
+                    map.put("distance", distance);
+                    result.add(map);
+                }
+            }
+        } catch (Exception e) {
+            log.error("역간 거리 데이터 로드 실패: {}", e.getMessage());
+        }
+        return result;
     }
 }

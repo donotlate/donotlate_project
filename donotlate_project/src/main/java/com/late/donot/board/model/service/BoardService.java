@@ -7,9 +7,9 @@ import com.late.donot.board.model.dto.Board;
 
 public interface BoardService {
 
-	List<Board> selectNoticeList(int cp, int limit);
+	List<Board> selectNoticeList(int cp, int limit, String query);
 
-	int getListCount();
+	int getListCount(String query);
 
 
 

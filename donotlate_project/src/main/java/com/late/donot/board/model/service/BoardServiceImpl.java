@@ -17,13 +17,13 @@ public class BoardServiceImpl implements BoardService {
 	private BoardMapper mapper;
 
 	@Override
-	public List<Board> selectNoticeList(int cp, int limit) {
-		return mapper.selectNoticeList(cp,limit);
+	public List<Board> selectNoticeList(int cp, int limit,String query) {
+		return mapper.selectNoticeList(cp,limit,query);
 	}
 
 	@Override
-	public int getListCount() {
-		return mapper.getListCount();
+	public int getListCount(String query) {
+		return mapper.getListCount(query);
 	}
 	
 

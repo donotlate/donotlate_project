@@ -16,11 +16,28 @@
                 <div class="card-header-border flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 w-full">
                         
-                        <div class="search-input-wrapper relative w-full sm:w-auto">
-                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10"></i>
+                        <!-- 검색 -->
+                        <form th:action="@{/notice}" method="get" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 w-full">
                             
-                            <input type="text" id="announcement-search" placeholder="공지사항 제목 검색..." class="search-input w-full sm:w-64" maxlength="50"/>
-                        </div>
+                            <div class="search-input-wrapper relative w-full sm:w-auto">
+                                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10"></i>
+                                
+                                <input type="text" 
+                                    name="query" 
+                                    id="announcement-search" 
+                                    th:value="${query}" 
+                                    placeholder="공지사항 제목 검색..." 
+                                    class="search-input w-full sm:w-64" 
+                                    maxlength="50"/>
+                            </div>
+
+                            <select name="type" id="announcement-filter" class="select-field w-full sm:w-auto">
+                                <option value="all">전체</option>
+                                <option value="update">업데이트</option>
+                            </select>
+                            
+                            <button type="submit" class="search-button">검색</button>
+                        </form>
                         
                         <select id="announcement-filter" class="select-field w-full sm:w-auto">
                             <option>전체</option>
@@ -33,6 +50,7 @@
                     </div>
                 </div>
 
+                <!-- 페이지네이션 -->
                 <div id="announcements-list">
                     <a th:each="notice : ${noticeList}"
                     th:href="@{/notice/{no}(no=${notice.boardNo})}"
