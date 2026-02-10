@@ -43,4 +43,22 @@ public class ChartController {
     public List<Long> getWeeklyBusData() {
         return chartService.getWeeklyBusCount();
     }
+
+	/** 작성자 : 유건우
+	 * 작성일자 : 2026-02-10
+	 * 환승 많은 노선 Top 10
+	 */
+	@GetMapping(value = "/transfer", produces = "application/json")
+	public List<Map<String, Object>> getTransferData(){
+		return chartService.getTransferCount();
+	}
+
+	/** 작성자 : 유건우
+	 * 작성일자 : 2026-02-10
+	 * 역 간 거리 긴 구간 Top 10
+	 */
+	@GetMapping(value = "/distance", produces = "application/json")
+	public List<Map<String, Object>> getStationDistance() {
+		return chartService.getStationDistance();
+	}
 }

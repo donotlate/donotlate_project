@@ -1,9 +1,44 @@
 window.addEventListener('load', function() {
+    showLoading('metro-chart');
+    showLoading('bus-chart');
+    showLoading('transfer-routes-chart');
+    showLoading('distance-chart');
+
     loadTopChartData();
     loadChartData();
     loadMetroData();
     loadBusData();
+    loadTransferData();
+    loadDistanceData();
 });
+
+/*
+    작성자 : 유건우
+    작성일자 : 2026-02-10
+    로딩 표시 함수
+ */
+function showLoading(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) {
+        el.innerHTML = 
+        `<div class="loading-container">
+            <div class="loading-spinner"></div>
+            <p class="loading-text">데이터를 분석하고 있습니다...</p>
+        </div>`;
+    }
+}
+
+/*
+    작성자 : 유건우
+    작성일자 : 2026-02-10
+    로딩 제거 함수
+ */
+function hideLoading(elementId) {
+    const el = document.getElementById(elementId);
+    if (el) {
+        el.innerHTML = ''; // 내부의 스피너와 텍스트를 깨끗이 지움
+    }
+}
 
 /*
     작성자 : 유건우
@@ -38,10 +73,11 @@ function loadMetroData() {
     fetch('/chart/subway-weekly')
         .then(res => res.json())
         .then(serverData => {
+            hideLoading('metro-chart');
             const maxVal = Math.max(...serverData);
             const minVal = Math.min(...serverData);
 
-            const trace = {
+            const trace = [{
                 x: getFormattedDay(),
                 y: serverData,
                 type: 'scatter',
@@ -52,7 +88,7 @@ function loadMetroData() {
                 fill: 'tozeroy',
                 fillcolor: 'rgba(239, 68, 68, 0.1)',
                 hovertemplate: '%{y:,.0f}명<extra></extra>'
-            };
+            }];
 
             const layout = {
                 margin: { t: 20, r: 30, b: 40, l: 60 }, // 여백 최적화
@@ -71,11 +107,11 @@ function loadMetroData() {
                 paper_bgcolor: '#FFFFFF'
             };
 
-            Plotly.newPlot(chartDiv, [trace], layout, { responsive: true, displayModeBar: false });
+            Plotly.newPlot(chartDiv, trace, layout, { responsive: true, displayModeBar: false });
             document.getElementById('metro-title').innerText = '요일별 지하철 이용자 수' + ' (' + getFormattedDate() + ')';
         })
         .catch(err => {
-            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">로딩 에러</p>`;
+            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">데이터 로딩 실패</p>`;
         });
 }
 
@@ -91,10 +127,11 @@ function loadBusData() {
     fetch('/chart/bus-weekly')
         .then(res => res.json())
         .then(serverData => {
+            hideLoading('bus-chart');
             const maxVal = Math.max(...serverData);
             const minVal = Math.min(...serverData);
 
-            const trace = {
+            const trace = [{
                 x: getFormattedDay(),
                 y: serverData,
                 type: 'scatter',
@@ -105,7 +142,7 @@ function loadBusData() {
                 fill: 'tozeroy',
                 fillcolor: 'rgba(37, 99, 235, 0.1)',
                 hovertemplate: '%{y:,.0f}명<extra></extra>'
-            };
+            }];
 
             const layout = {
                 margin: { t: 20, r: 30, b: 40, l: 60 }, // 여백 최적화
@@ -124,11 +161,11 @@ function loadBusData() {
                 paper_bgcolor: '#FFFFFF'
             };
 
-            Plotly.newPlot(chartDiv, [trace], layout, { responsive: true, displayModeBar: false });
+            Plotly.newPlot(chartDiv, trace, layout, { responsive: true, displayModeBar: false });
             document.getElementById('bus-title').innerText = '요일별 버스 이용자 수' + ' (' + getFormattedDate() + ')';
         })
         .catch(err => {
-            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">로딩 에러</p>`;
+            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">데이터 로딩 실패</p>`;
         });
 }
 
@@ -173,48 +210,115 @@ function getFormattedDate() {
 
 /*
     작성자 : 유건우
+    작성일자 : 2026-02-10
+    환승 많은 노선 Top 10
+*/
+function loadTransferData() {
+    const chartDiv = document.getElementById('transfer-routes-chart');
+
+    fetch('/chart/transfer')
+        .then(res => res.json())
+        .then(data => {
+            hideLoading('transfer-routes-chart');
+            // 인원수 기준 오름차순 정렬
+            const sortedData = data.sort((a, b) => a.count - b.count);
+            const stationNames = sortedData.map(item => item.station);
+            const transferCounts = sortedData.map(item => item.count);
+
+            const trace = [{
+                type: 'bar',
+                orientation: 'h',
+                x: transferCounts,
+                y: stationNames,
+                text: transferCounts.map(v => (v / 10000).toFixed(1) + '만'),
+                textposition: 'auto',
+                marker: { 
+                    color: ['#3B82F6', '#10B981', '#EF4444', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1'] 
+                },
+                hovertemplate: '<b>%{y}</b><br>환승인원: %{x:,.0f}명<extra></extra>'
+            }];
+
+            const layout = {
+                margin: { t: 50, r: 30, b: 40, l: 100 }, // 역명이 길어 l 여백을 조금 더 줌
+                plot_bgcolor: '#FFFFFF',
+                paper_bgcolor: '#FFFFFF',
+                xaxis: { 
+                    title: '환승 인원(명)', 
+                    showgrid: true, 
+                    gridcolor: '#F3F4F6', 
+                    tickformat: ',' 
+                },
+                yaxis: { showgrid: false },
+                showlegend: false
+            };
+            
+            Plotly.newPlot(chartDiv, trace, layout, { responsive: true, displayModeBar: false });
+        })
+        .catch(err => {
+            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">데이터 로딩 실패</p>`;
+        });
+}
+
+/*
+    작성자 : 유건우
+    작성일자 : 2026-02-10
+    역 간 거리 긴 구간 Top 10
+*/
+function loadDistanceData() {
+    const chartDiv = document.getElementById('distance-chart');
+
+    fetch('/chart/distance')
+        .then(res => res.json())
+        .then(data => {
+            hideLoading('distance-chart');
+            // 거리가 긴 순서대로 정렬 (내림차순)
+            const sortedData = data.sort((a, b) => b.distance - a.distance);
+            const sections = sortedData.map(item => item.section);
+            const distances = sortedData.map(item => item.distance);
+
+            const trace = [{
+                type: 'bar',
+                x: sections,
+                y: distances,
+                marker: { color: '#F59E0B' },
+                text: distances.map(d => d.toFixed(1) + 'km'),
+                textposition: 'auto',
+                hovertemplate: '<b>%{x}</b><br>거리: %{y}km<extra></extra>'
+            }];
+
+            const layout = {
+                margin: { t: 50, r: 20, b: 80, l: 50 },
+                plot_bgcolor: '#FFFFFF',
+                paper_bgcolor: '#FFFFFF',
+                xaxis: { 
+                    tickfont: { size: 10 }, // X축 역명 폰트도 줄임
+                    tickangle: -45, // 역 이름이 길 경우 대각선 처리
+                    showgrid: false 
+                },
+                yaxis: { 
+                    title: '거리 (km)', 
+                    showgrid: true, 
+                    gridcolor: '#F3F4F6' 
+                },
+                showlegend: false
+            };
+
+            Plotly.newPlot(chartDiv, trace, layout, {responsive: true, displayModeBar: false });
+        })
+        .catch(err => {
+            console.error("Distance Chart Error:", err);
+            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">데이터 로딩 실패</p>`;
+        });
+}
+
+
+/*
+    작성자 : 유건우
     작성일자 : 2026-02-09
     추후 수정 - 하드코딩 영역
 */
 function loadChartData(){
     try {
-        var transferRoutesData = [{
-            type: 'bar',
-            orientation: 'h',
-            y: ['2호선', '9호선', '1호선', '3호선', '4호선', '7호선', '5호선', '6호선', '8호선', '경의선'],
-            x: [1847, 1632, 1489, 1356, 1243, 1128, 987, 856, 734, 623],
-            marker: { color: ['#3B82F6', '#10B981', '#EF4444', '#F59E0B', '#8B5CF6', '#EC4899', '#06B6D4', '#84CC16', '#F97316', '#6366F1'] }
-        }];
-        
-        var transferRoutesLayout = {
-            margin: { t: 20, r: 20, b: 40, l: 80 },
-            plot_bgcolor: '#FFFFFF',
-            paper_bgcolor: '#FFFFFF',
-            xaxis: { title: '환승 횟수', showgrid: true, gridcolor: '#F3F4F6' },
-            yaxis: { showgrid: false },
-            showlegend: false
-        };
-        
-        Plotly.newPlot('transfer-routes-chart', transferRoutesData, transferRoutesLayout, {responsive: true, displayModeBar: false, displaylogo: false});
-
-        var distanceData = [{
-            type: 'bar',
-            x: ['강남-양재', '서울역-용산', '신도림-구로', '잠실-송파', '홍대-신촌', '광화문-종로', '역삼-선릉', '사당-방배'],
-            y: [3.2, 2.8, 2.6, 2.4, 2.2, 2.0, 1.9, 1.7],
-            marker: { color: '#F59E0B' }
-        }];
-        
-        var distanceLayout = {
-            margin: { t: 20, r: 20, b: 80, l: 50 },
-            plot_bgcolor: '#FFFFFF',
-            paper_bgcolor: '#FFFFFF',
-            xaxis: { tickangle: -45, showgrid: false },
-            yaxis: { title: '거리 (km)', showgrid: true, gridcolor: '#F3F4F6' },
-            showlegend: false
-        };
-        
-        Plotly.newPlot('distance-chart', distanceData, distanceLayout, {responsive: true, displayModeBar: false, displaylogo: false});
-
         var stationUsersData = [{
             type: 'bar',
             x: ['강남역', '서울역', '잠실역', '신도림역', '홍대입구역', '사당역', '왕십리역', '구로디지털단지역'],
