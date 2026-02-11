@@ -31,14 +31,8 @@
                                     maxlength="50"/>
                             </div>
 
-                            <select name="type" id="announcement-filter" class="select-field w-full sm:w-auto">
-                                <option value="all">전체</option>
-                                <option value="update">업데이트</option>
-                            </select>
-                            
-                            <button type="submit" class="search-button">검색</button>
                         </form>
-                        
+
                         <select id="announcement-filter" class="select-field w-full sm:w-auto">
                             <option>전체</option>
                             <option>업데이트</option>
@@ -47,10 +41,11 @@
                             <option>기타</option>
                         </select>
                         
+                        
                     </div>
                 </div>
 
-                <!-- 페이지네이션 -->
+                
                 <div id="announcements-list">
                     <a th:each="notice : ${noticeList}"
                     th:href="@{/notice/{no}(no=${notice.boardNo})}"
@@ -79,6 +74,7 @@
                         </div>
                     </a>
                     
+                    <!-- 페이지네이션 -->
                     <div class="pagination">
                         <span th:text="|총 ${noticeList.size()}개 표시|"></span>
 

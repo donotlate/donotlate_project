@@ -3,8 +3,29 @@
 <mapper namespace="com.late.donot.board.model.mapper.BoardMapper">
 
 
-	<select id="selectNoticeList">
-		SELECT
+	<select id="selectNoticeList" >
+	    SELECT * FROM (
+	        SELECT ROWNUM AS RNUM, A.* FROM (
+	            SELECT * FROM NOTICE
+	            WHERE BOARD_DEL_FL = 'N'
+	            <if test="query != null and query != ''">
+	                AND BOARD_TITLE LIKE '%' || #{query} || '%'
+	            </if>
+	            ORDER BY BOARD_NO DESC
+	        ) A
+	    ) WHERE RNUM BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+	</select>
+	
+	<select id="getListCount" resultType="_int">
+	    SELECT COUNT(*) FROM NOTICE
+	    WHERE BOARD_DEL_FL = 'N'
+	    <if test="query != null and query != ''">
+	        AND BOARD_TITLE LIKE '%' || #{query} || '%'
+	    </if>
+	</select>
+
+	<select id="selectNoticeDetail">
+	    SELECT
 		    N.BOARD_NO,
 		    N.BOARD_TITLE,
 		    N.BOARD_CONTENT,
@@ -15,13 +36,8 @@
 		FROM NOTICE N
 		JOIN MEMBER M
 		USING (MEMBER_NO)
-		WHERE BOARD_DEL_FL = 'N'
-		ORDER BY N.BOARD_WRITE_DATE DESC
-	</select>
-	
-	<select id="getListCount">
-		SELECT COUNT(*) FROM NOTICE
-		WHERE BOARD_DEL_FL = 'N'
+	    WHERE BOARD_NO = #{no}
+	    AND BOARD_DEL_FL = 'N'
 	</select>
 
 </mapper>

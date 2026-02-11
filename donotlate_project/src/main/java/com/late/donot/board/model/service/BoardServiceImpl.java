@@ -1,6 +1,9 @@
 package com.late.donot.board.model.service;
 
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,12 +21,26 @@ public class BoardServiceImpl implements BoardService {
 
 	@Override
 	public List<Board> selectNoticeList(int cp, int limit,String query) {
-		return mapper.selectNoticeList(cp,limit,query);
+		
+		int offset = (cp - 1) * limit;
+		
+		Map<String, Object> map = new HashMap<>();
+	    map.put("limit", limit);
+	    map.put("offset", offset);
+	    map.put("query", query);
+		
+		return mapper.selectNoticeList(map);
 	}
 
 	@Override
 	public int getListCount(String query) {
 		return mapper.getListCount(query);
+	}
+
+	@Override
+	public Board selectNoticeDetail(int boardNo) {
+
+		return mapper.selectNoticeDetail(boardNo);
 	}
 	
 

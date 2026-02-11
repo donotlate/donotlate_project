@@ -11,6 +11,8 @@ public interface BoardService {
 
 	int getListCount(String query);
 
+	Board selectNoticeDetail(int boardNo);
+
 
 
 	
