@@ -3,9 +3,13 @@ package com.late.donot.chart.model.service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -48,172 +52,205 @@ public class ChartServiceImpl implements ChartService {
     @Autowired
     private ChartMapper mapper;
 
-    // API 호출을 위한 객체 생성
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /** 작성자 : 유건우
-	 * 작성일자 : 2026-02-07
-	 * 상단 차트 내용 로드
-	 */
+     * 작성일자 : 2026-02-11
+     * [공통 유틸 메소드] JSON 응답에서 안전하게 특정 노드 배열(row/data) 추출
+     */
+    private JsonNode getSafeRowNode(String response, String rootName, String arrayName) {
+        try {
+            JsonNode root = objectMapper.readTree(response);
+            JsonNode targetNode = rootName != null ? root.path(rootName).path(arrayName) : root.path(arrayName);
+            
+            if (targetNode.isArray() && targetNode.size() > 0) {
+                return targetNode;
+            }
+        } catch (Exception e) {
+            log.warn("JSON 파싱 중 경고(데이터 없음 또는 형식 불일치): {}", e.getMessage());
+        }
+        return objectMapper.createArrayNode(); // 빈 배열 반환
+    }
+
+    /** 작성자 : 유건우
+     * 작성일자 : 2026-02-07
+     * 상단 차트 내용 로드
+     */
     @Override
     public Map<String, Object> getTopChart() {
         return mapper.getTopChart();
     }
 
     /** 작성자 : 유건우
-	 * 작성일자 : 2026-02-09
-	 * 지하철 요일별 이용자 수
-	 */
+     * 작성일자 : 2026-02-09
+     * 지하철 요일별 이용자 수 (일주일 전 기준)
+     */
     @Override
     public List<Long> getWeeklySubwayCount() {
         List<Long> weeklyData = new ArrayList<>();
-        //저번주 (월~일) 데이터
-        LocalDate endDate = LocalDate.now().minusDays(8); 
+        LocalDate endDate = LocalDate.now().minusDays(8);
         
         for (int i = 6; i >= 0; i--) {
             String targetDate = endDate.minusDays(i).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            weeklyData.add(fetchSubwayDailyTotal(targetDate));
+            weeklyData.add(fetchDailyTotal(targetDate, "subway"));
         }
         return weeklyData;
     }
 
     /** 작성자 : 유건우
-	 * 작성일자 : 2026-02-09
-	 * 지하철 요일별 이용자 수 - 인원수 합산
-     * (서울 지하철역은 약 600개)
-	 */
-    private Long fetchSubwayDailyTotal(String date) {
-        try {
-            // 지하철 API 서비스명: CardSubwayStatsNew
-            String response = weekSubwayClient.getSubwayData(subwayApiKey, 1, 1000, date);
-            
-            JsonNode root = objectMapper.readTree(response);
-            // 지하철 API 응답 계층 구조에 맞춰 경로 설정
-            JsonNode rowArray = root.path("CardSubwayStatsNew").path("row");
-
-            long dailyTotal = 0L;
-            if (rowArray.isArray()) {
-                for (JsonNode row : rowArray) {
-                    //승차인원 합산
-                    dailyTotal += row.path("GTON_TNOPE").asLong();
-                }
-                log.info("지하철 {} 날짜 합산 완료: {}명", date, dailyTotal);
-            }
-            return dailyTotal;
-        } catch (Exception e) {
-            log.error("지하철 데이터 호출 중 오류: {}", e.getMessage());
-            return 0L;
-        }
-    }
-
-    /** 작성자 : 유건우
-	 * 작성일자 : 2026-02-09
-	 * 버스 요일별 이용자 수 
-     * (정류장 갯수가 약 4만개라 상위 1000개 정류장 기준으로 채택)
-	 */
+     * 작성일자 : 2026-02-09
+     * 버스 요일별 이용자 수 (일주일 전 기준)
+     */
     @Override
     public List<Long> getWeeklyBusCount() {
         List<Long> weeklyData = new ArrayList<>();
-        //저번주 (월~일) 데이터
-        LocalDate endDate = LocalDate.now().minusDays(8); 
+        LocalDate endDate = LocalDate.now().minusDays(8);
         
         for (int i = 6; i >= 0; i--) {
             String targetDate = endDate.minusDays(i).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-            weeklyData.add(fetchBusDailyTotal(targetDate));
+            weeklyData.add(fetchDailyTotal(targetDate, "bus"));
         }
         return weeklyData;
     }
 
     /** 작성자 : 유건우
-	 * 작성일자 : 2026-02-09
-	 * 버스 요일별 이용자 수 - 인원수 합산
-	 */
-    private Long fetchBusDailyTotal(String date) {
+     * 작성일자 : 2026-02-09
+     * [공용 로직] 일자별 총 승차 인원 합계 계산 (버스/지하철 공통 처리)
+     */
+    private Long fetchDailyTotal(String date, String type) {
         try {
-            // 버스 API 서비스명: CardBusStatisticsServiceNew
-            String response = weekBusClient.getBusData(subwayApiKey, 1, 1000, date);
+            String response = "";
+            String rootName = "";
             
-            JsonNode root = objectMapper.readTree(response);
-            // 버스 API 응답 계층 구조에 맞춰 경로 설정
-            JsonNode rowArray = root.path("CardBusStatisticsServiceNew").path("row");
-
-            long dailyTotal = 0L;
-            if (rowArray.isArray()) {
-                for (JsonNode row : rowArray) {
-                    //승차인원 합산
-                    dailyTotal += row.path("GTON_TNOPE").asLong();
-                }
-                log.info("버스 {} 날짜 합산 완료: {}명", date, dailyTotal);
+            if ("subway".equals(type)) {
+                response = weekSubwayClient.getSubwayData(subwayApiKey, 1, 1000, date);
+                rootName = "CardSubwayStatsNew";
+            } else {
+                response = weekBusClient.getBusData(subwayApiKey, 1, 1000, date);
+                rootName = "CardBusStatisticsServiceNew";
             }
-            return dailyTotal;
+
+            JsonNode rows = getSafeRowNode(response, rootName, "row");
+            
+            // Stream을 이용한 합계 계산
+            return StreamSupport.stream(rows.spliterator(), false)
+                    .mapToLong(row -> row.path("GTON_TNOPE").asLong(0))
+                    .sum();
+
         } catch (Exception e) {
-            log.error("버스 데이터 호출 중 오류: {}", e.getMessage());
+            log.error("{} 데이터 합산 중 에러 (날짜: {}): {}", type, date, e.getMessage());
             return 0L;
         }
     }
 
     /** 작성자 : 유건우
-	 * 작성일자 : 2026-02-10
-	 * 환승 많은 노선 Top 10
-	 */
+     * 작성일자 : 2026-02-10
+     * 환승 많은 노선 Top 10
+     * API 토큰 제한으로 인해 100개만 호출
+     */
     @Override
     public List<Map<String, Object>> getTransferCount() {
         try {
-            // FeignClient를 통해 데이터 호출
-            String response = transferClient.getTransferData(1, 10, transferApiKey);
-            
-            JsonNode root = objectMapper.readTree(response);
-            JsonNode dataArray = root.path("data");
-    
-            List<Map<String, Object>> result = new ArrayList<>();
-            if (dataArray.isArray()) {
-                for (JsonNode node : dataArray) {
-                    Map<String, Object> map = new HashMap<>();
-                    // API 필드명에 맞춰 매핑
-                    map.put("station", node.path("역명").asText());
-                    map.put("count", node.path("평일(일평균)").asLong());
-                    result.add(map);
-                }
-            }
-            return result;
+            String response = transferClient.getTransferData(1, 100, transferApiKey);
+            JsonNode rows = getSafeRowNode(response, null, "data");
+
+            return StreamSupport.stream(rows.spliterator(), false)
+                    .map(node -> {
+                        Map<String, Object> map = new HashMap<>();
+                        map.put("station", node.path("역명").asText());
+                        map.put("count", node.path("평일(일평균)").asLong(0));
+                        return map;
+                    })
+                    .sorted((m1, m2) -> Long.compare((long) m2.get("count"), (long) m1.get("count"))) // 내림차순 정렬
+                    .limit(10) // 상위 10개
+                    .collect(Collectors.toList());
+
         } catch (Exception e) {
-            log.error("환승 데이터 파싱 실패: {}", e.getMessage());
+            log.error("환승 많은 역 데이터 호출 중 오류: {}", e.getMessage());
             return new ArrayList<>();
         }
     }
 
     /** 작성자 : 유건우
-	 * 작성일자 : 2026-02-10
-	 * 역 간 거리 긴 구간 Top 10
-	 */
+     * 작성일자 : 2026-02-11 
+     * 역 간 거리 긴 구간 Top 10
+     * (수정: 호출 데이터 1000개 확대 및 정확한 정렬 적용)
+     */
     @Override
     public List<Map<String, Object>> getStationDistance() {
-        List<Map<String, Object>> result = new ArrayList<>();
-
         try {
-            // 상위 8개만 가져오기
-            String response = distanceClient.getDistanceData(1, 10, transferApiKey);
-            JsonNode root = objectMapper.readTree(response);
-            JsonNode dataArray = root.path("data");
+            // 1. 데이터 풀을 1000개로 대폭 확대
+            String response = distanceClient.getDistanceData(1, 1000, transferApiKey);
+            JsonNode rows = getSafeRowNode(response, null, "data");
 
-            if (dataArray.isArray()) {
-                for (JsonNode node : dataArray) {
+            // 2. 중복 제거를 위한 Map (역명을 키로 사용)
+            Map<String, Map<String, Object>> distinctMap = new HashMap<>();
+
+            for (JsonNode node : rows) {
+                String stationName = node.path("역명").asText("");
+                double distance = node.path("역간거리").asDouble(0.0);
+
+                if (stationName.isEmpty()) continue;
+
+                // 동일 역명이 이미 있다면, 더 긴 거리의 데이터로 업데이트 (정확한 Top 10을 위해)
+                if (!distinctMap.containsKey(stationName) || 
+                    (double)distinctMap.get(stationName).get("distance") < distance) {
+                    
                     Map<String, Object> map = new HashMap<>();
-                    
-                    // 역간 정보 (예: 강남-양재)
-                    // API 필드명에 맞춰 "역명" 혹은 "구간" 확인 필요 (Swagger 기준 "역명" 사용 가능성 높음)
-                    map.put("section", node.path("역명").asText());
-
-                    // 거리 정보 (소수점이 포함된 거리 데이터)
-                    double distance = node.path("역간거리").asDouble();
-                    
+                    map.put("section", stationName);
                     map.put("distance", distance);
-                    result.add(map);
+                    distinctMap.put(stationName, map);
                 }
             }
+
+            // 3. 1000개 데이터 중 중복 제거된 역들을 '거리순'으로 다시 정렬하여 상위 10개 추출
+            return distinctMap.values().stream()
+                    .sorted((m1, m2) -> Double.compare((double) m2.get("distance"), (double) m1.get("distance")))
+                    .limit(10)
+                    .collect(Collectors.toList());
+
         } catch (Exception e) {
-            log.error("역간 거리 데이터 로드 실패: {}", e.getMessage());
+            log.error("역 간 거리 긴 구간 Top 10 데이터 호출 중 오류: {}", e.getMessage());
+            return new ArrayList<>();
         }
-        return result;
+    }
+
+    /** 작성자 : 유건우
+     * 작성일자 : 2026-02-11
+     * 지하철 혼잡도 통계 (상위 8개 역) - 출퇴근 구분
+     */
+    @Override
+    public List<Map<String, Object>> getSubwayCongestion(String type) {
+        String targetDate = LocalDate.now().minusDays(8).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        try {
+            String response = weekSubwayClient.getSubwayData(subwayApiKey, 1, 1000, targetDate);
+            JsonNode rows = getSafeRowNode(response, "CardSubwayStatsNew", "row");
+
+            return StreamSupport.stream(rows.spliterator(), false)
+                    .map(row -> {
+                        Map<String, Object> map = new HashMap<>();
+                        String stationName = row.path("SBWY_STNS_NM").asText("");
+                        
+                        long count = 0;
+                        if ("attendance".equals(type)) {
+                            count = row.path("GTON_TNOPE").asLong(0); // 승차
+                        } else {
+                            count = row.path("GTOFF_TNOPE").asLong(0); // 하차
+                        }
+
+                        map.put("station", stationName);
+                        map.put("count", count);
+                        return map;
+                    })
+                    .filter(map -> !map.get("station").toString().isEmpty()) // 역 이름 없는 더미 데이터 제외
+                    .sorted((m1, m2) -> Long.compare((long) m2.get("count"), (long) m1.get("count"))) // 인원수 내림차순
+                    .limit(8) // 상위 8개만 추출
+                    .collect(Collectors.toList());
+
+        } catch (Exception e) {
+            log.error("혼잡도 데이터(타입:{}) 호출 중 오류: {}", type, e.getMessage());
+            return new ArrayList<>();
+        }
     }
 }
