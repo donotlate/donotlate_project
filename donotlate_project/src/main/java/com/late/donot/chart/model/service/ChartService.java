@@ -35,4 +35,9 @@ public interface ChartService {
 	 */
     List<Map<String, Object>> getStationDistance();
 
+	/** 작성자 : 유건우
+     * 작성일자 : 2026-02-11
+     * 지하철 혼잡도 통계 (상위 8개)
+     */
+	List<Map<String, Object>> getSubwayCongestion(String type);
 }
