@@ -1,15 +1,16 @@
+/*
+    작성자 : 유건우
+    작성일자 : 2026-02-09
+    차트 로드
+ */
 window.addEventListener('load', function() {
-    showLoading('metro-chart');
-    showLoading('bus-chart');
-    showLoading('transfer-routes-chart');
-    showLoading('distance-chart');
-
     loadTopChartData();
-    loadChartData();
     loadMetroData();
     loadBusData();
     loadTransferData();
     loadDistanceData();
+    loadAttendanceData();
+    loadLeaveWorkData();
 });
 
 /*
@@ -36,7 +37,7 @@ function showLoading(elementId) {
 function hideLoading(elementId) {
     const el = document.getElementById(elementId);
     if (el) {
-        el.innerHTML = ''; // 내부의 스피너와 텍스트를 깨끗이 지움
+        el.innerHTML = '';
     }
 }
 
@@ -68,12 +69,13 @@ function loadTopChartData(){
     요일별 지하철 이용자 수 차트 로드 및 시각화
 */
 function loadMetroData() {
-    const chartDiv = document.getElementById('metro-chart');
+    const chartDiv = 'metro-chart';
+    showLoading(chartDiv);
 
     fetch('/chart/subway-weekly')
         .then(res => res.json())
         .then(serverData => {
-            hideLoading('metro-chart');
+            hideLoading(chartDiv);
             const maxVal = Math.max(...serverData);
             const minVal = Math.min(...serverData);
 
@@ -122,12 +124,13 @@ function loadMetroData() {
     api 토큰 제한으로 상위 1000개 기준임.
 */
 function loadBusData() {
-    const chartDiv = document.getElementById('bus-chart');
+    const chartDiv = 'bus-chart';
+    showLoading(chartDiv);
 
     fetch('/chart/bus-weekly')
         .then(res => res.json())
         .then(serverData => {
-            hideLoading('bus-chart');
+            hideLoading(chartDiv);
             const maxVal = Math.max(...serverData);
             const minVal = Math.min(...serverData);
 
@@ -214,12 +217,13 @@ function getFormattedDate() {
     환승 많은 노선 Top 10
 */
 function loadTransferData() {
-    const chartDiv = document.getElementById('transfer-routes-chart');
+    const chartDiv = 'transfer-routes-chart';
+    showLoading(chartDiv);
 
     fetch('/chart/transfer')
         .then(res => res.json())
         .then(data => {
-            hideLoading('transfer-routes-chart');
+            hideLoading(chartDiv);
             // 인원수 기준 오름차순 정렬
             const sortedData = data.sort((a, b) => a.count - b.count);
             const stationNames = sortedData.map(item => item.station);
@@ -265,12 +269,13 @@ function loadTransferData() {
     역 간 거리 긴 구간 Top 10
 */
 function loadDistanceData() {
-    const chartDiv = document.getElementById('distance-chart');
+    const chartDiv = 'distance-chart';
+    showLoading(chartDiv);
 
     fetch('/chart/distance')
         .then(res => res.json())
         .then(data => {
-            hideLoading('distance-chart');
+            hideLoading(chartDiv);
             // 거리가 긴 순서대로 정렬 (내림차순)
             const sortedData = data.sort((a, b) => b.distance - a.distance);
             const sections = sortedData.map(item => item.section);
@@ -306,111 +311,94 @@ function loadDistanceData() {
             Plotly.newPlot(chartDiv, trace, layout, {responsive: true, displayModeBar: false });
         })
         .catch(err => {
-            console.error("Distance Chart Error:", err);
             chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">데이터 로딩 실패</p>`;
         });
 }
 
+/*
+    작성자 : 유건우
+    작성일자 : 2026-02-11
+    출근 이용자 많은 역 차트 로드
+*/
+function loadAttendanceData() {
+    const chartDiv = 'attendance-chart';
+    showLoading(chartDiv);
+
+    fetch('/chart/subway-congestion?type=attendance')
+        .then(res => res.json())
+        .then(data => {
+            hideLoading(chartDiv);
+            
+            const stationNames = data.map(item => item.station);
+            const counts = data.map(item => item.count);
+
+            const trace = [{
+                type: 'bar',
+                x: stationNames,
+                y: counts,
+                marker: { color: '#3B82F6' },
+                text: counts.map(v => (v / 10000).toFixed(1) + '만'),
+                textposition: 'auto',
+                textfont: { size: 10 }
+            }];
+
+            const layout = {
+                margin: { t: 20, r: 20, b: 80, l: 50 },
+                plot_bgcolor: '#FFFFFF',
+                paper_bgcolor: '#FFFFFF',
+                xaxis: { tickangle: -45, showgrid: false, tickfont: { size: 10 } },
+                yaxis: { title: '출근 인원', showgrid: true, gridcolor: '#F3F4F6', tickfont: { size: 10 } },
+                showlegend: false,
+                uniformtext: { minsize: 9, mode: 'hide' }
+            };
+
+            Plotly.newPlot(chartDiv, trace, layout, { responsive: true, displayModeBar: false, displaylogo: false });
+        })
+        .catch(err => {
+            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">데이터 로딩 실패</p>`;
+        });
+}
 
 /*
     작성자 : 유건우
-    작성일자 : 2026-02-09
-    추후 수정 - 하드코딩 영역
+    작성일자 : 2026-02-11
+    퇴근 이용자 많은 역 차트 로드
 */
-function loadChartData(){
-    try {
-        var stationUsersData = [{
-            type: 'bar',
-            x: ['강남역', '서울역', '잠실역', '신도림역', '홍대입구역', '사당역', '왕십리역', '구로디지털단지역'],
-            y: [2847, 2456, 2134, 1987, 1845, 1723, 1598, 1467],
-            marker: { color: '#3B82F6' }
-        }];
-        
-        var stationUsersLayout = {
-            margin: { t: 20, r: 20, b: 80, l: 50 },
-            plot_bgcolor: '#FFFFFF',
-            paper_bgcolor: '#FFFFFF',
-            xaxis: { tickangle: -45, showgrid: false },
-            yaxis: { title: '출근 인원', showgrid: true, gridcolor: '#F3F4F6' },
-            showlegend: false
-        };
-        
-        Plotly.newPlot('attendance-chart', stationUsersData, stationUsersLayout, {responsive: true, displayModeBar: false, displaylogo: false});
+function loadLeaveWorkData() {
+    const chartDiv = 'leave-work-chart';
+    showLoading(chartDiv);
 
-        var leaveWorkData = [{
-            type: 'bar',
-            x: ['강남역', '서울역', '잠실역', '신도림역', '홍대입구역', '사당역', '왕십리역', '구로디지털단지역'],
-            y: [2847, 2456, 2134, 1987, 1845, 1723, 1598, 1467],
-            marker: { color: '#EF4444' }
-        }];
-        
-        var leaveWorkLayout = {
-            margin: { t: 20, r: 20, b: 80, l: 50 },
-            plot_bgcolor: '#FFFFFF',
-            paper_bgcolor: '#FFFFFF',
-            xaxis: { tickangle: -45, showgrid: false },
-            yaxis: { title: '퇴근 인원', showgrid: true, gridcolor: '#F3F4F6' },
-            showlegend: false
-        };
-        
-        Plotly.newPlot('leave-work-chart', leaveWorkData, leaveWorkLayout, {responsive: true, displayModeBar: false, displaylogo: false});
+    fetch('/chart/subway-congestion?type=leave')
+        .then(res => res.json())
+        .then(data => {
+            hideLoading(chartDiv);
+            
+            const stationNames = data.map(item => item.station);
+            const counts = data.map(item => item.count);
 
-        var hourlyPatternData = [
-            {
-                type: 'scatter',
-                mode: 'lines',
-                name: '월요일',
-                x: ['05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00'],
-                y: [234, 567, 1234, 2456, 1987, 845, 456, 234],
-                line: { color: '#3B82F6', width: 2 }
-            },
-            {
-                type: 'scatter',
-                mode: 'lines',
-                name: '화요일',
-                x: ['05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00'],
-                y: [245, 589, 1289, 2512, 2034, 867, 478, 256],
-                line: { color: '#10B981', width: 2 }
-            },
-            {
-                type: 'scatter',
-                mode: 'lines',
-                name: '수요일',
-                x: ['05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00'],
-                y: [256, 612, 1345, 2589, 2123, 901, 501, 278],
-                line: { color: '#F59E0B', width: 2 }
-            },
-            {
-                type: 'scatter',
-                mode: 'lines',
-                name: '목요일',
-                x: ['05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00'],
-                y: [267, 634, 1401, 2634, 2178, 934, 523, 289],
-                line: { color: '#EF4444', width: 2 }
-            },
-            {
-                type: 'scatter',
-                mode: 'lines',
-                name: '금요일',
-                x: ['05:00', '06:00', '07:00', '08:00', '09:00', '10:00', '11:00', '12:00'],
-                y: [278, 656, 1456, 2712, 2234, 967, 545, 301],
-                line: { color: '#8B5CF6', width: 2 }
-            }
-        ];
-        
-        var hourlyPatternLayout = {
-            margin: { t: 20, r: 20, b: 60, l: 60 },
-            plot_bgcolor: '#FFFFFF',
-            paper_bgcolor: '#FFFFFF',
-            xaxis: { title: '시간', showgrid: false },
-            yaxis: { title: '출근 인원', showgrid: true, gridcolor: '#F3F4F6' },
-            showlegend: true,
-            legend: { x: 1, xanchor: 'right', y: 1 }
-        };
-        
-        Plotly.newPlot('hourly-pattern-chart', hourlyPatternData, hourlyPatternLayout, {responsive: true, displayModeBar: false, displaylogo: false});
+            const trace = [{
+                type: 'bar',
+                x: stationNames,
+                y: counts,
+                marker: { color: '#EF4444' },
+                text: counts.map(v => (v / 10000).toFixed(1) + '만'),
+                textposition: 'auto',
+                textfont: { size: 10 }
+            }];
 
-    } catch(e) {
-        console.error('Chart rendering error:', e);
-    }
+            const layout = {
+                margin: { t: 20, r: 20, b: 80, l: 50 },
+                plot_bgcolor: '#FFFFFF',
+                paper_bgcolor: '#FFFFFF',
+                xaxis: { tickangle: -45, showgrid: false, tickfont: { size: 10 } },
+                yaxis: { title: '퇴근 인원', showgrid: true, gridcolor: '#F3F4F6', tickfont: { size: 10 } },
+                showlegend: false,
+                uniformtext: { minsize: 9, mode: 'hide' }
+            };
+
+            Plotly.newPlot(chartDiv, trace, layout, { responsive: true, displayModeBar: false, displaylogo: false });
+        })
+        .catch(err => {
+            chartDiv.innerHTML = `<p style="text-align:center; padding:50px; color:#EF4444;">데이터 로딩 실패</p>`;
+        });
 }

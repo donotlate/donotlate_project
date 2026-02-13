@@ -73,7 +73,7 @@
             UPDATE_DATE, 
             SOCIAL_TYPE, 
             SOCIAL_ID
-        FROM DNL."MEMBER"
+        FROM "MEMBER"
         WHERE SOCIAL_ID = #{socialId}
         AND SOCIAL_TYPE = #{socialType}
         AND MEMBER_DEL_FL = 'N'
