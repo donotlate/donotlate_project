@@ -24,12 +24,14 @@
         WHERE MEMBER_NO = #{memberNo}
     </update>
 
+    <!-- 회원 탈퇴 -->
     <update id="deleteMember">
         UPDATE MEMBER
         SET MEMBER_DEL_FL = 'Y'
         WHERE MEMBER_NO = #{memberNo}
     </update>
 
+    <!-- 프로필 수정 -->
     <update id="updateProfileImg">
         UPDATE MEMBER
         SET PROFILE_IMG = #{profileImg}

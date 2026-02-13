@@ -202,7 +202,7 @@ public class MemberController {
      * 카카오 인증 API 호출 후 리다이렉트 메소드
      * 토큰 확인 -> 멤버 DTO에 대입 -> 로그인 처리
      */
-    @GetMapping("login/oauth2/kakao") // yml에 등록한 kakaoRedirectUri의 경로
+    @GetMapping("login/oauth2/kakao")
     public String kakaoCallback(@RequestParam("code") String code, HttpServletRequest req, RedirectAttributes ra) {
         // 1. 토큰 획득
     	String accessToken = KakaoService.getAccessTokenFromKakao(code);
