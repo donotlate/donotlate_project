@@ -26,7 +26,7 @@ public class BoardServiceImpl implements BoardService {
 		
 		Map<String, Object> map = new HashMap<>();
 	    map.put("limit", limit);
-	    map.put("offset", offset);
+	    map.put("offset", offset); // 계산한 offset만큼 건너뜀
 	    map.put("query", query);
 		
 		return mapper.selectNoticeList(map);
@@ -40,7 +40,15 @@ public class BoardServiceImpl implements BoardService {
 	@Override
 	public Board selectNoticeDetail(int boardNo) {
 
+		
 		return mapper.selectNoticeDetail(boardNo);
+	}
+
+	@Override
+	public void increaseViewCount(int boardNo) {
+		
+		mapper.increaseViewCount(boardNo);
+		
 	}
 	
 

@@ -16,6 +16,8 @@ public interface BoardMapper {
 
 	Board selectNoticeDetail(int boardNo);
 
+	int increaseViewCount(int boardNo);
+
 
 
 

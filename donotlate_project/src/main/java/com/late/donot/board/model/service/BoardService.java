@@ -13,6 +13,8 @@ public interface BoardService {
 
 	Board selectNoticeDetail(int boardNo);
 
+	void increaseViewCount(int boardNo);
+
 
 
 	

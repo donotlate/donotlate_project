@@ -2,7 +2,9 @@ package com.late.donot.admin.controller;
 
 import java.util.List;
 
+import org.springframework.web.bind.support.SessionStatus; 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,19 +59,23 @@ public class AdminController {
 	 * @param sessionStatus
 	 * @return
 	 */
+
 	@GetMapping("logout")
-	public String logout(HttpSession session) {
-
-		session.invalidate();
-
-		return "redirect:/";
-
+	public ResponseEntity<String> logout(HttpSession session, SessionStatus status) {
+	    
+	    // 1. @SessionAttributes로 등록된 세션 데이터(loginMember)를 비움
+	    status.setComplete(); 
+	    
+	    // 2. HTTP 세션 자체를 무효화
+	    session.invalidate(); 
+	    
+	    return ResponseEntity.ok().build();  // -> 200
 	}
 	
 	/** 작성자: 양충모 
 	 * 	작성일: 01-29
 	 *  유저 조회
-	 * @param member
+	 * @param member	
 	 * @return
 	 */
 	@GetMapping("Users")

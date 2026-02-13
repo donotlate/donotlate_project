@@ -39,5 +39,11 @@
 	    WHERE BOARD_NO = #{no}
 	    AND BOARD_DEL_FL = 'N'
 	</select>
+	
+	<update id="increaseViewCount">
+		UPDATE NOTICE
+    	SET BOARD_VIEW_COUNT = BOARD_VIEW_COUNT + 1
+    	WHERE BOARD_NO = #{boardNo}
+	</update>
 
 </mapper>
