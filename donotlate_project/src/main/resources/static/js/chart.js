@@ -37,7 +37,7 @@ function showLoading(elementId) {
 function hideLoading(elementId) {
     const el = document.getElementById(elementId);
     if (el) {
-        el.innerHTML = ''; // 내부의 스피너와 텍스트를 깨끗이 지움
+        el.innerHTML = '';
     }
 }
 
