@@ -1,6 +1,7 @@
 package com.late.donot.board.model.mapper;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Mapper;
 
@@ -9,6 +10,16 @@ import com.late.donot.board.model.dto.Board;
 @Mapper
 public interface BoardMapper {
 
-	List<Board> Notices();
+	List<Board> selectNoticeList(Map<String, Object> mapmap);
+
+	int getListCount(String query);
+
+	Board selectNoticeDetail(int boardNo);
+
+	int increaseViewCount(int boardNo);
+
+
+
+
 
 }
