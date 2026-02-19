@@ -22,4 +22,11 @@ public class OdsaySubPath {
     private String endName;
     
     private Integer stationCount;
+    
+    private List<String> stations;
+    
+    private OdsayStopList passStopList;
+    
+    private Integer startID;
+    private Integer endID; 
 }
