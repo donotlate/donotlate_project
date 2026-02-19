@@ -1,8 +1,8 @@
 package com.late.donot.admin.controller;
 
 import java.util.List;
+import java.util.Map;
 
-import org.springframework.web.bind.support.SessionStatus; 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.late.donot.admin.model.service.AdminService;
 import com.late.donot.board.model.dto.Board;
+import com.late.donot.common.config.jwtUtilConfig;
 import com.late.donot.member.model.dto.Member;
 
 import jakarta.servlet.http.HttpSession;
@@ -25,51 +26,40 @@ import jakarta.servlet.http.HttpSession;
 @RestController
 @CrossOrigin(origins = "http://localhost:5173",allowCredentials = "true")
 @RequestMapping("admin")
-@SessionAttributes({ "loginMember" })
 public class AdminController {
 
-	@Autowired
-	private AdminService service;
+	  @Autowired private AdminService service;
+	  @Autowired private jwtUtilConfig jwtUtil;
 
-	/**
-	 * 작성자 양충모 작성일 2026-01-26 로그인
-	 * 
+	  /** 작성자: 양충모 작성일 : 02-19 로그인
 	 * @param inputMember
-	 * @param session
 	 * @return
 	 */
 	@PostMapping("login")
-	public Member login(@RequestBody Member inputMember, HttpSession session) {
+	  public ResponseEntity<?> login(@RequestBody Member inputMember) {
 
-		Member loginMember = service.login(inputMember);
+	    Member loginMember = service.login(inputMember);
+	    if (loginMember == null) return ResponseEntity.status(401).body("LOGIN_FAIL");
 
-		if (loginMember == null)
-			return null;
+	    String role = "ADMIN";
+	    String token = jwtUtil.createToken(loginMember.getMemberEmail(), role);
 
-		session.setAttribute("loginMember", loginMember);
-
-		System.out.println("관지자 정보" + loginMember);
-		return loginMember;
-
-	}
+	    return ResponseEntity.ok(Map.of(
+	      "token", token,
+	      "memberName", loginMember.getMemberName(),
+	      "memberEmail", loginMember.getMemberEmail()
+	    ));
+	  }
 
 	/**
-	 * 작성자: 양충모 작성일: 01-28 로그아웃
+	 * 작성자: 양충모 작성일: 02-19 로그아웃
 	 * 
 	 * @param sessionStatus
 	 * @return
 	 */
-
 	@GetMapping("logout")
-	public ResponseEntity<String> logout(HttpSession session, SessionStatus status) {
-	    
-	    // 1. @SessionAttributes로 등록된 세션 데이터(loginMember)를 비움
-	    status.setComplete(); 
-	    
-	    // 2. HTTP 세션 자체를 무효화
-	    session.invalidate(); 
-	    
-	    return ResponseEntity.ok().build();  // -> 200
+	public ResponseEntity<Void> logout() {
+	    return ResponseEntity.ok().build();
 	}
 	
 	/** 작성자: 양충모 
