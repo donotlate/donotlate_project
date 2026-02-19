@@ -16,5 +16,15 @@ public class SecurityConfig {
 		
 	}
 
-	
+	@Bean
+	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+	    http
+	        .cors(cors -> {})  // 👈 이것만 있어도 기본 CORS 활성화됨
+	        .csrf(csrf -> csrf.disable())
+	        .authorizeHttpRequests(auth -> auth
+	            .anyRequest().permitAll()
+	        );
+
+	    return http.build();
+	}
 }
