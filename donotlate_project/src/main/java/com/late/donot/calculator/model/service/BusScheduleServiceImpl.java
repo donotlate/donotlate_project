@@ -27,43 +27,67 @@ public class BusScheduleServiceImpl implements BusScheduleService{
     private String apiKey;
 	
 	@Override
-	public TimeItem findNextBus(int stationId, String busNo, LocalTime baseTime, DayType dayType) {
-		
-		BusStationInfoResponse res = odsayBusTime.getBusStationInfo(apiKey, stationId, 0, "json");
-		
-		if (res == null || res.getResult() == null) return null;
+	public TimeItem findNextBus(int stationId,
+	                            String busNo,
+	                            LocalTime baseTime,
+	                            DayType dayType) {
 
-        BusLane lane = res.getResult().getLane()
-                .stream()
-                .filter(l -> busNo.equals(l.getBusNo()))
-                .findFirst()
-                .orElse(null);
+	    if (baseTime == null) baseTime = LocalTime.now();
 
-        if (lane == null) return null;
+	    BusStationInfoResponse res =
+	            odsayBusTime.getBusStationInfo(apiKey, stationId, 0, "json");
 
-        LocalTime first = parseTime(lane.getBusFirstTime());
-        LocalTime last  = parseTime(lane.getBusLastTime());
-        int interval = parseInterval(lane.getBusInterval());
+	    if (res == null || res.getResult() == null) return null;
 
-        if (first == null || last == null || interval <= 0) return null;
+	    BusLane lane = res.getResult().getLane()
+	            .stream()
+	            .filter(l -> busNo.equals(l.getBusNo()))
+	            .findFirst()
+	            .orElse(null);
 
-        LocalTime next = calcNextTime(first, last, interval, baseTime);
+	    if (lane == null) return null;
 
-        if (next == null) return null;
+	    LocalTime first = parseHHmm(lane.getBusFirstTime());
+	    LocalTime last  = parseHHmm(lane.getBusLastTime());
+	    int interval = parseInterval(lane.getBusInterval());
 
-        return TimeItem.builder()
-                .departureTime(next.toString())
-                .subwayClass(0)
-                .endStationName(lane.getBusDirectionName())
-                .build();
-    }
+	    if (first == null || last == null || interval <= 0) return null;
+
+	    LocalTime next = calcNextTime(first, last, interval, baseTime);
+
+	    if (next == null) return null;
+
+	    return TimeItem.builder()
+	            .departureTime(formatHHmm(next))
+	            .endStationName(lane.getBusDirectionName())
+	            .build();
+	}
 
 
-    private LocalTime parseTime(String time) {
-        if (time == null || time.isBlank()) return null;
-        
-        return LocalTime.parse(time);
-    }
+
+	private LocalTime parseHHmm(String time) {
+
+	    if (time == null || time.isBlank()) return null;
+
+	    time = time.trim();
+
+	    if (time.matches("^\\d{3,4}$")) {
+	        if (time.length() == 3) {
+	            time = "0" + time;
+	        }
+	        time = time.substring(0, 2) + ":" + time.substring(2);
+	    }
+
+	    String[] parts = time.split(":");
+	    int hour = Integer.parseInt(parts[0]);
+	    int minute = Integer.parseInt(parts[1]);
+
+	    if (hour >= 24) {
+	        hour = hour - 24;
+	    }
+
+	    return LocalTime.of(hour, minute);
+	}
 
     private int parseInterval(String interval) {
         try {
@@ -85,6 +109,11 @@ public class BusScheduleServiceImpl implements BusScheduleService{
         LocalTime next = first.plusMinutes(cnt * interval);
 
         return next.isAfter(last) ? null : next;
+    }
+    
+    private String formatHHmm(LocalTime time) {
+        if (time == null) return null;
+        return time.getHour() + ":" + String.format("%02d", time.getMinute());
     }
 
 

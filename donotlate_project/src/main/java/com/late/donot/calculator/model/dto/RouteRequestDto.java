@@ -1,6 +1,8 @@
-package com.late.donot.api.dto;
+package com.late.donot.calculator.model.dto;
 
 import java.time.LocalTime;
+
+import com.late.donot.api.dto.DayType;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +13,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class RouteRequestDto {
+public class RouteRequestDTO {
 	
 	private double sx;
     private double sy;

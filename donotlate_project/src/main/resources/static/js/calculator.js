@@ -130,6 +130,7 @@ document.querySelectorAll(".transport-btn").forEach(btn => {
 });
 
 async function loadRoutes() {
+
   const sx = document.getElementById("departure-lng").value;
   const sy = document.getElementById("departure-lat").value;
   const ex = document.getElementById("arrival-lng").value;
@@ -137,11 +138,16 @@ async function loadRoutes() {
 
   if (!sx || !sy || !ex || !ey) {
     document.getElementById("route-result-container").innerHTML = "";
-
     return;
   }
 
-  const url = `/calculator/routes?sx=${encodeURIComponent(sx)}&sy=${encodeURIComponent(sy)}&ex=${encodeURIComponent(ex)}&ey=${encodeURIComponent(ey)}&mode=${encodeURIComponent(currentMode)}`;
+  const dt = getDepartureDateTimeOptional();
+
+  let url = `/calculator/routes?sx=${encodeURIComponent(sx)}&sy=${encodeURIComponent(sy)}&ex=${encodeURIComponent(ex)}&ey=${encodeURIComponent(ey)}&mode=${encodeURIComponent(currentMode)}`;
+
+  if (dt) {
+    url += `&departureTime=${encodeURIComponent(dt.time)}&dayType=${encodeURIComponent(dt.dayType)}`;
+  }
 
   const container = document.getElementById("route-result-container");
   container.innerHTML = renderLoadingCards();
@@ -157,6 +163,7 @@ async function loadRoutes() {
     container.innerHTML = renderErrorCard();
   }
 }
+
 
 function renderLoadingCards() {
   return `
@@ -204,7 +211,7 @@ function routeCardHtml(route, idx) {
   const steps = getStepsToRender(route, isExpanded);
 
   return `
-    <section class="section-card" data-route-idx="${idx}">
+    <section class="section-card route-card cursor-pointer" data-route-idx="${idx}" onclick="selectRoute(${idx})">
       <h2 class="heading-3 flex-center">
         <i class="fa-solid fa-route text-blue-600 mr-2"></i>
         ${idx + 1}번 경로 / 경유 노선 및 환승 정보
@@ -558,4 +565,232 @@ function toggleStations(id, btn) {
   btn.innerText = opened
     ? btn.innerText.replace("▼", "▶")
     : btn.innerText.replace("▶", "▼");
+}
+
+function getDepartureDateTime() {
+    const date = document.getElementById("departure-date").value;
+    const time = document.getElementById("departure-time").value;
+
+    if (!date || !time) {
+        alert("출발 희망 일시를 선택해주세요.");
+        return null;
+    }
+
+    const base = new Date(`${date}T${time}:00`);
+
+    return {
+        date,
+        time,
+        dayType: resolveDayType(base)
+    };
+}
+
+function resolveDayType(dateObj) {
+    const day = dateObj.getDay();
+
+    if (day === 0) return "HOLIDAY";
+    if (day === 6) return "SATURDAY";
+    return "WEEKDAY";
+}
+
+function getDepartureDateTimeOptional() {
+  const date = document.getElementById("departure-date")?.value;
+  const time = document.getElementById("departure-time")?.value;
+
+  if (!date || !time) return null;
+
+  const base = new Date(`${date}T${time}:00`);
+
+  return {
+    time,
+    dayType: resolveDayType(base)
+  };
+}
+
+function trimSeconds(timeStr) {
+  if (!timeStr) return "";
+
+  return timeStr.length >= 5 ? timeStr.slice(0, 5) : timeStr;
+}
+
+async function callAiPushTime(selectedRoute) {
+
+    const prepareTime = parseInt(document.getElementById("prepare-time").value || 0);
+    const bufferTime = parseInt(document.getElementById("transport-time").value || 0);
+
+    const date = document.getElementById("departure-date").value;
+    const time = document.getElementById("departure-time").value;
+
+    if (!date || !time) {
+        alert("출발 일시를 입력해주세요.");
+        return;
+    }
+
+    const departureDateTime = `${date}T${time}:00`;
+
+    const weather = "맑음";
+
+    const request = {
+        route: selectedRoute,
+        prepareTime: prepareTime,
+        bufferTime: bufferTime,
+        weather: weather,
+        departureDateTime: departureDateTime
+    };
+
+    try {
+        const response = await fetch("/push/ai", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(request)
+        });
+
+        if (!response.ok) {
+            throw new Error("AI 호출 실패");
+        }
+
+        const result = await response.text();
+
+        updateAiPushUI(result, prepareTime, bufferTime, selectedRoute.totalTime);
+
+    } catch (error) {
+        console.error(error);
+        alert("AI 추천 시간 계산 실패");
+    }
+}
+
+function updateAiPushUI(aiTime, prepareTime, bufferTime, moveTime) {
+
+    document.getElementById("ai-push-time").innerText = aiTime;
+
+    document.getElementById("ai-prepare-time").innerText = prepareTime + "분";
+    document.getElementById("ai-move-time").innerText = moveTime + "분";
+    document.getElementById("ai-buffer-time").innerText = bufferTime + "분";
+
+}
+
+let selectedRouteIndex = null;
+
+function selectRoute(idx) {
+
+    console.log("선택됨:", idx);
+
+    selectedRouteIndex = idx;
+
+    document.querySelectorAll(".route-card").forEach(card => {
+        card.classList.remove("ring-4", "ring-indigo-600", "bg-indigo-50");
+    });
+
+    const selectedCard = document.querySelector(
+        `.route-card[data-route-idx="${idx}"]`
+    );
+
+    selectedCard.classList.add("ring-4", "ring-indigo-600", "bg-indigo-50");
+
+    const route = currentRoutes[idx];
+
+    document.getElementById("selected-route-label-ai").innerText =
+        `${idx + 1}번 경로 사용`;
+
+    callAiPushTime(route);
+    updateManualPushTime(route);
+}
+
+
+function isRushHour(date) {
+  const day = date.getDay();
+  const hour = date.getHours();
+
+  const isWeekday = day >= 1 && day <= 5;
+  if (!isWeekday) return false;
+
+  const morning = hour >= 7 && hour < 10;
+  const evening = hour >= 17 && hour < 20;
+  return morning || evening;
+}
+
+function calcArrivalTime({
+  departureAt,
+  prepMinutes = 0,
+  travelMinutes = 0,
+  transportBuffer = 0,
+  transferCount = 0,
+  rushHour = null
+}) {
+
+  const departure = new Date(departureAt);
+
+  const rush = rushHour !== null ? rushHour : isRushHour(departure);
+
+  const perTransfer = rush ? 3 : 5;
+  const transferBuffer = transferCount * perTransfer;
+
+  const totalMinutes =
+    prepMinutes +
+    travelMinutes +
+    transportBuffer +
+    transferBuffer;
+
+  const arrival = new Date(departure.getTime() + totalMinutes * 60000);
+
+  return {
+    arrival,
+    breakdown: {
+      prepMinutes,
+      travelMinutes,
+      transportBuffer,
+      transferBuffer,
+      rush
+    }
+  };
+}
+
+function fmtHHmm(d) {
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mm = String(d.getMinutes()).padStart(2, "0");
+  return `${hh}:${mm}`;
+}
+
+function updateManualPushTime(route) {
+
+  const prepareTime = parseInt(document.getElementById("prepare-time").value || 0);
+  const bufferTime  = parseInt(document.getElementById("transport-time").value || 0);
+
+  const date = document.getElementById("departure-date").value;
+  const time = document.getElementById("departure-time").value;
+
+  if (!date || !time) return;
+
+  const arrivalAt = new Date(`${date}T${time}:00`);
+
+  const rush = isRushHour(arrivalAt);
+  const perTransfer = rush ? 3 : 5;
+  const transferBuffer = route.transferCount * perTransfer;
+
+  const totalMinutes =
+      route.totalTime +
+      prepareTime +
+      bufferTime +
+      transferBuffer;
+
+  const pushTime = new Date(
+      arrivalAt.getTime() - totalMinutes * 60000
+  );
+
+  document.getElementById("recommend-push-time").innerText =
+      fmtHHmm(pushTime);
+
+  document.getElementById("recommend-prepare-time").innerText =
+      prepareTime + "분";
+
+  document.getElementById("recommend-move-time").innerText =
+      route.totalTime + "분";
+
+  document.getElementById("recommend-buffer-time").innerText =
+      (bufferTime + transferBuffer) + "분";
+
+  document.getElementById("selected-route-label-recommend").innerText =
+      "선택 경로 기준";
 }
