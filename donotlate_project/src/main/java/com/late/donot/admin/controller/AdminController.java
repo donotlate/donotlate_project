@@ -14,22 +14,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.late.donot.admin.model.service.AdminService;
 import com.late.donot.board.model.dto.Board;
-import com.late.donot.common.config.jwtUtilConfig;
+import com.late.donot.common.config.JwtUtilConfig;
 import com.late.donot.member.model.dto.Member;
 
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletRequest;
 
-@RestController
-@CrossOrigin(origins = "http://localhost:5173",allowCredentials = "true")
+@RestController	
 @RequestMapping("admin")
 public class AdminController {
 
 	  @Autowired private AdminService service;
-	  @Autowired private jwtUtilConfig jwtUtil;
+	  @Autowired private JwtUtilConfig jwtUtil;
 
 	  /** 작성자: 양충모 작성일 : 02-19 로그인
 	 * @param inputMember
@@ -42,8 +40,11 @@ public class AdminController {
 	    if (loginMember == null) return ResponseEntity.status(401).body("LOGIN_FAIL");
 
 	    String role = "ADMIN";
-	    String token = jwtUtil.createToken(loginMember.getMemberEmail(), role);
-
+	    String token =  jwtUtil.createToken(
+	    	    loginMember.getMemberEmail(),
+	    	    role,
+	    	    loginMember.getMemberNo()
+	    	); // 토큰에 번호까지 넣어주기
 	    return ResponseEntity.ok(Map.of(
 	      "token", token,
 	      "memberName", loginMember.getMemberName(),
@@ -68,7 +69,7 @@ public class AdminController {
 	 * @param member	
 	 * @return
 	 */
-	@GetMapping("Users")
+	@GetMapping("users")
 	public List<Member> getUsers() {
 		
 		List<Member> userList = service.getUsers();
@@ -120,7 +121,7 @@ public class AdminController {
 	/** 게시판 조회
 	 * @return
 	 */
-	@GetMapping("Notices")
+	@GetMapping("notices")
 	public List<Board> Notices(){
 		
 		List<Board> boardList = service.Notices();
@@ -131,12 +132,12 @@ public class AdminController {
 	/** 게시판 생성
 	 * @return
 	 */
+
 	@PostMapping("createBoard")
-	public List<Board> createBoard(@RequestBody Board inputBoard,HttpSession session){
-		
-	    Member loginMember = (Member) session.getAttribute("loginMember");
-	    
-	    inputBoard.setMemberNo(loginMember.getMemberNo());
+	public List<Board> createBoard(@RequestBody Board inputBoard, HttpServletRequest request){
+
+	    Integer memberNo = (Integer) request.getAttribute("authMemberNo");
+	    inputBoard.setMemberNo(memberNo);
 
 	    return service.createBoard(inputBoard);
 	}

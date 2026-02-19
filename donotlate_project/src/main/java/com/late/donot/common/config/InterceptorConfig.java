@@ -6,41 +6,55 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import com.late.donot.common.interceptor.JwtAdminInterceptor;
 import com.late.donot.common.interceptor.LoginCheckInterceptor;
 
 @Configuration
-public class InterceptorConfig implements WebMvcConfigurer{
+public class InterceptorConfig implements WebMvcConfigurer {
 
     @Autowired
-	private LoginCheckInterceptor loginCheckInterceptor;
-    
+    private LoginCheckInterceptor loginCheckInterceptor;
+
+    @Autowired
+    private JwtAdminInterceptor jwtAdminInterceptor; // ✅ 이거 추가해야 함
+
+
     /** 작성자 : 양충모
      *	작성일: 2026-01-26
      *  cors 풀림
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/**") // 모든 경로에 대해 CORS 허용
-                .allowedOrigins("http://localhost:5173",  "https://donotlate-admin-project.vercel.app","https://donotlate.kro.kr")
-                .allowCredentials(true) // 쿠키 전송 허용
-                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 명시적으로 허용
+        registry.addMapping("/**")
+                .allowedOrigins(
+                        "http://localhost:5173",
+                        "https://donotlate-admin-project.vercel.app",
+                        "https://donotlate.kro.kr"
+                )
+                .allowCredentials(true)
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*");
     }
-    
-    
-	
+
 	/** 작성자 : 유건우
 	 *  작성일 : 2026-01-22
 	 *  인증하지 않을 URL 허용
 	 */
-	@Override
-	public void addInterceptors(InterceptorRegistry registry) {
-		
-		registry.addInterceptor(loginCheckInterceptor)
-		.addPathPatterns("/**")
-		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**", "/admin/login",
-                            "/css/**", "/js/**", "/favicon.ico");		
-	}
-	
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
 
+        //  /admin/** 는 JWT로 보호
+        registry.addInterceptor(jwtAdminInterceptor)
+                .addPathPatterns("/admin/**")
+                .excludePathPatterns("/admin/login"); // 로그인만 예외
+
+        // 기존 세션 인터셉터는 /admin/** 제외(충돌 방지)
+        registry.addInterceptor(loginCheckInterceptor)
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**",
+                        "/css/**", "/js/**", "/favicon.ico",
+                        "/admin/**"
+                );
+    }
 }
