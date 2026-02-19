@@ -21,7 +21,7 @@ public class InterceptorConfig implements WebMvcConfigurer{
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**") // 모든 경로에 대해 CORS 허용
-                .allowedOrigins("http://localhost:5173")
+                .allowedOrigins("http://localhost:5173",  "https://donotlate-admin-project.vercel.app")
                 .allowCredentials(true) // 쿠키 전송 허용
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 명시적으로 허용
                 .allowedHeaders("*");
