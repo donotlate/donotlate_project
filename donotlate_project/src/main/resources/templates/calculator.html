@@ -132,63 +132,74 @@
                         <h2 class="text-lg font-semibold flex items-center">
                             <i class="fa-solid fa-bell mr-2"></i>
                             권장 Push 시간
-                        </h2>
+                        </h2>                
                         <div class="flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full">
                             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span class="text-xs font-medium">1번 경로 사용 시</span>
+                            <span id="selected-route-label-recommend"
+                                  class="text-xs font-medium">
+                                경로 선택 필요
+                            </span>
                         </div>
-                    </div>
-                    
+                    </div>         
                     <div class="text-center py-6">
-                        <div class="text-6xl font-bold mb-2">07:48</div>
+                        <div id="recommend-push-time"
+                             class="text-6xl font-bold mb-2">
+                            --:--
+                        </div>
                         <div class="text-blue-200 text-sm">오전</div>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-3 mt-6">
+                    </div>     
+                    <div class="grid grid-cols-3 gap-3 mt-6">                
                         <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
-                            <div class="text-2xl font-bold">30분</div>
+                            <div id="recommend-prepare-time" class="text-2xl font-bold">--</div>
                             <div class="text-xs text-blue-200 mt-1">준비시간</div>
-                        </div>
+                        </div>                 
                         <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
-                            <div class="text-2xl font-bold">32분</div>
+                            <div id="recommend-move-time" class="text-2xl font-bold">--</div>
                             <div class="text-xs text-blue-200 mt-1">이동시간</div>
-                        </div>
+                        </div>                  
                         <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
-                            <div class="text-2xl font-bold">10분</div>
+                            <div id="recommend-buffer-time" class="text-2xl font-bold">--</div>
                             <div class="text-xs text-blue-200 mt-1">여유시간</div>
-                        </div>
+                        </div>        
                     </div>
                 </section>
+
                 <section id="ai-recommended-push-time-section" class="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl shadow-lg p-6 text-white">
                     <div class="flex items-center justify-between mb-4">
                         <h2 class="text-lg font-semibold flex items-center">
                             <i class="fa-solid fa-bell mr-2"></i>
                             AI 추천 Push 시간
                         </h2>
+                    
                         <div class="flex items-center space-x-2 bg-white/20 px-3 py-1 rounded-full">
                             <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                            <span class="text-xs font-medium">1번 경로 사용 시</span>
+                            <span id="selected-route-label-ai"
+                                  class="text-xs font-medium">
+                                경로 선택 필요
+                            </span>
                         </div>
-                    </div>
-                    
+                    </div>               
                     <div class="text-center py-6">
-                        <div class="text-6xl font-bold mb-2">07:52</div>
+                        <div id="ai-push-time"
+                             class="text-6xl font-bold mb-2">
+                            --:--
+                        </div>
                         <div class="text-blue-200 text-sm">오전</div>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-3 mt-6">
+                    </div>               
+                    <div class="grid grid-cols-3 gap-3 mt-6">                   
                         <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
-                            <div class="text-2xl font-bold">30분</div>
+                            <div id="ai-prepare-time" class="text-2xl font-bold">--</div>
                             <div class="text-xs text-blue-200 mt-1">준비시간</div>
                         </div>
+                    
                         <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
-                            <div class="text-2xl font-bold">32분</div>
+                            <div id="ai-move-time" class="text-2xl font-bold">--</div>
                             <div class="text-xs text-blue-200 mt-1">이동시간</div>
-                        </div>
+                        </div>                  
                         <div class="bg-white/10 rounded-xl p-3 text-center backdrop-blur">
-                            <div class="text-2xl font-bold">10분</div>
+                            <div id="ai-buffer-time" class="text-2xl font-bold">--</div>
                             <div class="text-xs text-blue-200 mt-1">여유시간</div>
-                        </div>
+                        </div>      
                     </div>
                 </section>
 

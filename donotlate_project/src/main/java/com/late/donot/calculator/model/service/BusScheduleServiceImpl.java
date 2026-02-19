@@ -26,11 +26,12 @@ public class BusScheduleServiceImpl implements BusScheduleService{
 	@Value("${odsay.api.key}")
     private String apiKey;
 	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *	다음 버스 도착시간 반환
+	 */
 	@Override
-	public TimeItem findNextBus(int stationId,
-	                            String busNo,
-	                            LocalTime baseTime,
-	                            DayType dayType) {
+	public TimeItem findNextBus(int stationId, String busNo, LocalTime baseTime, DayType dayType) {
 
 	    if (baseTime == null) baseTime = LocalTime.now();
 
@@ -63,8 +64,10 @@ public class BusScheduleServiceImpl implements BusScheduleService{
 	            .build();
 	}
 
-
-
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *	시간 문자열을 변환 
+	 */
 	private LocalTime parseHHmm(String time) {
 
 	    if (time == null || time.isBlank()) return null;
@@ -89,6 +92,10 @@ public class BusScheduleServiceImpl implements BusScheduleService{
 	    return LocalTime.of(hour, minute);
 	}
 
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *	배치간격 추출후 변환
+	 */
     private int parseInterval(String interval) {
         try {
             return Integer.parseInt(interval.replaceAll("[^0-9]", ""));
@@ -97,6 +104,10 @@ public class BusScheduleServiceImpl implements BusScheduleService{
         }
     }
 
+    /** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *	다음 버스 도착시간 계산
+	 */
     private LocalTime calcNextTime(LocalTime first, LocalTime last, int interval, LocalTime base) {
 
         if (base.isBefore(first)) {
@@ -111,6 +122,10 @@ public class BusScheduleServiceImpl implements BusScheduleService{
         return next.isAfter(last) ? null : next;
     }
     
+    /** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *	HHmm형식을 문자열로 변환
+	 */
     private String formatHHmm(LocalTime time) {
         if (time == null) return null;
         return time.getHour() + ":" + String.format("%02d", time.getMinute());

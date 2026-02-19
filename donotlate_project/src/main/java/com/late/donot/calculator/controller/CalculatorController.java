@@ -44,6 +44,10 @@ public class CalculatorController {
 	            sx, sy, ex, ey, mode, departureTime, dayType);
 	}
 	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  출발시간과 요일까지 포함해 경로를 계산해 반환
+	 */
 	@PostMapping("/routes")
 	public List<Route> routesWithTime(
 	        @RequestBody RouteRequestDTO req

@@ -27,6 +27,10 @@ public class SubwayScheduleServiceImpl implements SubwayScheduleService{
 	@Value("${odsay.api.key}")
 	private String apiKey;
 	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  다음 지하철 출발 시간 
+	 */
 	@Override
 	public TimeItem findNextSubway(int stationId, int wayCode, LocalTime baseTime, DayType dayType) {
 	
@@ -39,6 +43,10 @@ public class SubwayScheduleServiceImpl implements SubwayScheduleService{
 							.orElse(null);
 	}
 	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  날짜별 시간표 계산 
+	 */
 	private List<TimeItem> extractByDay(SubwayTimeResponse res, DayType dayType, int wayCode) {
 		
 		ScheduleGroup group = switch(dayType) {

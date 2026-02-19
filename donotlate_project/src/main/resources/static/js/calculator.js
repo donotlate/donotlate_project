@@ -691,8 +691,9 @@ function selectRoute(idx) {
 
     const route = currentRoutes[idx];
 
-    document.getElementById("selected-route-label-ai").innerText =
-        `${idx + 1}번 경로 사용`;
+    document.getElementById("selected-route-label-ai").innerText = `${idx + 1}번 경로 사용`;
+
+    document.getElementById("selected-route-label-recommend").innerText = `${idx + 1}번 경로 사용`;
 
     callAiPushTime(route);
     updateManualPushTime(route);
@@ -727,11 +728,7 @@ function calcArrivalTime({
   const perTransfer = rush ? 3 : 5;
   const transferBuffer = transferCount * perTransfer;
 
-  const totalMinutes =
-    prepMinutes +
-    travelMinutes +
-    transportBuffer +
-    transferBuffer;
+  const totalMinutes = prepMinutes + travelMinutes + transportBuffer + transferBuffer;
 
   const arrival = new Date(departure.getTime() + totalMinutes * 60000);
 
@@ -769,28 +766,21 @@ function updateManualPushTime(route) {
   const perTransfer = rush ? 3 : 5;
   const transferBuffer = route.transferCount * perTransfer;
 
-  const totalMinutes =
-      route.totalTime +
-      prepareTime +
-      bufferTime +
-      transferBuffer;
+  const totalMinutes = route.totalTime + prepareTime + bufferTime + transferBuffer;
 
   const pushTime = new Date(
       arrivalAt.getTime() - totalMinutes * 60000
   );
 
-  document.getElementById("recommend-push-time").innerText =
-      fmtHHmm(pushTime);
+  document.getElementById("recommend-push-time").innerText = fmtHHmm(pushTime);
 
-  document.getElementById("recommend-prepare-time").innerText =
-      prepareTime + "분";
+  document.getElementById("recommend-prepare-time").innerText = prepareTime + "분";
 
-  document.getElementById("recommend-move-time").innerText =
-      route.totalTime + "분";
+  document.getElementById("recommend-move-time").innerText = route.totalTime + "분";
 
-  document.getElementById("recommend-buffer-time").innerText =
-      (bufferTime + transferBuffer) + "분";
+  document.getElementById("recommend-buffer-time").innerText = bufferTime + "분";
 
-  document.getElementById("selected-route-label-recommend").innerText =
-      "선택 경로 기준";
+  if (selectedRouteIndex !== null) {
+      document.getElementById("selected-route-label-recommend").innerText = `${selectedRouteIndex + 1}번 경로 사용`;
+  }
 }

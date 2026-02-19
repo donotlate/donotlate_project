@@ -75,8 +75,9 @@ public class CalculatorServiceImpl implements CalculatorService {
 		return routes;
 	}
 
-	/**
-	 * 교통수단 종류 필터
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  교통수단 종류 필터
 	 */
 	private boolean matchMode(OdsayPath path, String mode) {
 		int bus = path.getInfo().getBusTransitCount();
@@ -176,6 +177,10 @@ public class CalculatorServiceImpl implements CalculatorService {
 				.build();
 	}
 
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  API값 변환
+	 */
 	private RouteStepType resolveType(OdsaySubPath sp) {
 		return switch (sp.getTrafficType()) {
 		case 1 -> RouteStepType.SUBWAY;
@@ -190,6 +195,10 @@ public class CalculatorServiceImpl implements CalculatorService {
 		};
 	}
 
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  제목 생성
+	 */
 	private String buildTitle(OdsaySubPath sp, RouteStepType type) {
 		return switch (type) {
 		case SUBWAY, BUS -> sp.getLane().get(0).getName();
@@ -198,6 +207,10 @@ public class CalculatorServiceImpl implements CalculatorService {
 		};
 	}
 
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  제목생성
+	 */
 	private String buildDescription(OdsaySubPath sp, RouteStepType type) {
 		return switch (type) {
 		case SUBWAY, BUS -> sp.getStartName() + " → " + sp.getEndName();
@@ -228,21 +241,13 @@ public class CalculatorServiceImpl implements CalculatorService {
 	 */
 	private LocalTime parseTime(String time) {
 
-	    if (time == null || time.isBlank()) return null;
-
-	    time = time.trim();
-
-	    if (time.matches("^\\d{3,4}$")) {
-	        if (time.length() == 3) {
-	            time = "0" + time;
-	        }
-	        time = time.substring(0, 2) + ":" + time.substring(2);
+	    if (time == null || time.isBlank()) {
+	        return null;
+	    }
+	    if (time.length() == 4) {
+	        time = "0" + time;
 	    }
 
-	    if (time.length() >= 5) {
-	        time = time.substring(0, 5);
-	    }
-
-	    return LocalTime.parse(time);
+	    return LocalTime.parse(time, DateTimeFormatter.ofPattern("H:mm"));
 	}
 }

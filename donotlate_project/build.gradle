@@ -55,7 +55,7 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml'
-	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter:1.0.0-M5'
+	implementation 'org.springframework.ai:spring-ai-openai-spring-boot-starter'
 	
 }
 
