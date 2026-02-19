@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.ibatis.annotations.Mapper;
 
+import com.late.donot.board.model.dto.Board;
 import com.late.donot.member.model.dto.Member;
 
 @Mapper
@@ -18,6 +19,16 @@ public interface AdminMapper {
 	void removeUser(int memberNo);
 
 	void createUser(Member inputMember);
+	
+	//--------------------------------------------------------------------------------------------------
+	
+	List<Board> Notices();
+
+	void createBoard(Board inputBoard);
+
+	void removeNotice(int boardNo);
+
+	void editBoard(Board board);
 
 
 }

@@ -39,6 +39,14 @@ public class FileConfig implements WebMvcConfigurer {
     @Value("${profile.resource-location}")
     private String profileResourceLocation;
 
+    
+    // 공지사항 이미지 경로 설정
+    @Value("${notice.resource-handler}")
+    private String noticeResourceHandler;
+
+    @Value("${notice.resource-location}")
+    private String noticeResourceLocation;
+    
     @Bean
     public MultipartConfigElement configElement() {
         MultipartConfigFactory factory = new MultipartConfigFactory();
@@ -59,5 +67,14 @@ public class FileConfig implements WebMvcConfigurer {
         // 프로필 이미지 핸들러 등록
         registry.addResourceHandler(profileResourceHandler)
                 .addResourceLocations(profileResourceLocation);
+        
+
+        // 공지 이미지
+        registry.addResourceHandler(noticeResourceHandler)
+                .addResourceLocations("file:" + noticeResourceLocation);
     }
+    
+    
+    
+    
 }

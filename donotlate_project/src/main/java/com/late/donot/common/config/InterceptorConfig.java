@@ -20,13 +20,14 @@ public class InterceptorConfig implements WebMvcConfigurer{
      */
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/admin/**")
-                .allowedOrigins("http://192.168.32.19:5173")
-                .allowCredentials(true)
-                .allowedMethods("*")
+        registry.addMapping("/**") // 모든 경로에 대해 CORS 허용
+                .allowedOrigins("http://localhost:5173",  "https://donotlate-admin-project.vercel.app")
+                .allowCredentials(true) // 쿠키 전송 허용
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 명시적으로 허용
                 .allowedHeaders("*");
-
     }
+    
+    
 	
 	/** 작성자 : 유건우
 	 *  작성일 : 2026-01-22
@@ -37,7 +38,7 @@ public class InterceptorConfig implements WebMvcConfigurer{
 		
 		registry.addInterceptor(loginCheckInterceptor)
 		.addPathPatterns("/**")
-		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**", "/admin/**",
+		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**", "/admin/login",
                             "/css/**", "/js/**", "/favicon.ico");		
 	}
 	

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<th:block th:replace="~{head :: headFragment}"></th:block>
+<body class="page-background">
+    <th:block th:replace="~{header :: headerFragment}"></th:block>
+
+    <div class="layout-container">
+        <th:block th:replace="~{aside :: asideFragment}"></th:block>
+        
+        <main class="main-content">
+            <div class="main-content-wrapper content-max-width-lg">
+                
+                <div class="content-header">
+                    <h1 class="heading-1">공지 사항</h1>
+                    <p class="text-secondary">서비스의 최신 소식을 상세히 확인하세요</p>
+                </div>
+
+                <div class="card-large content-spacing-md">
+                    
+                    <div class="card-header-border" style="padding-bottom: 1.5rem;">
+                        <h2 class="announcement-title" 
+                            style="font-size: 1.5rem; color: #111827; margin-bottom: 1rem; cursor: default;" 
+                            th:text="${notice.boardTitle}">공지사항 제목</h2>
+                        
+                        <div class="announcement-meta">
+                            <span>
+                                <i class="fa-regular fa-calendar meta-icon"></i>
+                                <span th:text="${notice.boardWriteDate}">2024.01.01</span>
+                            </span>
+                            <span>
+                                <i class="fa-regular fa-eye meta-icon"></i>
+                                조회수 <span th:text="${notice.boardViewCount}">0</span>
+                            </span>
+                            <span>
+                                <i class="fa-regular fa-user meta-icon"></i>
+                                작성자: <span th:text="${notice.memberName}">관리자</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="announcement-item-content" style="min-height: 400px; padding: 2.5rem 1.5rem;">
+                        <div class="announcement-description" 
+                            style="font-size: 1.05rem; color: #374151; line-height: 1.8;" 
+                            th:utext="${notice.boardContent}">
+                            여기에 공지사항 내용이 출력됩니다.
+                        </div>
+                    </div>
+
+                    <div class="detail-footer" style="padding-top: 1.5rem; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                        <button th:onclick="|location.href='/notice'|" 
+                                class="pagination-button" 
+                                style="width: auto; padding: 0 1.25rem; display: flex; align-items: center; gap: 8px; background: #2563eb; color:#e5e7eb;">
+                            <i class="fa-solid fa-arrow-left"></i> 목록으로
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

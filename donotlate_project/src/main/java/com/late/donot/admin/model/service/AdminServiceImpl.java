@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.late.donot.admin.model.mapper.AdminMapper;
+import com.late.donot.board.model.dto.Board;
 import com.late.donot.member.model.dto.Member;
 
 import lombok.RequiredArgsConstructor;
@@ -76,6 +77,33 @@ public class AdminServiceImpl implements AdminService {
 		mapper.createUser(inputMember);
 		
 		return mapper.getUsers();
+	}
+	
+	
+	//--------------------------------------------------------------------------------------------------
+	
+	@Override
+	public List<Board> Notices() {
+		return mapper.Notices();
+	}
+
+	@Override
+	public List<Board> createBoard(Board inputBoard) {
+		
+		mapper.createBoard(inputBoard);
+		return mapper.Notices();
+	}
+
+	@Override
+	public List<Board> removeNotice(int boardNo) {
+		mapper.removeNotice(boardNo);
+		return mapper.Notices();
+	}
+
+	@Override
+	public List<Board> editBoard(Board board) {
+		mapper.editBoard(board);
+		return mapper.Notices();
 	}
 
 }

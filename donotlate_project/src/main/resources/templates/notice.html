@@ -16,12 +16,23 @@
                 <div class="card-header-border flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 w-full">
                         
-                        <div class="search-input-wrapper relative w-full sm:w-auto">
-                            <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10"></i>
+                        <!-- 검색 -->
+                        <form th:action="@{/notice}" method="get" class="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4 w-full">
                             
-                            <input type="text" id="announcement-search" placeholder="공지사항 제목 검색..." class="search-input w-full sm:w-64" maxlength="50"/>
-                        </div>
-                        
+                            <div class="search-input-wrapper relative w-full sm:w-auto">
+                                <i class="fa-solid fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none z-10"></i>
+                                
+                                <input type="text" 
+                                    name="query" 
+                                    id="announcement-search" 
+                                    th:value="${query}" 
+                                    placeholder="공지사항 제목 검색..." 
+                                    class="search-input w-full sm:w-64" 
+                                    maxlength="50"/>
+                            </div>
+
+                        </form>
+
                         <select id="announcement-filter" class="select-field w-full sm:w-auto">
                             <option>전체</option>
                             <option>업데이트</option>
@@ -30,140 +41,68 @@
                             <option>기타</option>
                         </select>
                         
+                        
                     </div>
                 </div>
 
+                
                 <div id="announcements-list">
-                    <div class="announcement-item-border announcement-item-hover">
-                        <div class="announcement-item-content">
-                            <div class="announcement-item-header">
+                    <a th:each="notice : ${noticeList}"
+                    th:href="@{/notice/{no}(no=${notice.boardNo})}"
+                    class="block announcement-item-border announcement-item-hover"> <div class="announcement-item-content"> <div class="announcement-item-header">
                                 <div class="announcement-item-main">
-                                    <div class="badge-group">
-                                        <span class="badge badge-danger">중요</span>
-                                        <span class="badge badge-primary">업데이트</span>
-                                    </div>
-                                    <h3 class="announcement-title">
-                                        대중교통 환승 최적화 기능 추가
-                                    </h3>
-                                    <p class="announcement-description">
-                                        지하철-버스 환승 시 최적의 환승 위치와 시간을 알려주는 기능이 추가되었습니다. 더 빠르고 편리한 출근이 가능합니다.
-                                    </p>
+                                    <h3 class="announcement-title" th:text="${notice.boardTitle}">제목</h3>
+                                    
+                                    <p class="announcement-description" th:text="${notice.boardContent}">내용</p>
+                                    
                                     <div class="announcement-meta">
-                                        <span><i class="fa-regular fa-calendar meta-icon"></i>2026.01.10</span>
-                                        <span><i class="fa-regular fa-eye meta-icon"></i>1,567</span>
+                                        <span>
+                                            <i class="fa-regular fa-calendar meta-icon"></i>
+                                            <span th:text="${notice.boardWriteDate}">2024.01.01</span>
+                                        </span>
+                                        <span>
+                                            <i class="fa-regular fa-eye meta-icon"></i>
+                                            <span th:text="${notice.boardViewCount}">0</span>
+                                        </span>
                                     </div>
                                 </div>
-                                <i class="fa-solid fa-chevron-right announcement-arrow"></i>
+                                
+                                <div class="announcement-arrow">
+                                    <i class="fa-solid fa-chevron-right"></i>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                    </a>
+                    
+                    <!-- 페이지네이션 -->
+                    <div class="pagination">
+                        <span th:text="|총 ${noticeList.size()}개 표시|"></span>
 
-                    <div class="announcement-item-border announcement-item-hover">
-                        <div class="announcement-item-content">
-                            <div class="announcement-item-header">
-                                <div class="announcement-item-main">
-                                    <div class="badge-group">
-                                        <span class="badge badge-warning">점검</span>
-                                    </div>
-                                    <h3 class="announcement-title">
-                                        정기 서버 점검 안내 (1월 20일)
-                                    </h3>
-                                    <p class="announcement-description">
-                                        서비스 안정성 향상을 위한 정기 점검이 예정되어 있습니다. 점검 시간: 2026년 1월 20일 02:00 ~ 06:00 (4시간)
-                                    </p>
-                                    <div class="announcement-meta">
-                                        <span><i class="fa-regular fa-calendar meta-icon"></i>2026.01.08</span>
-                                        <span><i class="fa-regular fa-eye meta-icon"></i>734</span>
-                                    </div>
-                                </div>
-                                <i class="fa-solid fa-chevron-right announcement-arrow"></i>
-                            </div>
-                        </div>
-                    </div>
+                        <div class="page-btns">
+                            <button class="pagination-button" 
+                                    th:disabled="${currentPage == 1}"
+                                    th:onclick="|location.href='/notice?cp=${currentPage - 1}'|">
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
 
-                    <div class="announcement-item-border announcement-item-hover">
-                        <div class="announcement-item-content">
-                            <div class="announcement-item-header">
-                                <div class="announcement-item-main">
-                                    <div class="badge-group">
-                                        <span class="badge badge-success">기타</span>
-                                    </div>
-                                    <h3 class="announcement-title">
-                                        개인정보 처리방침 개정 안내
-                                    </h3>
-                                    <p class="announcement-description">
-                                        관련 법령 개정에 따라 개인정보 처리방침이 일부 변경되었습니다. 자세한 내용은 공지사항을 참고해 주세요.
-                                    </p>
-                                    <div class="announcement-meta">
-                                        <span><i class="fa-regular fa-calendar meta-icon"></i>2026.01.03</span>
-                                        <span><i class="fa-regular fa-eye meta-icon"></i>456</span>
-                                    </div>
-                                </div>
-                                <i class="fa-solid fa-chevron-right announcement-arrow"></i>
-                            </div>
-                        </div>
-                    </div>
+                            <th:block th:each="i : ${#numbers.sequence(1, totalPages > 0 ? totalPages : 1)}">
+                                <button th:text="${i}"
+                                        class="pagination-button"
+                                        th:classappend="${currentPage == i} ? 'active' : ''"
+                                        th:onclick="|location.href='/notice?cp=${i}'|">
+                                </button>
+                            </th:block>
 
-                    <div class="announcement-item-border announcement-item-hover">
-                        <div class="announcement-item-content">
-                            <div class="announcement-item-header">
-                                <div class="announcement-item-main">
-                                    <div class="badge-group">
-                                        <span class="badge badge-primary">업데이트</span>
-                                    </div>
-                                    <h3 class="announcement-title">
-                                        모바일 UI 버전 2.5 업데이트
-                                    </h3>
-                                    <p class="announcement-description">
-                                        UI 개선 및 성능 최적화가 이루어진 새로운 버전이 출시되었습니다. 앱 스토어에서 업데이트 해주세요.
-                                    </p>
-                                    <div class="announcement-meta">
-                                        <span><i class="fa-regular fa-calendar meta-icon"></i>2025.12.28</span>
-                                        <span><i class="fa-regular fa-eye meta-icon"></i>1,890</span>
-                                    </div>
-                                </div>
-                                <i class="fa-solid fa-chevron-right announcement-arrow"></i>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="announcement-item-hover announcement-item-last">
-                        <div class="announcement-item-content">
-                            <div class="announcement-item-header">
-                                <div class="announcement-item-main">
-                                    <div class="badge-group">
-                                        <span class="badge badge-info">이벤트</span>
-                                    </div>
-                                    <h3 class="announcement-title">
-                                        연말 감사 이벤트 당첨자 발표
-                                    </h3>
-                                    <p class="announcement-description">
-                                        2025년 연말 감사 이벤트 당첨자가 발표되었습니다. 당첨자 확인 및 경품 수령 방법을 안내드립니다.
-                                    </p>
-                                    <div class="announcement-meta">
-                                        <span><i class="fa-regular fa-calendar meta-icon"></i>2025.12.25</span>
-                                        <span><i class="fa-regular fa-eye meta-icon"></i>3,421</span>
-                                    </div>
-                                </div>
-                                <i class="fa-solid fa-chevron-right announcement-arrow"></i>
-                            </div>
+                            <button class="pagination-button" 
+                                    th:disabled="${currentPage == totalPages}"
+                                    th:onclick="|location.href='/notice?cp=${currentPage + 1}'|">
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
                         </div>
                     </div>
                 </div>
 
-                <div class="pagination">
-                    <button class="pagination-button" disabled>
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </button>
-                    <button class="pagination-button active">1</button>
-                    <button class="pagination-button">2</button>
-                    <button class="pagination-button">3</button>
-                    <button class="pagination-button">4</button>
-                    <button class="pagination-button">5</button>
-                    <button class="pagination-button">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </button>
-                </div>
+
             </div>
         </div>
     </main>

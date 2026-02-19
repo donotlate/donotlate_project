@@ -61,11 +61,6 @@ public class MainController {
         return "weather";
     }
 
-    @GetMapping("notice")
-    public String notice(Model model) {
-        setMenu(model, MenuType.NOTICE);
-        return "notice";
-    }
 
     @GetMapping("mypage")
     public String mypage(Model model) {

@@ -3,18 +3,47 @@
 <mapper namespace="com.late.donot.board.model.mapper.BoardMapper">
 
 
-	<select id="Notices">
-		SELECT BOARD_NO,
-		    BOARD_TITLE,
-		    BOARD_CONTENT,
-		    BOARD_VIEW_COUNT,
-		    BOARD_WRITE_DATE,
-		    BOARD_DEL_FL,
-		    CATEGORY_NO,
-		    MEMBER_NO
-		 FROM "NOTICE"
+	<select id="selectNoticeList" >
+	    SELECT * FROM (
+	        SELECT ROWNUM AS RNUM, A.* FROM (
+	            SELECT * FROM NOTICE
+	            WHERE BOARD_DEL_FL = 'N'
+	            <if test="query != null and query != ''">
+	                AND BOARD_TITLE LIKE '%' || #{query} || '%'
+	            </if>
+	            ORDER BY BOARD_NO DESC
+	        ) A
+	    ) WHERE RNUM BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+	</select>
+	
+	<select id="getListCount" resultType="_int">
+	    SELECT COUNT(*) FROM NOTICE
+	    WHERE BOARD_DEL_FL = 'N'
+	    <if test="query != null and query != ''">
+	        AND BOARD_TITLE LIKE '%' || #{query} || '%'
+	    </if>
 	</select>
 
-
+	<select id="selectNoticeDetail">
+	    SELECT
+		    N.BOARD_NO,
+		    N.BOARD_TITLE,
+		    N.BOARD_CONTENT,
+		    N.BOARD_WRITE_DATE,
+		    N.BOARD_VIEW_COUNT,
+		    N.BOARD_DEL_FL,
+		    M.MEMBER_NAME
+		FROM NOTICE N
+		JOIN MEMBER M
+		USING (MEMBER_NO)
+	    WHERE BOARD_NO = #{no}
+	    AND BOARD_DEL_FL = 'N'
+	</select>
+	
+	<update id="increaseViewCount">
+		UPDATE NOTICE
+    	SET BOARD_VIEW_COUNT = BOARD_VIEW_COUNT + 1
+    	WHERE BOARD_NO = #{boardNo}
+	</update>
 
 </mapper>
