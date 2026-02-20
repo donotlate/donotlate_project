@@ -1,9 +1,14 @@
 package com.late.donot.member.controller;
 
+import java.util.Collections;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -73,11 +78,28 @@ public class MemberController {
 			ra.addFlashAttribute("message", "로그인 실패, 아이디 또는 비밀번호가 일치하지 않습니다");		
 			return "redirect:/";
 		}
-        else {
-			req.getSession().setAttribute("loginMember", loginMember);
-		}
-		
-		return "redirect:/main";
+	    req.getSession().setAttribute("loginMember", loginMember);
+
+	    // 2026-02-20 유건우 수정 - Spring Security 인증
+	    UsernamePasswordAuthenticationToken authentication =
+	            new UsernamePasswordAuthenticationToken(
+	                    loginMember,
+	                    null,
+	                    Collections.emptyList()
+	            );
+
+	    // 2026-02-20 유건우 수정 - SecurityContext 생성 후 등록
+	    SecurityContext context = SecurityContextHolder.createEmptyContext();
+	    context.setAuthentication(authentication);
+
+	    SecurityContextHolder.setContext(context);
+
+	    req.getSession().setAttribute(
+	            HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+	            context
+	    );
+
+	    return "redirect:/main";
 	}
 
     /**
@@ -87,6 +109,8 @@ public class MemberController {
      */
     @GetMapping("logout")
     public String logout(HttpServletResponse resp, HttpServletRequest req) {
+    	//2026-02-20 유건우 수정 - Spring Security 인증 삭제
+    	SecurityContextHolder.clearContext();
         req.getSession().invalidate();
         return "redirect:/";
     }
