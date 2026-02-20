@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.late.donot.calculator.model.mapper.CalculatorMapper">
+
+	<insert id="insertRoute" parameterType="com.late.donot.calculator.model.dto.PushSaveRequest">
+    	<selectKey keyProperty="routeNo" resultType="int" order="BEFORE">
+        	SELECT SEQ_ROUTE.NEXTVAL FROM DUAL
+    	</selectKey>
+    	INSERT INTO ROUTE (
+        	ROUTE_NO,
+        	START_NAME,
+        	START_LAT,
+        	START_LNG,
+        	END_NAME,
+        	END_LAT,
+        	END_LNG,
+        	MEMBER_NO,
+        	START_STATION,
+			END_STATION
+    	)
+    	VALUES (
+        	#{routeNo},
+        	#{startName},
+        	#{startLat},
+        	#{startLng},
+        	#{endName},
+        	#{endLat},
+        	#{endLng},
+        	#{memberNo},
+        	#{startStation},
+			#{endStation}
+    	)
+	</insert>
+	
+	<insert id="insertPush" parameterType="com.late.donot.calculator.model.dto.PushSaveRequest">
+	    INSERT INTO PUSH (
+	        PUSH_NO,
+	        PUSH_NAME,
+	        TRANSPORT_TYPE,
+	        ARRIVE_TIME,
+	        PREPARE_TIME,
+	        SPARE_TIME,
+	        PUSH_TIME,
+	        DAY_OF_WEEK,
+	        MEMBER_NO,
+	        ROUTE_NO
+	    )
+	    VALUES (
+	        SEQ_PUSH.NEXTVAL,
+	        #{pushName},
+	        #{transportType},
+	        #{arriveTime},
+	        #{prepareTime},
+	        #{spareTime},
+	        #{pushTime},
+	        #{dayOfWeek},
+	        #{memberNo},
+	        #{routeNo}
+	    )
+	</insert>
+    
+
+</mapper>
