@@ -1,13 +1,17 @@
 package com.late.donot.admin.model.service;
 
+import java.io.File;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.late.donot.admin.model.mapper.AdminMapper;
 import com.late.donot.board.model.dto.Board;
@@ -104,6 +108,33 @@ public class AdminServiceImpl implements AdminService {
 	public List<Board> editBoard(Board board) {
 		mapper.editBoard(board);
 		return mapper.Notices();
+	}
+
+	
+	@Value("${notice.folder-path}")
+	private String noticeFolderPath;   // C:/uploadFiles/board/
+	
+	@Override
+	public String saveNoticeImage(MultipartFile image) throws Exception {
+
+	    String uploadDir = noticeFolderPath; // properties 경로 사용
+
+	    File dir = new File(uploadDir);
+	    if (!dir.exists()) dir.mkdirs();
+
+	    String originalName = image.getOriginalFilename();
+
+	    String ext = "";
+	    if (originalName != null && originalName.lastIndexOf(".") != -1) {
+	        ext = originalName.substring(originalName.lastIndexOf("."));
+	    }
+
+	    String savedName = UUID.randomUUID().toString() + ext;
+
+	    File dest = new File(uploadDir + savedName);
+	    image.transferTo(dest);
+
+	    return savedName;   // ✅ DB에는 파일명만 저장
 	}
 
 }

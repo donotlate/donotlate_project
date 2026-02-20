@@ -2,6 +2,8 @@ package com.late.donot.admin.model.service;
 
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import com.late.donot.board.model.dto.Board;
 import com.late.donot.member.model.dto.Member;
 
@@ -26,4 +28,6 @@ public interface AdminService {
 	List<Board> removeNotice(int boardNo);
 
 	List<Board> editBoard(Board board);
+
+	String saveNoticeImage(MultipartFile image)throws Exception;;
 }
