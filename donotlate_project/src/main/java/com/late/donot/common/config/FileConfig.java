@@ -71,7 +71,7 @@ public class FileConfig implements WebMvcConfigurer {
 
         // 공지 이미지
         registry.addResourceHandler(noticeResourceHandler)
-                .addResourceLocations("file:" + noticeResourceLocation);
+                .addResourceLocations(noticeResourceLocation);
     }
     
     

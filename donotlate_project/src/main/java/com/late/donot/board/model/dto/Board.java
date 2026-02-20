@@ -14,6 +14,8 @@ public class Board {
 	private int boardViewCount;
 	private String boardWriteDate;
 	private String boardDelFl;
+	private String thumbnailUrl;
+
 
 	
 	private int memberNo;

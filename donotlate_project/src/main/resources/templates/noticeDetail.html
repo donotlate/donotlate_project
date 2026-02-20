@@ -39,6 +39,13 @@
                     </div>
 
                     <div class="announcement-item-content" style="min-height: 400px; padding: 2.5rem 1.5rem;">
+                        <div th:if="${notice.thumbnailUrl != null and notice.thumbnailUrl != ''}"
+                            style="margin-bottom: 20px;">
+                        <img th:src="@{/images/board/{file}(file=${notice.thumbnailUrl})}"
+                            alt="공지 이미지"
+                            style="max-width: 100%; height: auto; border-radius: 12px; display:block;" />
+                        </div>
+                        
                         <div class="announcement-description" 
                             style="font-size: 1.05rem; color: #374151; line-height: 1.8;" 
                             th:utext="${notice.boardContent}">

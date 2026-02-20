@@ -16,7 +16,7 @@ public class InterceptorConfig implements WebMvcConfigurer {
     private LoginCheckInterceptor loginCheckInterceptor;
 
     @Autowired
-    private JwtAdminInterceptor jwtAdminInterceptor; // ✅ 이거 추가해야 함
+    private JwtAdminInterceptor jwtAdminInterceptor; 
 
 
     /** 작성자 : 양충모

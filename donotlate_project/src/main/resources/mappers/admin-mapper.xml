@@ -66,7 +66,8 @@
 		    N.BOARD_WRITE_DATE,
 		    N.BOARD_VIEW_COUNT,
 		    N.BOARD_DEL_FL,
-		    M.MEMBER_NAME
+		    M.MEMBER_NAME,
+		    N.THUMBNAIL_URL
 		FROM NOTICE N
 		JOIN MEMBER M
 		USING (MEMBER_NO)
@@ -79,12 +80,14 @@
 	        BOARD_NO,
 	        BOARD_TITLE,
 	        BOARD_CONTENT,
-	        MEMBER_NO
+	        MEMBER_NO,
+	        THUMBNAIL_URL
 	    ) VALUES (
 	        SEQ_BOARD.NEXTVAL,
 	        #{boardTitle},
 	        #{boardContent},
-	        #{memberNo}
+	        #{memberNo},
+	        #{thumbnailUrl}
 	    )
 	</insert>
 	
@@ -102,6 +105,9 @@
 			BOARD_TITLE = #{boardTitle},
 			BOARD_CONTENT = #{boardContent},
 			BOARD_DEL_FL = #{boardDelFl}
+		<if test="thumbnailUrl != null and thumbnailUrl != ''">
+  			, THUMBNAIL_URL = #{thumbnailUrl}
+		</if>
 		WHERE BOARD_NO = #{boardNo}
 	</update>
 

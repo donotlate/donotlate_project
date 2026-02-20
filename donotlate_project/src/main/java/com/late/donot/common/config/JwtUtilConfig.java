@@ -20,7 +20,14 @@ public class JwtUtilConfig {
     @Value("${jwt.expiration-ms}")
     private long expMs;
 
- // 🔹 토큰 생성 (memberNo 포함)
+    /** 작성자 양충모 
+     * 작성일 2026-02-19
+     * @param email
+     * @param role
+     * @param memberNo
+     * @return
+     */
+    //  토큰 생성 (memberNo 포함)
     public String createToken(String email, String role, int memberNo) {
 
         Date now = new Date();
@@ -29,7 +36,7 @@ public class JwtUtilConfig {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("role", role)
-                .claim("memberNo", memberNo)   // ✅ 추가
+                .claim("memberNo", memberNo)   
                 .setIssuedAt(now)
                 .setExpiration(exp)
                 .signWith(
@@ -39,7 +46,7 @@ public class JwtUtilConfig {
                 .compact();
     }
 
-    // 🔹 memberNo 꺼내기
+    //  memberNo 꺼내기
     public Integer getMemberNoFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
@@ -53,7 +60,7 @@ public class JwtUtilConfig {
     }
 
 
-    // 🔹 토큰 검증
+    //  토큰 검증
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder()
@@ -66,7 +73,7 @@ public class JwtUtilConfig {
         }
     }
 
-    // 🔹 이메일 꺼내기
+    //  이메일 꺼내기
     public String getEmailFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
@@ -77,7 +84,7 @@ public class JwtUtilConfig {
         return claims.getSubject();
     }
 
-    // 🔹 role 꺼내기
+    //  role 꺼내기
     public String getRoleFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8)))
