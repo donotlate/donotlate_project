@@ -213,7 +213,7 @@
                     <div class="space-y-4">
                         <div>
                             <label class="text-sm font-medium text-gray-700 mb-2 block">Push 이름</label>
-                            <input type="text" placeholder="예: 출근하러 갑니다." maxlength="20" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium">
+                            <input id="push-name" type="text" placeholder="예: 출근하러 갑니다." maxlength="20" class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 font-medium">
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-700 mb-2 block">Push 설정 시간</label>
@@ -221,14 +221,14 @@
                         </div>
                         <div>
                             <label class="text-sm font-medium text-gray-700 mb-2 block">반복 요일</label>
-                            <div class="grid grid-cols-7 gap-1.5">
-                                <button class="h-10 flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-200 transition">일</button>
-                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">월</button>
-                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">화</button>
-                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">수</button>
-                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">목</button>
-                                <button class="h-10 flex items-center justify-center bg-blue-500 text-white rounded-lg text-sm font-semibold shadow-sm shadow-blue-200">금</button>
-                                <button class="h-10 flex items-center justify-center bg-gray-100 border border-gray-200 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-200 transition">토</button>
+                            <div class="grid grid-cols-7 gap-1.5" id="weekday-container">
+                                <button type="button" data-day="7" class="weekday-btn">일</button>
+                                <button type="button" data-day="1" class="weekday-btn">월</button>
+                                <button type="button" data-day="2" class="weekday-btn">화</button>
+                                <button type="button" data-day="3" class="weekday-btn">수</button>
+                                <button type="button" data-day="4" class="weekday-btn">목</button>
+                                <button type="button" data-day="5" class="weekday-btn">금</button>
+                                <button type="button" data-day="6" class="weekday-btn">토</button>
                             </div>
                             
                             <div class="grid grid-cols-2 gap-3 mt-4">
@@ -242,7 +242,7 @@
                                 </button>
                             </div>
                         </div>
-                        <button class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-blue-500/30">
+                        <button id="push-save-btn" class="w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition shadow-lg shadow-blue-500/30">
                             <i class="fa-solid fa-check mr-2"></i>
                             Push 저장하기
                         </button>
