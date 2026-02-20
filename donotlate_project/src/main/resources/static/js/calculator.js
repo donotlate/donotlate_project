@@ -775,3 +775,177 @@ function updateManualPushTime(route) {
       document.getElementById("selected-route-label-recommend").innerText = `${selectedRouteIndex + 1}번 경로 사용`;
   }
 }
+
+let selectedPushType = null;
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const recommendCard = document.getElementById("recommended-push-time-section");
+    const aiCard = document.getElementById("ai-recommended-push-time-section");
+
+    if (recommendCard) {
+        recommendCard.addEventListener("click", () => applyPushTime("recommend"));
+    }
+
+    if (aiCard) {
+        aiCard.addEventListener("click", () => applyPushTime("ai"));
+    }
+
+    const buttons = document.querySelectorAll(".weekday-btn");
+
+    buttons.forEach(btn => {
+
+        btn.classList.add(
+            "h-10",
+            "flex",
+            "items-center",
+            "justify-center",
+            "rounded-lg",
+            "text-sm",
+            "font-medium",
+            "transition",
+            "bg-gray-100",
+            "border",
+            "border-gray-200",
+            "text-gray-400"
+        );
+
+        btn.addEventListener("click", function () {
+
+            const isSelected = btn.classList.contains("bg-blue-500");
+
+            if (isSelected) {
+                btn.classList.remove("bg-blue-500", "text-white", "font-semibold", "shadow-sm", "shadow-blue-200");
+                btn.classList.add("bg-gray-100", "border", "border-gray-200", "text-gray-400");
+            } else {
+                btn.classList.remove("bg-gray-100", "border", "border-gray-200", "text-gray-400");
+                btn.classList.add("bg-blue-500", "text-white", "font-semibold", "shadow-sm", "shadow-blue-200");
+            }
+
+        });
+
+    });
+
+});
+
+
+function applyPushTime(type) {
+
+    const recommendTime = document.getElementById("recommend-push-time")?.innerText.trim();
+    const aiTime = document.getElementById("ai-push-time")?.innerText.trim();
+    const alarmInput = document.getElementById("alarm-time");
+
+    if (!alarmInput) return;
+
+    if (type === "recommend" && recommendTime && recommendTime !== "--:--") {
+        alarmInput.value = recommendTime;
+        selectedPushType = "recommend";
+    }
+
+    if (type === "ai" && aiTime && aiTime !== "--:--") {
+        alarmInput.value = aiTime;
+        selectedPushType = "ai";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    const saveBtn = document.getElementById("push-save-btn");
+
+    if (saveBtn) {
+        saveBtn.addEventListener("click", savePush);
+    }
+
+});
+
+async function savePush() {
+
+    const pushName = document.getElementById("push-name")?.value.trim();
+    const alarmTime = document.getElementById("alarm-time")?.value;
+
+    if (!pushName) {
+        alert("Push 이름을 입력해주세요.");
+        return;
+    }
+
+    if (!alarmTime) {
+        alert("Push 시간을 설정해주세요.");
+        return;
+    }
+
+    if (selectedRouteIndex === null) {
+        alert("경로를 먼저 선택해주세요.");
+        return;
+    }
+
+    const selectedRoute = currentRoutes[selectedRouteIndex];
+
+    const selectedDays = [];
+    document.querySelectorAll(".weekday-btn").forEach(btn => {
+        if (btn.classList.contains("bg-blue-500")) {
+            selectedDays.push(btn.dataset.day);
+        }
+    });
+
+    if (selectedDays.length === 0) {
+        alert("반복 요일을 선택해주세요.");
+        return;
+    }
+
+    const pushTimeNumber = alarmTime.replace(":", "");
+
+    const arrivalTime = document.getElementById("departure-time")?.value.replace(":", "");
+
+    const prepareTime = parseInt(document.getElementById("prepare-time").value || 0);
+    const spareTime = parseInt(document.getElementById("transport-time").value || 0);
+
+    const request = {
+        pushName: pushName,
+        transportType: detectTransportType(selectedRoute),
+        arriveTime: Number(arrivalTime),
+        prepareTime: prepareTime,
+        spareTime: spareTime,
+        pushTime: Number(pushTimeNumber),
+        dayOfWeek: selectedDays.join(""),
+        startName: document.getElementById("departure-input").value,
+        startLat: Number(document.getElementById("departure-lat").value),
+        startLng: Number(document.getElementById("departure-lng").value),
+        endName: document.getElementById("arrival-input").value,
+        endLat: Number(document.getElementById("arrival-lat").value),
+        endLng: Number(document.getElementById("arrival-lng").value),
+        startStation: selectedRoute.firstStation,
+        endStation: selectedRoute.lastStation
+    };
+
+    try {
+
+        const response = await fetch("/calculator/push/save", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(request)
+        });
+
+        if (!response.ok) {
+            throw new Error("저장 실패");
+        }
+
+        alert("Push가 저장되었습니다.");
+
+    } catch (error) {
+        console.error(error);
+        alert("Push 저장 중 오류 발생");
+    }
+
+}
+
+function detectTransportType(route) {
+    const hasSubway = route.steps.some(s => s.type === "SUBWAY");
+    const hasBus    = route.steps.some(s => s.type === "BUS");
+
+    if (hasSubway && hasBus) return "MIX";
+    if (hasSubway) return "SUBWAY";
+    if (hasBus) return "BUS";
+    return "MIX";
+}

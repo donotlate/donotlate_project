@@ -21,6 +21,8 @@ import com.late.donot.api.dto.RouteStep;
 import com.late.donot.api.dto.RouteStepType;
 import com.late.donot.api.dto.TimeItem;
 import com.late.donot.calculator.client.OdsaylabClient;
+import com.late.donot.calculator.model.dto.PushSaveRequest;
+import com.late.donot.calculator.model.mapper.CalculatorMapper;
 import com.late.donot.common.config.AsyncConfig;
 
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class CalculatorServiceImpl implements CalculatorService {
 
+	@Autowired
+	private CalculatorMapper mapper;
+	
 	@Autowired
 	private AsyncConfig asyncConfig;
 
@@ -172,9 +177,29 @@ public class CalculatorServiceImpl implements CalculatorService {
 		}
 
 		int transferCount = path.getInfo().getBusTransitCount() + path.getInfo().getSubwayTransitCount();
+		
+		String firstStation = null;
+		String lastStation = null;
 
-		return Route.builder().totalTime(path.getInfo().getTotalTime()).transferCount(transferCount).steps(steps)
-				.build();
+		for (RouteStep step : steps) {
+		    if (step.getType() == RouteStepType.SUBWAY
+		        || step.getType() == RouteStepType.BUS) {
+
+		        if (firstStation == null) {
+		            firstStation = step.getDescription().split(" → ")[0];
+		        }
+
+		        lastStation = step.getDescription().split(" → ")[1];
+		    }
+		}
+
+		return Route.builder()
+		        .totalTime(path.getInfo().getTotalTime())
+		        .transferCount(transferCount)
+		        .steps(steps)
+		        .firstStation(firstStation)
+		        .lastStation(lastStation)
+		        .build();
 	}
 
 	/** 작성자 : 이승준
@@ -249,5 +274,17 @@ public class CalculatorServiceImpl implements CalculatorService {
 	    }
 
 	    return LocalTime.parse(time, DateTimeFormatter.ofPattern("H:mm"));
+	}
+
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19(수정)
+	 *  DB에 저장
+	 */
+	@Override
+	public int savePushWithRoute(PushSaveRequest request) {
+		
+		mapper.insertRoute(request);
+
+        return mapper.insertPush(request);
 	}
 }

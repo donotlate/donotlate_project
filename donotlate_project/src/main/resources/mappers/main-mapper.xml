@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.late.donot.main.mapper.MainMapper">
+<mapper namespace="com.late.donot.main.model.mapper.MainMapper">
 
+	<select id="selectPushList" parameterType="int" resultType="com.late.donot.main.model.dto.PushSimpleDTO">
+	    SELECT
+	        P.PUSH_NO,
+	        P.PUSH_NAME,
+	        P.PUSH_TIME,
+	        P.DAY_OF_WEEK,
+	        P.TRANSPORT_TYPE,
+	        R.START_NAME,
+	        R.END_NAME,
+	        R.START_STATION,
+        	R.END_STATION,
+        	P.IS_ACTIVE
+	    FROM PUSH P
+	    JOIN ROUTE R
+	      ON P.ROUTE_NO = R.ROUTE_NO
+	    WHERE P.MEMBER_NO = #{memberNo}
+	    ORDER BY P.PUSH_NO DESC
+	</select>
 
+	<select id="selectAveragePushTime" parameterType="int" resultType="int">
+        SELECT ROUND(AVG(PUSH_TIME))
+        FROM PUSH
+        WHERE MEMBER_NO = #{memberNo}
+    </select>
+    
+    <update id="updatePushActive">
+	    UPDATE PUSH
+	    SET IS_ACTIVE =
+	        CASE WHEN #{isActive} = 1 THEN 'Y'
+	             ELSE 'N'
+	        END
+	    WHERE PUSH_NO = #{pushNo}
+	      AND MEMBER_NO = #{memberNo}
+	</update>
+	
+	<delete id="deletePush">
+	    DELETE FROM PUSH
+	    WHERE PUSH_NO = #{pushNo}
+	      AND MEMBER_NO = #{memberNo}
+	</delete>
 </mapper>

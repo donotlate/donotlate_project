@@ -13,9 +13,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.late.donot.api.dto.DayType;
 import com.late.donot.api.dto.Route;
+import com.late.donot.calculator.model.dto.PushSaveRequest;
 import com.late.donot.calculator.model.dto.RouteRequestDTO;
 import com.late.donot.calculator.model.service.CalculatorService;
+import com.late.donot.member.model.dto.Member;
 
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -63,6 +66,24 @@ public class CalculatorController {
 	            req.getDepartureTime(),
 	            req.getDayType()
 	    );
+	}
+	
+	/** 작성자 : 이승준
+	 *  작성일 : 2026-02-19
+	 *  계산 push 저장
+	 */
+	@PostMapping("/push/save")
+	public int savePush(@RequestBody PushSaveRequest request, HttpSession session) {
+
+	    Member loginMember = (Member) session.getAttribute("loginMember");
+
+	    if (loginMember == null) {
+	        return 0;
+	    }
+
+	    request.setMemberNo(loginMember.getMemberNo());
+
+	    return calculatorService.savePushWithRoute(request);
 	}
 
 }
