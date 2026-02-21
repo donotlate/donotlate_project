@@ -137,7 +137,7 @@ public class MemberController {
     @ResponseBody
     public int sendAuthKey(@RequestBody Map<String, String> map) {
         String email = map.get("email");
-		String authKey = service.sendEmail("signUp", email);
+		String authKey = service.sendEmail("signup", email);
 
         if(authKey != null) {
 		    return 1;
