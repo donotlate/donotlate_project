@@ -4,13 +4,24 @@
     
     <select id="getTopChart">
         SELECT 
-            NVL((SELECT COUNT(*) FROM "MEMBER" WHERE "MEMBER_DEL_FL" = 'N'), 0) AS "userCount",
-            (SELECT 
-                NVL(TO_CHAR(AVG(PUSH_TIME), '00:00'), '00:00')
-                FROM "PUSH" 
-                WHERE "IS_ACTIVE" = 'Y') AS "avgPushTime",
-            (SELECT NVL(ROUND(AVG("PREPARE_TIME"), 1), 0) FROM "PUSH" WHERE "IS_ACTIVE" = 'Y') AS "avgPrepareTime",
-            (SELECT NVL(ROUND(AVG("SPARE_TIME"), 1), 0) FROM "PUSH" WHERE "IS_ACTIVE" = 'Y') AS "avgTrafficTime"
-        FROM DUAL
+		    NVL((SELECT COUNT(*) 
+		         FROM "MEMBER" 
+		         WHERE "MEMBER_DEL_FL" = 'N'), 0) AS "userCount",
+		    
+		    (SELECT NVL(
+		            LPAD(TRUNC(AVG("PUSH_TIME")/60), 2, '0') || ':' || 
+		            LPAD(MOD(TRUNC(AVG("PUSH_TIME")), 60), 2, '0'),
+		            '00:00')
+		     FROM "PUSH" 
+		     WHERE "IS_ACTIVE" = 'Y') AS "avgPushTime",
+		    
+		    (SELECT NVL(ROUND(AVG("PREPARE_TIME"), 1), 0) 
+		     FROM "PUSH" 
+		     WHERE "IS_ACTIVE" = 'Y') AS "avgPrepareTime",
+		    
+		    (SELECT NVL(ROUND(AVG("SPARE_TIME"), 1), 0) 
+		     FROM "PUSH" 
+		     WHERE "IS_ACTIVE" = 'Y') AS "avgTrafficTime"
+		FROM DUAL
     </select>
 </mapper>
