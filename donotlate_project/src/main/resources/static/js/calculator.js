@@ -1,5 +1,23 @@
 let currentRoutes = [];
 
+function isRequiredFilled() {
+
+  const departureLat = document.getElementById("departure-lat").value;
+  const departureLng = document.getElementById("departure-lng").value;
+
+  const arrivalLat = document.getElementById("arrival-lat").value;
+  const arrivalLng = document.getElementById("arrival-lng").value;
+
+  const date = document.getElementById("departure-date").value;
+  const time = document.getElementById("departure-time").value;
+
+  if (!departureLat || !departureLng) return false;
+  if (!arrivalLat || !arrivalLng) return false;
+  if (!date || !time) return false;
+
+  return true;
+}
+
 function setLocation(prefix, address, lat, lng) {
   document.getElementById(`${prefix}-input`).value = address || "";
   document.getElementById(`${prefix}-lat`).value = lat ?? "";
@@ -59,8 +77,12 @@ document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll(".transport-btn").forEach(btn => {
     btn.addEventListener("click", () => {
 
+      if (!isRequiredFilled()) {
+        alert("출발지 및 일정 설정을 먼저 완료해주세요.");
+        return;
+      }
+
       const nextMode = btn.dataset.mode;
-      if (currentMode === nextMode) return;
 
       document.querySelectorAll(".transport-btn").forEach(b => {
         b.classList.remove("bg-blue-50", "border-blue-500");
@@ -71,6 +93,7 @@ document.addEventListener("DOMContentLoaded", () => {
       btn.classList.add("bg-blue-50", "border-blue-500");
 
       currentMode = nextMode;
+
       loadRoutes();
     });
   });
@@ -654,12 +677,21 @@ async function callAiPushTime(selectedRoute) {
 
 function updateAiPushUI(aiTime, prepareTime, bufferTime, moveTime) {
 
-    document.getElementById("ai-push-time").innerText = aiTime;
+    const [hh, mm] = aiTime.split(":").map(Number);
+    const isPM = hh >= 12;
+
+    let displayHour = hh % 12;
+    if (displayHour === 0) displayHour = 12;
+
+    displayHour = String(displayHour).padStart(2, "0");
+
+    document.getElementById("ai-push-time").innerText = `${displayHour}:${mm.toString().padStart(2, "0")}`;
+
+    document.getElementById("ai-period").innerText = isPM ? "오후" : "오전";
 
     document.getElementById("ai-prepare-time").innerText = prepareTime + "분";
     document.getElementById("ai-move-time").innerText = moveTime + "분";
     document.getElementById("ai-buffer-time").innerText = bufferTime + "분";
-
 }
 
 let selectedRouteIndex = null;
@@ -763,7 +795,19 @@ function updateManualPushTime(route) {
       arrivalAt.getTime() - totalMinutes * 60000
   );
 
-  document.getElementById("recommend-push-time").innerText = fmtHHmm(pushTime);
+  const hours = pushTime.getHours();
+  const isPM = hours >= 12;
+
+  let displayHour = hours % 12;
+  if (displayHour === 0) displayHour = 12;
+
+  displayHour = String(displayHour).padStart(2, "0");
+
+  const minutes = String(pushTime.getMinutes()).padStart(2, "0");
+
+  document.getElementById("recommend-push-time").innerText = `${displayHour}:${minutes}`;
+
+  document.getElementById("recommend-period").innerText = isPM ? "오후" : "오전";
 
   document.getElementById("recommend-prepare-time").innerText = prepareTime + "분";
 
@@ -831,32 +875,28 @@ document.addEventListener("DOMContentLoaded", function () {
 
 function applyPushTime(type) {
 
-    const recommendTime = document.getElementById("recommend-push-time")?.innerText.trim();
-    const aiTime = document.getElementById("ai-push-time")?.innerText.trim();
+    if (selectedRouteIndex === null) return;
+
+    const route = currentRoutes[selectedRouteIndex];
+
+    const date = document.getElementById("departure-date").value;
+    const time = document.getElementById("departure-time").value;
+
+    if (!date || !time) return;
+
+    const arrivalAt = new Date(`${date}T${time}:00`);
+
+    const pushTime = new Date(
+        arrivalAt.getTime() - route.totalTime * 60000
+    );
+
+    const formatted = fmtHHmm(pushTime);
+
     const alarmInput = document.getElementById("alarm-time");
 
-    if (!alarmInput) return;
-
-    if (type === "recommend" && recommendTime && recommendTime !== "--:--") {
-        alarmInput.value = recommendTime;
-        selectedPushType = "recommend";
-    }
-
-    if (type === "ai" && aiTime && aiTime !== "--:--") {
-        alarmInput.value = aiTime;
-        selectedPushType = "ai";
-    }
+    alarmInput.value = "";
+    alarmInput.value = formatted;
 }
-
-document.addEventListener("DOMContentLoaded", function () {
-
-    const saveBtn = document.getElementById("push-save-btn");
-
-    if (saveBtn) {
-        saveBtn.addEventListener("click", savePush);
-    }
-
-});
 
 async function savePush() {
 
@@ -932,6 +972,7 @@ async function savePush() {
         }
 
         alert("Push가 저장되었습니다.");
+        window.location.href = "/main";
 
     } catch (error) {
         console.error(error);
@@ -948,4 +989,18 @@ function detectTransportType(route) {
     if (hasSubway) return "SUBWAY";
     if (hasBus) return "BUS";
     return "MIX";
+}
+
+function fmt12Hour(d) {
+
+  let hours = d.getHours();
+  const minutes = String(d.getMinutes()).padStart(2, "0");
+
+  const isPM = hours >= 12;
+  const period = isPM ? "오후" : "오전";
+
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+
+  return `${period} ${hours}:${minutes}`;
 }

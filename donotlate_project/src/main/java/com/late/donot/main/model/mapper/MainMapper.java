@@ -22,4 +22,6 @@ public interface MainMapper {
 	void deletePush(@Param("pushNo") int pushNo,
                     @Param("memberNo") int memberNo);
 
+	List<Integer> selectAllMemberAverageMinutes();
+
 }

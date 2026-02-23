@@ -22,10 +22,17 @@
 	</select>
 
 	<select id="selectAveragePushTime" parameterType="int" resultType="int">
-        SELECT ROUND(AVG(PUSH_TIME))
-        FROM PUSH
-        WHERE MEMBER_NO = #{memberNo}
-    </select>
+	    SELECT 
+	        FLOOR(
+	            AVG(
+	                (FLOOR(PUSH_TIME / 100) * 60)
+	                + MOD(PUSH_TIME, 100)
+	            )
+	        )
+	    FROM PUSH
+	    WHERE MEMBER_NO = #{memberNo}
+	      AND IS_ACTIVE = 'Y'
+	</select>
     
     <update id="updatePushActive">
 	    UPDATE PUSH
@@ -42,4 +49,18 @@
 	    WHERE PUSH_NO = #{pushNo}
 	      AND MEMBER_NO = #{memberNo}
 	</delete>
+	
+	<select id="selectAllMemberAverageMinutes" resultType="int">
+	    SELECT 
+	        FLOOR(
+	            AVG(
+	                (FLOOR(PUSH_TIME / 100) * 60)
+	                + MOD(PUSH_TIME, 100)
+	            )
+	        )
+	    FROM PUSH
+	    WHERE IS_ACTIVE = 'Y'
+	    GROUP BY MEMBER_NO
+	</select>
+
 </mapper>

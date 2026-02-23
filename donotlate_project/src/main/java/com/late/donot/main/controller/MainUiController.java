@@ -7,11 +7,14 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.late.donot.main.model.dto.DashBoardPushDTO;
+import com.late.donot.main.model.service.MainAiService;
 import com.late.donot.main.model.service.MainService;
 import com.late.donot.member.model.dto.Member;
 
@@ -25,6 +28,9 @@ public class MainUiController {
 	
 	@Autowired
 	private MainService service;
+	
+	@Autowired
+	private MainAiService mainAiService;
 	
 	/** 작성자 : 이승준
 	 *  작성일 : 2026-02-20
@@ -65,4 +71,13 @@ public class MainUiController {
 
 	    service.deletePush(pushNo, loginMember.getMemberNo());
 	}
+	
+	@PostMapping("/dashboard/ai")
+	public String recommendDashboardAi(@RequestParam("lat") double lat,
+									   @RequestParam("lon") double lon) {
+
+	    return mainAiService.generateDashboardComment(lat, lon);
+	}
+	
+		
 }

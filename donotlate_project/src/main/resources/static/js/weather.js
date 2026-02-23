@@ -1,4 +1,8 @@
+window.CURRENT_LAT = null;
+window.CURRENT_LON = null;
+
 function loadWeather(refresh = false) {
+
   if (!navigator.geolocation) {
     alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
     return;
@@ -8,12 +12,16 @@ function loadWeather(refresh = false) {
 
   navigator.geolocation.getCurrentPosition(
     (position) => {
+
       const lat = position.coords.latitude;
       const lon = position.coords.longitude;
 
+      window.CURRENT_LAT = lat;
+      window.CURRENT_LON = lon;
+
       const url = refresh
-      ? `/weather/dust?lat=${lat}&lon=${lon}&refresh=true`
-      : `/weather/dust?lat=${lat}&lon=${lon}`;
+        ? `/weather/dust?lat=${lat}&lon=${lon}&refresh=true`
+        : `/weather/dust?lat=${lat}&lon=${lon}`;
 
       fetch(url)
         .then(res => {
@@ -21,7 +29,12 @@ function loadWeather(refresh = false) {
           return res.json();
         })
         .then(data => {
+
           renderWeather(data);
+
+          loadHourWeather(lat, lon);
+          loadWeekWeather(lat, lon);
+          loadUltraviolet();
         })
         .catch(err => {
           console.error(err);
@@ -102,6 +115,7 @@ function renderWeather(data) {
 }
 
 function renderLoadingState() {
+  
   document.getElementById("weather-location").innerText = "위치 불러오는 중...";
 
   document.getElementById("weather-datetime").innerText = "--";
@@ -118,34 +132,19 @@ function renderLoadingState() {
 }
 
 // 시간대 날씨 JS
-function loadHourWeather() {
-  if (!navigator.geolocation) {
-    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
-    return;
-  }
+function loadHourWeather(lat, lon) {
 
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-
-      fetch(`/weather/hour?lat=${lat}&lon=${lon}`)
-        .then(res => {
-          if (!res.ok) throw new Error("시간별 날씨 응답 오류");
-          return res.json();
-        })
-        .then(data => {
-          console.log("시간별 날씨:", data);
-          renderHourWeather(data);
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
+  fetch(`/weather/hour?lat=${lat}&lon=${lon}`)
+    .then(res => {
+      if (!res.ok) throw new Error("시간별 날씨 응답 오류");
+      return res.json();
+    })
+    .then(data => {
+      renderHourWeather(data);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }
 
 function getHourNumber(timeStr) {
@@ -220,34 +219,19 @@ function getIconName(icon) {
   }
 }
 
-function loadWeekWeather() {
-  if (!navigator.geolocation) {
-    alert("이 브라우저는 위치 정보를 지원하지 않습니다.");
-    return;
-  }
+function loadWeekWeather(lat, lon) {
 
-  navigator.geolocation.getCurrentPosition(
-    (position) => {
-      const lat = position.coords.latitude;
-      const lon = position.coords.longitude;
-
-      fetch(`/weather/week?lat=${lat}&lon=${lon}`)
-        .then(res => {
-          if (!res.ok) throw new Error("주간 날씨 응답 오류");
-          return res.json();
-        })
-        .then(data => {
-          console.log("주간 날씨:", data);
-          renderWeekWeather(data);
-        })
-        .catch(err => {
-          console.error(err);
-        });
-    },
-    (error) => {
-      console.error(error);
-    }
-  );
+  fetch(`/weather/week?lat=${lat}&lon=${lon}`)
+    .then(res => {
+      if (!res.ok) throw new Error("주간 날씨 응답 오류");
+      return res.json();
+    })
+    .then(data => {
+      renderWeekWeather(data);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }
 
 function renderWeekWeather(list) {
@@ -398,10 +382,25 @@ function renderUltraviolet(data) {
   descEl.textContent = `UV 지수 ${data.uvIndex}`;
 }
 
+function getCurrentLocation() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject("Geolocation not supported");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        resolve({
+          lat: pos.coords.latitude,
+          lon: pos.coords.longitude
+        });
+      },
+      (err) => reject(err)
+    );
+  });
+}
 
 document.addEventListener("DOMContentLoaded", () => {
   loadWeather(false);
-  loadHourWeather();
-  loadWeekWeather(); 
-  loadUltraviolet();
 });

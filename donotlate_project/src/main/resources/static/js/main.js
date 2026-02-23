@@ -1,22 +1,11 @@
-document.addEventListener("DOMContentLoaded", loadDashboard);
-
 async function loadDashboard() {
-    try {
-        const res = await fetch("/ui/dashboard");
 
-        if (!res.ok) {
-            console.error("대시보드 데이터 로드 실패");
-            return;
-        }
+    const res = await fetch("/ui/dashboard");
+    const data = await res.json();
 
-        const data = await res.json();
+    renderPushList(data.pushList);
+    renderAverage(data.averagePushTime, data.rankPercent);
 
-        renderPushList(data.pushList);
-        renderAverage(data.averagePushTime);
-
-    } catch (err) {
-        console.error("에러 발생:", err);
-    }
 }
 
 function renderPushList(list) {
@@ -112,26 +101,30 @@ function renderPushList(list) {
         container.innerHTML += card;
     });
 }
-function renderAverage(avg) {
 
-    if (avg == null) return;
+function renderAverage(avgMinutes, rankPercent) {
 
-    const timeStr = formatTime(avg);
+    if (avgMinutes == null) return;
 
-    const hour = parseInt(timeStr.split(":")[0]);
-    const ampm = hour >= 12 ? "오후" : "오전";
+    let hour24 = Math.floor(avgMinutes / 60);
+    const minute = avgMinutes % 60;
+
+    const ampm = hour24 >= 12 ? "오후" : "오전";
+
+    let hour12 = hour24 % 12;
+    if (hour12 === 0) hour12 = 12;
+
+    const timeStr =
+        hour12.toString().padStart(2, "0") + ":" +
+        minute.toString().padStart(2, "0");
 
     document.getElementById("avg-push-time").innerText = timeStr;
     document.getElementById("avg-push-ampm").innerText = ampm;
 
-    const percent =
-        hour < 7 ? 97.3 :
-        hour < 8 ? 95.2 :
-        hour < 9 ? 80.5 :
-        hour < 10 ? 60.1 : 45.3;
-
-    document.getElementById("avg-rank-text").innerText =
-        `당신은 상위 ${percent}%의 일찍 일어나는 사람입니다.`;
+    if (rankPercent != null) {
+        document.getElementById("avg-rank-text").innerText =
+            `당신은 상위 ${rankPercent}%의 일찍 일어나는 사람입니다.`;
+    }
 }
 
 function formatTime(num) {
@@ -236,3 +229,49 @@ async function deletePush(pushNo, btn) {
         alert("삭제 실패");
     }
 }
+
+async function loadDashboardAi(lat, lon) {
+
+    try {
+
+        const res = await fetch(
+            `/ui/dashboard/ai?lat=${lat}&lon=${lon}`,
+            { method: "POST" }
+        );
+
+        if (!res.ok) throw new Error();
+
+        const text = await res.text();
+
+        document.getElementById("ai-title").innerText =
+            "오늘의 출근 전략";
+
+        document.getElementById("ai-message").innerText = text;
+
+    } catch (e) {
+        showAiFallback();
+    }
+}
+
+function showAiFallback() {
+    document.getElementById("ai-title").innerText =
+        "오늘도 좋은 하루 보내세요!";
+
+    document.getElementById("ai-message").innerText =
+        "출근 준비를 차분히 진행해보세요.";
+}
+
+document.addEventListener("DOMContentLoaded", async () => {
+
+    await loadDashboard();
+
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+
+            loadDashboardAi(lat, lon);
+        });
+    }
+});

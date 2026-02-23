@@ -15,4 +15,7 @@ public class DashBoardPushDTO {
 	
 	private List<PushSimpleDTO> pushList;
     private Integer averagePushTime;
+    private Double rankPercent;
+    
+    private String aiComment;
 }
