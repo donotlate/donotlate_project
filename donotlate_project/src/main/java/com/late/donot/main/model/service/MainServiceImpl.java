@@ -19,23 +19,47 @@ public class MainServiceImpl implements MainService{
 	
 	@Autowired
 	private MainMapper mapper;
+	
 
 	/** 작성자 : 이승준
 	 *  작성일 : 2026-02-19(수정)
 	 *  푸시목록과 시간으로 DTO조합
 	 */
 	@Override
-	public DashBoardPushDTO getDashboardData(int memberNo) {
-		
-		List<PushSimpleDTO> pushList = mapper.selectPushList(memberNo);
-        Integer avg = mapper.selectAveragePushTime(memberNo);
+    public DashBoardPushDTO getDashboardData(int memberNo) {
+
+        List<PushSimpleDTO> pushList =
+                mapper.selectPushList(memberNo);
+
+        Integer avg =
+                mapper.selectAveragePushTime(memberNo);
+
+        Double rankPercent = null;
+
+        if (avg != null) {
+
+            List<Integer> allAvgList =
+                    mapper.selectAllMemberAverageMinutes();
+
+            int total = allAvgList.size();
+            int laterCount = 0;
+
+            for (Integer memberAvg : allAvgList) {
+                if (memberAvg >= avg) {
+                    laterCount++;
+                }
+            }
+
+            rankPercent = (laterCount * 100.0) / total;
+            rankPercent = Math.round(rankPercent * 10.0) / 10.0;
+        }
 
         return DashBoardPushDTO.builder()
-        		.pushList(pushList)
+                .pushList(pushList)
                 .averagePushTime(avg)
+                .rankPercent(rankPercent)
                 .build();
-		
-	}
+    }
 	
 	/** 작성자 : 이승준
 	 *  작성일 : 2026-02-19(수정)
