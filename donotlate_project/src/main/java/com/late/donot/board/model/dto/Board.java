@@ -15,10 +15,12 @@ public class Board {
 	private String boardWriteDate;
 	private String boardDelFl;
 	private String thumbnailUrl;
+	private int categoryNo;
 
 
 	
 	private int memberNo;
 	private String memberName;
 	
+	private String categoryName;
 }

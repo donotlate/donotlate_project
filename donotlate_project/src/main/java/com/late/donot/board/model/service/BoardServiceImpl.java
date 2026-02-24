@@ -20,7 +20,7 @@ public class BoardServiceImpl implements BoardService {
 	private BoardMapper mapper;
 
 	@Override
-	public List<Board> selectNoticeList(int cp, int limit,String query) {
+	public List<Board> selectNoticeList(int cp, int limit,String query, Integer categoryNo) {
 		
 		int offset = (cp - 1) * limit;
 		
@@ -28,6 +28,7 @@ public class BoardServiceImpl implements BoardService {
 	    map.put("limit", limit);
 	    map.put("offset", offset); // 계산한 offset만큼 건너뜀
 	    map.put("query", query);
+	    map.put("categoryNo", categoryNo);
 		
 		return mapper.selectNoticeList(map);
 	}

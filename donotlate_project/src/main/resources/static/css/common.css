@@ -698,6 +698,22 @@ body {
 .meta-icon {
     margin-right: 0.5rem;
 }
+/* 작성자 : 양충모
+   작성일 : 02-24 
+카테고리별 색상 추가  */
+.category-badge{
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+}
+.badge-general { background:#f3f4f6; color:#6b7280; }
+.badge-update { background:#dbeafe; color:#2563eb; }
+.badge-maintenance { background:#fef3c7; color:#f59e0b; }
+.badge-event { background:#d1fae5; color:#10b981; }
+.badge-urgent { background:#fee2e2; color:#ef4444; }
 
 .announcement-arrow {
     color: #9ca3af;

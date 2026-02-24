@@ -2,18 +2,35 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.late.donot.board.model.mapper.BoardMapper">
 
-
-	<select id="selectNoticeList" >
-	    SELECT * FROM (
-	        SELECT ROWNUM AS RNUM, A.* FROM (
-	            SELECT * FROM NOTICE
-	            WHERE BOARD_DEL_FL = 'N'
-	            <if test="query != null and query != ''">
-	                AND BOARD_TITLE LIKE '%' || #{query} || '%'
-	            </if>
-	            ORDER BY BOARD_NO DESC
-	        ) A
-	    ) WHERE RNUM BETWEEN #{offset} + 1 AND #{offset} + #{limit}
+	
+	<select id="selectNoticeList">
+	  SELECT * FROM (
+	    SELECT ROWNUM AS RNUM, A.* FROM (
+	      SELECT
+	        N.BOARD_NO,
+	        N.BOARD_TITLE,
+	        N.BOARD_CONTENT,
+	        TO_CHAR(N.BOARD_WRITE_DATE, 'YYYY-MM-DD HH24:MI') AS BOARD_WRITE_DATE,
+	        N.BOARD_VIEW_COUNT,
+	        N.BOARD_DEL_FL,
+	        N.CATEGORY_NO,
+	        N.THUMBNAIL_URL,
+	        M.MEMBER_NAME AS MEMBER_NAME,
+	        C.CATEGORY_NAME AS CATEGORY_NAME
+	      FROM NOTICE N
+	      JOIN MEMBER M ON N.MEMBER_NO = M.MEMBER_NO
+	      JOIN NOTICE_CATEGORY C ON N.CATEGORY_NO = C.CATEGORY_NO
+	      WHERE N.BOARD_DEL_FL = 'N'
+	      <if test="query != null and query != ''">
+	        AND N.BOARD_TITLE LIKE '%' || #{query} || '%'
+	      </if>
+	      <if test="categoryNo != null">
+	        AND N.CATEGORY_NO = #{categoryNo}
+	      </if>
+	      ORDER BY N.BOARD_NO DESC
+	    ) A
+	  )
+	  WHERE RNUM BETWEEN #{offset} + 1 AND #{offset} + #{limit}
 	</select>
 	
 	<select id="getListCount" resultType="_int">
@@ -25,22 +42,24 @@
 	</select>
 
 	<select id="selectNoticeDetail">
-	    SELECT
-		    N.BOARD_NO,
-		    N.BOARD_TITLE,
-		    N.BOARD_CONTENT,
-		    N.BOARD_WRITE_DATE,
-		    N.BOARD_VIEW_COUNT,
-		    N.BOARD_DEL_FL,
-		    M.MEMBER_NAME,
-		    N.THUMBNAIL_URL
-		FROM NOTICE N
-		JOIN MEMBER M
-		USING (MEMBER_NO)
-	    WHERE BOARD_NO = #{no}
+	  SELECT
+	    N.BOARD_NO,
+	    N.BOARD_TITLE,
+	    N.BOARD_CONTENT,
+	    N.BOARD_WRITE_DATE,
+	    N.BOARD_VIEW_COUNT,
+	    N.BOARD_DEL_FL,
+	    N.THUMBNAIL_URL,
+	    N.CATEGORY_NO,
+	    M.MEMBER_NAME AS memberName,
+	    C.CATEGORY_NAME AS categoryName
+	  FROM NOTICE N
+	  JOIN MEMBER M USING (MEMBER_NO)
+	  JOIN NOTICE_CATEGORY C ON N.CATEGORY_NO = C.CATEGORY_NO
+	  WHERE BOARD_NO = #{no}
 	    AND BOARD_DEL_FL = 'N'
 	</select>
-	
+		
 	<update id="increaseViewCount">
 		UPDATE NOTICE
     	SET BOARD_VIEW_COUNT = BOARD_VIEW_COUNT + 1
