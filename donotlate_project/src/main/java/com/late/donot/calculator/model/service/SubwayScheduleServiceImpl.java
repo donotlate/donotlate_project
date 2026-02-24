@@ -33,14 +33,20 @@ public class SubwayScheduleServiceImpl implements SubwayScheduleService{
 	 */
 	@Override
 	public TimeItem findNextSubway(int stationId, int wayCode, LocalTime baseTime, DayType dayType) {
-	
-		SubwayTimeResponse res = odsaySubwayTime.getTime(apiKey, stationId, wayCode, 0, "json");
-		
-		List<TimeItem> list =  extractByDay(res, dayType, wayCode);
-		
-		return list.stream().filter(t -> LocalTime.parse(t.getDepartureTime()).isAfter(baseTime))
-							.findFirst()
-							.orElse(null);
+	    SubwayTimeResponse res = odsaySubwayTime.getTime(apiKey, stationId, wayCode, 0, "json");
+	    
+	    List<TimeItem> list = extractByDay(res, dayType, wayCode);
+
+	    if (list == null || list.isEmpty()) {
+	        log.warn("해당 데이터가 없습니다.");
+	        return null;
+	    }
+
+	    return list.stream()
+	               .filter(t -> t.getDepartureTime() != null)
+	               .filter(t -> LocalTime.parse(t.getDepartureTime()).isAfter(baseTime))
+	               .findFirst()
+	               .orElse(null);
 	}
 	
 	/** 작성자 : 이승준
