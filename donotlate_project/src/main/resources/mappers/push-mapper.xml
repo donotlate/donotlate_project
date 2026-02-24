@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.late.donot.push.model.mapper.PushMapper">
+
+	<insert id="mergeSubscription">
+        MERGE INTO PUSH_SUBSCRIPTION t
+        USING dual
+        ON (t.ENDPOINT = #{endpoint})
+
+        WHEN MATCHED THEN
+            UPDATE SET
+                MEMBER_NO = #{memberNo},
+                P256DH = #{p256dh},
+                AUTH = #{auth},
+                USER_AGENT = #{userAgent}
+
+        WHEN NOT MATCHED THEN
+            INSERT (
+                SUB_NO,
+                MEMBER_NO,
+                ENDPOINT,
+                P256DH,
+                AUTH,
+                USER_AGENT
+            )
+            VALUES (
+                SEQ_PUSH_SUB.NEXTVAL,
+                #{memberNo},
+                #{endpoint},
+                #{p256dh},
+                #{auth},
+                #{userAgent}
+            )
+    </insert>
+    
+    <select id="selectByMember" resultType="map">
+	    SELECT *
+	    FROM PUSH_SUBSCRIPTION
+	    WHERE MEMBER_NO = #{memberNo}
+	</select>
+	
+	<select id="selectSchedulerTargets" resultType="map">
+	    SELECT *
+	    FROM PUSH
+	    WHERE IS_ACTIVE = 'Y'
+	      AND PUSH_TIME = #{nowHHmm}
+	      AND INSTR(DAY_OF_WEEK, #{todayNum}) > 0
+	</select>
+
+</mapper>

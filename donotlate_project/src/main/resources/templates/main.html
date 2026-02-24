@@ -15,6 +15,12 @@
                                 <i class="fa-solid fa-list text-blue-600 mr-2"></i>
                                 저장된 Push
                             </h2>
+                            <button onclick="subscribePush()"
+                                    class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 
+                                        text-white px-3 py-1 rounded-lg text-sm transition">
+                                <i class="fa-solid fa-bell"></i>
+                                알림 활성화
+                            </button>
                         </div>
                             <div id="push-list-container" class="space-y-3 overflow-y-auto pr-2 flex-1">
                             </div>
@@ -69,5 +75,6 @@
     </main>
 </div>
 <script src="/js/main.js"></script>
+<script src="/js/push.js"></script>
 </body>
 </html>
