@@ -548,13 +548,14 @@ function renderStationToggle(step, routeIdx, stepIdx) {
   if (!step.stations || step.stations.length < 2) return "";
 
   const id = `stations-${routeIdx}-${stepIdx}`;
+  const stationLength = Math.max(step.stations.length - 1, 0);
 
   return `
     <div class="mt-1">
       <button
         class="text-xs text-blue-600 hover:underline flex items-center gap-1"
         onclick="toggleStations('${id}', this)">
-        ▶ ${step.stationCount}개 ${
+        ▶ ${stationLength}개 ${
           step.type === "SUBWAY" ? "역" : "정거장"
         } 이동
       </button>
