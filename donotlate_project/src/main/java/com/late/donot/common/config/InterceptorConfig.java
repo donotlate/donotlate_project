@@ -39,13 +39,20 @@ public class InterceptorConfig implements WebMvcConfigurer {
     /** 작성자 : 유건우
 	 *  작성일 : 2026-01-22
 	 *  인증하지 않을 URL 허용
+	 *  
 	 */
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(loginCheckInterceptor)
 		.addPathPatterns("/**")
 		.excludePathPatterns("/", "/signUp", "/error/**", "/member/**", "/;jsessionid=**", "/admin/login",
-                            "/css/**", "/js/**", "/favicon.ico");		
+                            "/css/**", "/js/**", "/favicon.ico",    
+                            "/**/*.png",
+                            "/**/*.jpg",
+                            "/**/*.jpeg",
+                            "/**/*.gif",
+                            "/**/*.webp",
+                            "/**/*.svg");		
 	}
     
 }
