@@ -59,19 +59,21 @@
 	
 
 	<select id="Notices">
-		SELECT
-		    N.BOARD_NO,
-		    N.BOARD_TITLE,
-		    N.BOARD_CONTENT,
-		    N.BOARD_WRITE_DATE,
-		    N.BOARD_VIEW_COUNT,
-		    N.BOARD_DEL_FL,
-		    M.MEMBER_NAME,
-		    N.THUMBNAIL_URL
-		FROM NOTICE N
-		JOIN MEMBER M
-		USING (MEMBER_NO)
-		ORDER BY N.BOARD_WRITE_DATE DESC
+	  SELECT
+	    N.BOARD_NO,
+	    N.BOARD_TITLE,
+	    N.BOARD_CONTENT,
+	    N.BOARD_WRITE_DATE,
+	    N.BOARD_VIEW_COUNT,
+	    N.BOARD_DEL_FL,
+	    N.CATEGORY_NO AS categoryNo,
+	    C.CATEGORY_NAME AS categoryName,
+	    M.MEMBER_NAME,
+	    N.THUMBNAIL_URL
+	  FROM NOTICE N
+	  JOIN MEMBER M ON N.MEMBER_NO = M.MEMBER_NO
+	  JOIN NOTICE_CATEGORY C ON N.CATEGORY_NO = C.CATEGORY_NO
+	  ORDER BY N.BOARD_WRITE_DATE DESC
 	</select>
 
 
@@ -80,12 +82,14 @@
 	        BOARD_NO,
 	        BOARD_TITLE,
 	        BOARD_CONTENT,
+	        CATEGORY_NO,
 	        MEMBER_NO,
 	        THUMBNAIL_URL
 	    ) VALUES (
 	        SEQ_BOARD.NEXTVAL,
 	        #{boardTitle},
 	        #{boardContent},
+	        #{categoryNo},
 	        #{memberNo},
 	        #{thumbnailUrl}
 	    )
@@ -104,6 +108,7 @@
 		SET
 			BOARD_TITLE = #{boardTitle},
 			BOARD_CONTENT = #{boardContent},
+			CATEGORY_NO = #{categoryNo},
 			BOARD_DEL_FL = #{boardDelFl}
 		<if test="thumbnailUrl != null and thumbnailUrl != ''">
   			, THUMBNAIL_URL = #{thumbnailUrl}

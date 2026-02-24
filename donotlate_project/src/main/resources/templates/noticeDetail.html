@@ -21,19 +21,29 @@
                         <h2 class="announcement-title" 
                             style="font-size: 1.5rem; color: #111827; margin-bottom: 1rem; cursor: default;" 
                             th:text="${notice.boardTitle}">공지사항 제목</h2>
-                        
+
                         <div class="announcement-meta">
-                            <span>
-                                <i class="fa-regular fa-calendar meta-icon"></i>
-                                <span th:text="${notice.boardWriteDate}">2024.01.01</span>
+                            <span class="category-badge"
+                                th:classappend="${notice.categoryNo == 1 ? 'badge-general' :
+                                notice.categoryNo == 2 ? 'badge-update' :
+                                notice.categoryNo == 3 ? 'badge-maintenance' :
+                                notice.categoryNo == 4 ? 'badge-event' :
+                                'badge-urgent'}"
+                                th:text="${notice.categoryName}">카테고리   
                             </span>
+                            <span>
+                                <i class="fa-regular fa-user meta-icon"></i>
+                                작성자: <span th:text="${notice.memberName}">관리자</span>
+                            </span>
+
+
                             <span>
                                 <i class="fa-regular fa-eye meta-icon"></i>
                                 조회수 <span th:text="${notice.boardViewCount}">0</span>
                             </span>
                             <span>
-                                <i class="fa-regular fa-user meta-icon"></i>
-                                작성자: <span th:text="${notice.memberName}">관리자</span>
+                                <i class="fa-regular fa-calendar meta-icon"></i>
+                                <span th:text="${#strings.substring(notice.boardWriteDate, 0, 10)}"></span>
                             </span>
                         </div>
                     </div>

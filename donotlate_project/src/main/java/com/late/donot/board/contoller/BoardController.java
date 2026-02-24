@@ -21,13 +21,14 @@ public class BoardController {
     private BoardService service;
 
     /** 작성자: 양충모
-     *  작성일: 2026-02-11
+     *  작성일: 2026-02-24 (수정)
      *  공지 사항
      */
     @GetMapping("/notice")
     public String noticeList(Model model, 
                              @RequestParam(value="cp", required=false, defaultValue="1") int cp,
-                             @RequestParam(value="query", required=false) String query) {
+                             @RequestParam(value="query", required=false) String query,
+                             @RequestParam(value="categoryNo", required=false) Integer categoryNo) {
 
 
         int totalCount = service.getListCount(query); 
@@ -36,7 +37,7 @@ public class BoardController {
         int totalPages = (int) Math.ceil((double) totalCount / limit);// Math.ceil : 반올림 해줌
 
 
-        List<Board> noticeList = service.selectNoticeList(cp, limit, query); 
+        List<Board> noticeList = service.selectNoticeList(cp, limit, query,categoryNo); 
 
 
         model.addAttribute("noticeList", noticeList);
@@ -44,6 +45,7 @@ public class BoardController {
         model.addAttribute("totalPages", totalPages);
         model.addAttribute("query", query); 
         model.addAttribute("activeMenu", "notice");
+        model.addAttribute("categoryNo", categoryNo);
         
         
        // 헤더 정보를 위한 값 추가      

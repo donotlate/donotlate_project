@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.late.donot.admin.model.service.AdminService;
 import com.late.donot.board.model.dto.Board;
@@ -123,25 +125,38 @@ public class AdminController {
 	    return service.Notices();
 	}
 
-	/** 게시판 생성 */
+	/** 작성자 : 양충모
+	 *  작성일 : 02-24(수정)
+	 * 
+	 *  게시판 생성 */
 	@PostMapping("createBoard")
 	public List<Board> createBoard(
-	        @RequestParam("boardTitle") String boardTitle,
-	        @RequestParam("boardContent") String boardContent,
-	        @RequestParam("boardDelFl") String boardDelFl,
-	        @RequestParam(value = "image", required = false) MultipartFile image,
-	        HttpServletRequest request
+	    @RequestParam("boardTitle") String boardTitle,
+	    @RequestParam("boardContent") String boardContent,
+	    @RequestParam("boardDelFl") String boardDelFl,
+	    @RequestParam("categoryNo") int categoryNo,
+	    @RequestParam(value = "image", required = false) MultipartFile image,
+	    HttpServletRequest request
 	) throws Exception {
 
-	    Integer memberNo = (Integer) request.getAttribute("authMemberNo");
+	    String auth = request.getHeader("Authorization");
+	    if (auth == null || !auth.startsWith("Bearer ")) {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "NO_TOKEN");
+	    }
+
+	    String token = auth.substring(7);
+	    Integer memberNo = jwtUtil.getMemberNoFromToken(token); 
+	    if (memberNo == null) {
+	        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "INVALID_TOKEN");
+	    }
 
 	    Board inputBoard = new Board();
 	    inputBoard.setMemberNo(memberNo);
 	    inputBoard.setBoardTitle(boardTitle);
 	    inputBoard.setBoardContent(boardContent);
 	    inputBoard.setBoardDelFl(boardDelFl);
+	    inputBoard.setCategoryNo(categoryNo);
 
-	    // ✅ 이미지 저장 후 파일명(또는 경로)을 thumbnailUrl 컬럼에 저장
 	    if (image != null && !image.isEmpty()) {
 	        String savedName = service.saveNoticeImage(image);
 	        inputBoard.setThumbnailUrl(savedName);
@@ -156,13 +171,17 @@ public class AdminController {
 	    return service.removeNotice(boardNo);
 	}
 
-	/** 게시판 수정 */
+	/** 작성자 : 양충모
+	 *  작성일 : 02-24(수정) 
+	 * 
+	 * 게시판 수정 */
 	@PutMapping("editBoard")
 	public List<Board> editBoard(
 	        @RequestParam("boardNo") int boardNo,
 	        @RequestParam("boardTitle") String boardTitle,
 	        @RequestParam("boardContent") String boardContent,
 	        @RequestParam("boardDelFl") String boardDelFl,
+	        @RequestParam("categoryNo") int categoryNo,
 	        @RequestParam(value = "image", required = false) MultipartFile image
 	) throws Exception {
 
@@ -171,13 +190,14 @@ public class AdminController {
 	    board.setBoardTitle(boardTitle);
 	    board.setBoardContent(boardContent);
 	    board.setBoardDelFl(boardDelFl);
+	    board.setCategoryNo(categoryNo);
 
-	    // ✅ 새 이미지가 오면 저장하고 thumbnailUrl 갱신
+	    // 새 이미지가 오면 저장하고 thumbnailUrl 갱신
 	    if (image != null && !image.isEmpty()) {
 	        String savedName = service.saveNoticeImage(image);
 	        board.setThumbnailUrl(savedName);
 	    }
-	    // ✅ 이미지가 안 오면: SQL에서 thumbnail_url을 업데이트하지 않게 해야 기존 유지됨
+	    // 이미지가 안 오면: SQL에서 thumbnail_url을 업데이트하지 않게 해야 기존 유지됨
 
 	    return service.editBoard(board);
 	}
